@@ -1,5 +1,7 @@
 package com.example.artmaster.register
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -45,19 +47,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.R
 
+
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun Register() {
+fun RegisterScreen(context: Context) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordOpen by remember { mutableStateOf(false) }
+
+    var isUsernameInvalid by remember { mutableStateOf(false) }
+    var isEmailInvalid by remember { mutableStateOf(false) }
+    var isPasswordInvalid by remember { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -84,7 +89,10 @@ fun Register() {
 
         OutlinedTextField(
             value = username,
-            onValueChange = { username = it },
+            onValueChange = {
+                username = it
+                isUsernameInvalid = username.length < 3 || username.isEmpty()
+                            },
             label = { Text(text = "Username") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -120,13 +128,26 @@ fun Register() {
                 fontFamily = FontFamily.Monospace,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold
-            )
+            ),
+            isError = isUsernameInvalid
         )
 
+        if (isUsernameInvalid) {
+            Text(
+                text = "El Username debe contener mas de 3 caracteres",
+                color = Color.Red,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+        }
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                            },
             label = { Text(text = "Email") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -163,13 +184,26 @@ fun Register() {
                 fontFamily = FontFamily.Monospace,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold
-            )
+            ),
+            isError = isEmailInvalid
         )
 
+        if (isEmailInvalid) {
+            Text(
+                text = "El correo electrónico no es válido.",
+                color = Color.Red,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+        }
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                isPasswordInvalid = password.isEmpty() || password.length < 8
+                            },
             label = { Text(text = "Password") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -209,6 +243,7 @@ fun Register() {
             ),
 
             visualTransformation = if (!isPasswordOpen) PasswordVisualTransformation() else VisualTransformation.None,
+            isError = isPasswordInvalid,
             trailingIcon = {
                 IconButton(onClick = { isPasswordOpen = !isPasswordOpen }) {
                     if (!isPasswordOpen) {
@@ -232,8 +267,30 @@ fun Register() {
 
         )
 
-        Button(onClick = {
+        if (isPasswordInvalid) {
+            Text(
+                text = "La Password debe tener mas de 8 digitos y una conbinacion de letras, numeros y caracteres especiales.",
+                color = Color.Red,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.padding(top = 10.dp).padding(horizontal = 30.dp)
+            )
+        }
 
+        Button(onClick = {
+            if (isUsernameInvalid) {
+                Toast.makeText(context,"Completa el campo Username correctamente", Toast.LENGTH_SHORT).show()
+            }else if (isEmailInvalid) {
+                Toast.makeText(context,"Completa el campo Email correctamente", Toast.LENGTH_SHORT).show()
+            }else if (isPasswordInvalid) {
+                Toast.makeText(context,"Completa el campo Password correctamente", Toast.LENGTH_SHORT).show()
+            }else if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(context,"Completa todos los campos", Toast.LENGTH_SHORT).show()
+            }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
+                Toast.makeText(context,"Registro exitoso!", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context,"Ocurrio un error.", Toast.LENGTH_SHORT).show()
+            }
         },
             colors = ButtonDefaults.buttonColors(
                 //containerColor = Color.Cyan
@@ -273,6 +330,8 @@ fun Register() {
         }
     }
 }
+
+
 
 @Composable
 fun SocialMediaBtn() {

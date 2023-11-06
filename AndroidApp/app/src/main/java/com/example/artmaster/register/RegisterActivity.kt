@@ -13,7 +13,7 @@ class RegisterActivity: ComponentActivity() {
         setContent {
             ArtMasterTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    Register()
+                    RegisterScreen(context = this)
                 }
             }
         }
