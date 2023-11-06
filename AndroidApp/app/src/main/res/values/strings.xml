@@ -1,3 +1,15 @@
 <resources>
+    <!-- nombres base !-->
     <string name="app_name">ArtMaster</string>
+    <string name="header">header app</string>
+    <string name="artMaster">ArtMaster</string>
+    <!-- secciones !-->
+    <string name="inicio">Inicio</string>
+    <string name="rutas">Rutas</string>
+    <string name="favoritos">Favoritos</string>
+    <string name="notas">Notas</string>
+    <string name="registro">Registro</string>
+    <string name="login">Login / Logout</string>
+    <string name="perfil">Perfil</string>
+    <string name="panel_admin">Panel Admin</string>
 </resources>
