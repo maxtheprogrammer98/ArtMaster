@@ -99,9 +99,9 @@ class MainActivity : ComponentActivity() {
             ArtMasterTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                    AddHeader()
                 }
             }
+            TobBarMain()
         }
     }
 }
@@ -125,7 +125,7 @@ fun AddHeader(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 //@Preview
-fun TobBar(){
+fun TobBarMain(){
     // 1 - creating flag variable to toggle menu
     var expanded by remember {
         mutableStateOf(false)
@@ -217,19 +217,31 @@ fun TobBar(){
     )
 
     // 4 - creating dropDownMenu
-    DropdownMenu(
-        expanded =  expanded,
-        onDismissRequest = { expanded = false},
-        modifier = Modifier.fillMaxWidth()){
-        //dynamically created options
-        allMenuOptions.forEach {
-            option -> DropdownMenuItem(
-            text = {
-                   Text(text = option.name)
-            },
-            onClick = {
-                Log.i("menu", option.name)
-            })
+    Box(
+        modifier = Modifier.absoluteOffset(0.dp,0.dp)
+    ){
+        DropdownMenu(
+            expanded =  expanded,
+            onDismissRequest = { expanded = false},
+            modifier = Modifier
+                .fillMaxWidth()){
+            //dynamically created options
+            allMenuOptions.forEach {
+                    option -> DropdownMenuItem(
+                leadingIcon = {
+                    Icon(
+                        imageVector = option.icon ,
+                        contentDescription = option.contentDescription,
+                        modifier = Modifier.padding(15.dp, 0.dp))
+                },
+                text = {
+                    Text(text = option.name);
+                },
+                onClick = {
+                    Log.i("menu", option.name);
+                }
+            )
+            }
         }
     }
 }
