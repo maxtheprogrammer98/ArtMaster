@@ -12,4 +12,10 @@
     <string name="login">Login / Logout</string>
     <string name="perfil">Perfil</string>
     <string name="panel_admin">Panel Admin</string>
+    <!-- login !-->
+    <string name="bienvenido">Bienvenido!</string>
+    <string name="ic_user">icono user</string>
+    <string name="email">ingrese email</string>
+    <string name="password">Ingrese contraseña</string>
+    <string name="password_olvidada">Olvidaste tu contraseña?</string>
 </resources>

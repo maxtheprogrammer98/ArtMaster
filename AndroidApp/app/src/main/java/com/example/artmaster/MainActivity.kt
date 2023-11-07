@@ -218,7 +218,7 @@ fun TobBarMain(){
 
     // 4 - creating dropDownMenu
     Box(
-        modifier = Modifier.absoluteOffset(0.dp,0.dp)
+        modifier = Modifier.absoluteOffset(0.dp,60.dp)
     ){
         DropdownMenu(
             expanded =  expanded,
@@ -272,7 +272,7 @@ fun BottomBar(){
     val sectionsApp = listOf<itemsGenerator>(itemInicio,itemFavs,itemRutas)
 
     // 3 - variable that holds the current screen selected
-    var screenSelected by remember {
+    val screenSelected by remember {
         mutableStateOf(sectionsApp)
     }
 
