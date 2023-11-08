@@ -3,6 +3,8 @@
     <string name="app_name">ArtMaster</string>
     <string name="header">header app</string>
     <string name="artMaster">ArtMaster</string>
+    <!-- varios !-->
+    <string name="toast_menu_else">La seccion aun se encuentra en construccion</string>
     <!-- secciones !-->
     <string name="inicio">Inicio</string>
     <string name="rutas">Rutas</string>
@@ -18,4 +20,8 @@
     <string name="email">ingrese email</string>
     <string name="password">Ingrese contraseña</string>
     <string name="password_olvidada">Olvidaste tu contraseña?</string>
+    <string name="login_fb"> Facebook</string>
+    <string name="login_google">Google</string>
+    <string name="login_alt">Tambien te puedes loguar via facebook o google</string>
+    <string name="iniciar_sesion">Iniciar sesion</string>
 </resources>

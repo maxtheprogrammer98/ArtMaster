@@ -1,5 +1,8 @@
 package com.example.artmaster
 
+import android.content.Intent
+import android.app.Application
+import android.content.Context
 import android.icu.text.CaseMap.Title
 import android.os.Bundle
 import android.service.autofill.OnClickAction
@@ -75,6 +78,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -84,6 +88,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.graphicElements.itemsGenerator
+import com.example.artmaster.login.Login
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.example.artmaster.ui.theme.darkBlue
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
@@ -104,201 +109,224 @@ class MainActivity : ComponentActivity() {
             TobBarMain()
         }
     }
-}
 
-@Composable
-fun AddHeader(){
-    Row (modifier = Modifier.fillMaxWidth()) {
-        Image(
-            painter = painterResource(id = R.mipmap.header),
-            contentDescription = stringResource(R.string.header),
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(0.dp, 60.dp)
+    @Composable
+    fun AddHeader(){
+        Row (modifier = Modifier.fillMaxWidth()) {
+            Image(
+                painter = painterResource(id = R.mipmap.header),
+                contentDescription = stringResource(R.string.header),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(0.dp, 60.dp)
+            )
+        }
+    }
+
+    /**
+     * creates a topbar with a dropdown menu
+     */
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    //@Preview
+    fun TobBarMain(){
+        // 1 - creating flag variable to toggle menu
+        var expanded by remember {
+            mutableStateOf(false)
+        }
+
+        // 2 - creating objets to populate dropdown menu
+        val inicioOption = itemsGenerator(
+            stringResource(id = R.string.inicio),
+            stringResource(id = R.string.inicio),
+            Icons.Filled.Home
         )
-    }
-}
 
-/**
- * creates a topbar with a dropdown menu
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-//@Preview
-fun TobBarMain(){
-    // 1 - creating flag variable to toggle menu
-    var expanded by remember {
-        mutableStateOf(false)
-    }
+        val rutasOption = itemsGenerator(
+            stringResource(id = R.string.rutas),
+            stringResource(id = R.string.rutas),
+            Icons.Filled.Create
+        )
 
-    // 2 - creating objets to populate dropdown menu
-    val inicioOption = itemsGenerator(
-        "Inicio",
-        "seccion inicio",
-        Icons.Filled.Home
-    )
+        val favsOption = itemsGenerator(
+            stringResource(id = R.string.favoritos),
+            stringResource(id = R.string.favoritos),
+            Icons.Filled.Favorite
+        )
 
-    val rutasOption = itemsGenerator(
-        "Rutas",
-        "seccion rutas",
-        Icons.Filled.Create
-    )
+        val notasOption = itemsGenerator(
+            stringResource(id = R.string.notas),
+            stringResource(id = R.string.notas),
+            Icons.Filled.DateRange
+        )
 
-    val favsOption = itemsGenerator(
-        "Favoritos",
-        "seccion favoritos",
-        Icons.Filled.Favorite
-    )
+        val loginOption = itemsGenerator(
+            stringResource(id = R.string.login),
+            stringResource(id = R.string.login),
+            Icons.Filled.Person
+        )
 
-    val notasOption = itemsGenerator(
-        "Notas",
-        "seccion notas",
-        Icons.Filled.DateRange
-    )
+        val registroOption = itemsGenerator(
+            stringResource(id = R.string.registro),
+            stringResource(id = R.string.registro),
+            Icons.Filled.AddCircle
+        )
 
-    val loginOption = itemsGenerator(
-        "Login / Logout",
-        "seccion login / logout",
-        Icons.Filled.Person
-    )
+        val perfilOption = itemsGenerator(
+            stringResource(id = R.string.perfil),
+            stringResource(id = R.string.perfil),
+            Icons.Filled.AccountCircle
+        )
 
-    val registroOption = itemsGenerator(
-        "registro",
-        "seccion registro",
-        Icons.Filled.AddCircle
-    )
+        val adminOption = itemsGenerator(
+            stringResource(id = R.string.panel_admin),
+            stringResource(id = R.string.panel_admin),
+            Icons.Filled.Warning
+        )
 
-    val perfilOption = itemsGenerator(
-        "perfil",
-        "seccion perfil",
-        Icons.Filled.AccountCircle
-    )
+        // list that containing all the menu options
+        val allMenuOptions = listOf<itemsGenerator>(inicioOption,
+            rutasOption,
+            favsOption,
+            notasOption,
+            registroOption,
+            loginOption,
+            perfilOption,
+            adminOption)
 
-    val adminOption = itemsGenerator(
-        "admin panel",
-        "seccion administrador",
-        Icons.Filled.Warning
-    )
 
-    // list that containing all the menu options
-    val allMenuOptions = listOf<itemsGenerator>(inicioOption,
-                                                rutasOption,
-                                                favsOption,
-                                                notasOption,
-                                                registroOption,
-                                                loginOption,
-                                                perfilOption,
-                                                adminOption)
+        // 3 - creating TopBar
+        TopAppBar(
+            title = {
+                Text(
+                    text = "ArtMaster",
+                    textAlign = TextAlign.End)
+            },
 
-    // special property that stores the chosen option
-    var selectedOption by remember {
-        mutableStateOf(allMenuOptions)
-    }
+            modifier = Modifier
+                .fillMaxWidth(),
 
-    // 3 - creating TopBar
-    TopAppBar(
-        title = {
-            Text(
-                text = "ArtMaster",
-                textAlign = TextAlign.End)
-        },
+            actions = {
+                // changes flag state
+                IconButton(onClick = {expanded = !expanded}) {
+                    Icon(
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "icono menu")
+                }
+            },
 
-        modifier = Modifier
-            .fillMaxWidth(),
+            colors = TopAppBarDefaults.largeTopAppBarColors(
+                containerColor = colorResource(id = R.color.dark_blue),
+                titleContentColor = colorResource(id = R.color.white)
+            )
+        )
 
-        actions = {
-            // changes flag state
-            IconButton(onClick = {expanded = !expanded}) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "icono menu")
+        // 4 - creating dropDownMenu
+        Box(
+            modifier = Modifier.absoluteOffset(0.dp,60.dp)
+        ){
+            DropdownMenu(
+                expanded =  expanded,
+                onDismissRequest = { expanded = false},
+                modifier = Modifier
+                    .fillMaxWidth()){
+                //dynamically created options
+                allMenuOptions.forEach {
+                        option -> DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            imageVector = option.icon ,
+                            contentDescription = option.contentDescription,
+                            modifier = Modifier.padding(15.dp, 0.dp))
+                    },
+                    text = {
+                        Text(text = option.name);
+                    },
+                    onClick = {
+                        validateSelecOption(option.name)
+                    }
+                )
+                }
             }
         }
-    )
+    }
 
-    // 4 - creating dropDownMenu
-    Box(
-        modifier = Modifier.absoluteOffset(0.dp,60.dp)
-    ){
-        DropdownMenu(
-            expanded =  expanded,
-            onDismissRequest = { expanded = false},
+    /**
+     * validates which menu option was selected
+     */
+    fun validateSelecOption(optionSelec : String){
+        when(optionSelec){
+            "Login / Logout" ->{
+                Intent(applicationContext, Login::class.java).also {
+                    startActivity(it)
+                }
+            } else ->{
+                Toast.makeText(applicationContext,
+                    "la seccion aun se encuentra en construccion",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+//@Preview
+    fun BottomBar(){
+        // 1 - creating object items
+        val itemInicio = itemsGenerator(
+            "inicio",
+            "seccion inicio",
+            Icons.Filled.Home)
+
+        val itemFavs = itemsGenerator(
+            "favs",
+            "seccion favoritos",
+            Icons.Filled.Favorite
+        )
+
+        val itemRutas = itemsGenerator(
+            "rutas",
+            "seccion rutas",
+            Icons.Filled.Create
+        )
+
+        // 2 - storing items in arrayList (to iterate it later on)
+        val sectionsApp = listOf<itemsGenerator>(itemInicio,itemFavs,itemRutas)
+
+        // 3 - variable that holds the current screen selected
+        val screenSelected by remember {
+            mutableStateOf(sectionsApp)
+        }
+
+        // 4 - creating menu and its items based on the previous list
+        NavigationBar(
             modifier = Modifier
-                .fillMaxWidth()){
-            //dynamically created options
-            allMenuOptions.forEach {
-                    option -> DropdownMenuItem(
-                leadingIcon = {
+                .fillMaxWidth()
+                .wrapContentSize()
+                .background(colorResource(id = R.color.dark_blue)),
+        ){
+            sectionsApp.forEach {
+                    section -> NavigationBarItem(
+                selected = screenSelected.any { it.name == section.name },
+                onClick = {  },
+                icon = {
                     Icon(
-                        imageVector = option.icon ,
-                        contentDescription = option.contentDescription,
-                        modifier = Modifier.padding(15.dp, 0.dp))
+                        imageVector = section.icon,
+                        contentDescription = section.contentDescription,
+                        tint = colorResource(id = R.color.white))
                 },
-                text = {
-                    Text(text = option.name);
-                },
-                onClick = {
-                    Log.i("menu", option.name);
+                label = {
+                    Text(
+                        text = section.name,
+                        color = colorResource(id = R.color.white))
                 }
             )
             }
-        }
-    }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-//@Preview
-fun BottomBar(){
-    // 1 - creating object items
-    val itemInicio = itemsGenerator(
-        "inicio",
-        "seccion inicio",
-        Icons.Filled.Home)
-
-    val itemFavs = itemsGenerator(
-        "favs",
-        "seccion favoritos",
-        Icons.Filled.Favorite
-    )
-
-    val itemRutas = itemsGenerator(
-        "rutas",
-        "seccion rutas",
-        Icons.Filled.Create
-    )
-
-    // 2 - storing items in arrayList (to iterate it later on)
-    val sectionsApp = listOf<itemsGenerator>(itemInicio,itemFavs,itemRutas)
-
-    // 3 - variable that holds the current screen selected
-    val screenSelected by remember {
-        mutableStateOf(sectionsApp)
-    }
-
-    // 4 - creating menu and its items based on the previous list
-    NavigationBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(),
-    ){
-        sectionsApp.forEach {
-            section -> NavigationBarItem(
-            selected = screenSelected.any { it.name == section.name },
-            onClick = { Log.i("bottom_men", section.name) },
-            icon = {
-                Icon(imageVector = section.icon,
-                    contentDescription = section.contentDescription)
-                },
-            label = {
-                Text(text = section.name)
-            }
-            )
         }
 
+
     }
-
-
 }
 
 
