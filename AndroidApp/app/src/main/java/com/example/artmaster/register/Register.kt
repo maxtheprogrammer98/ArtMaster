@@ -64,6 +64,8 @@ fun RegisterScreen(context: Context) {
     var isEmailInvalid by remember { mutableStateOf(false) }
     var isPasswordInvalid by remember { mutableStateOf(false) }
 
+    val passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}\$".toRegex()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -91,7 +93,7 @@ fun RegisterScreen(context: Context) {
             value = username,
             onValueChange = {
                 username = it
-                isUsernameInvalid = username.length < 3 || username.isEmpty()
+                isUsernameInvalid = username.length < 3 || username.isEmpty() || username.length > 24
                             },
             label = { Text(text = "Username") },
             modifier = Modifier
@@ -202,7 +204,7 @@ fun RegisterScreen(context: Context) {
             value = password,
             onValueChange = {
                 password = it
-                isPasswordInvalid = password.isEmpty() || password.length < 8
+                isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password)
                             },
             label = { Text(text = "Password") },
             modifier = Modifier
@@ -269,11 +271,11 @@ fun RegisterScreen(context: Context) {
 
         if (isPasswordInvalid) {
             Text(
-                text = "La Password debe tener mas de 8 digitos y una conbinacion de letras, numeros y caracteres especiales.",
+                text = "Tu contraseña debe contener al menos 8 caracteres,\n incluyendo al menos una letra mayúscula,\n una letra minúscula, un número y\n un carácter especial como @, #, \$, %, ^, &, + o !.",
                 color = Color.Red,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Black,
-                modifier = Modifier.padding(top = 10.dp).padding(horizontal = 30.dp)
+                modifier = Modifier.padding(top = 10.dp)
             )
         }
 
