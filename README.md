@@ -1,8 +1,8 @@
 
 
-# <img width="48" height="48" src="https://img.icons8.com/external-those-icons-flat-those-icons/48/external-Android-logos-and-brands-those-icons-flat-those-icons.png" alt="external-Android-logos-and-brands-those-icons-flat-those-icons"/> ArtMaster
+# <img width="30" height="30" src="https://img.icons8.com/arcade/30/android-os.png" alt="android-os"/> ArtMaster
 
-## <img width="16" height="16" src="https://img.icons8.com/office/16/info--v1.png" alt="info--v1"/> Informacion
+## <img width="16" height="16" src="https://img.icons8.com/office/16/info--v1.png" alt="info--v1"/> Información
 Repositorio dedicado a la creación de una aplicación móvil Android en Kotlin.
 La misma te brindara todos los recursos que necesitas para alcanzar un nivel proficiente en el dibujo realista.
 Aquí puedes encontrar un esquema con las interfaces que componenen a la app.
