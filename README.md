@@ -3,9 +3,9 @@
 # <img width="30" height="30" src="https://img.icons8.com/arcade/30/android-os.png" alt="android-os"/> ArtMaster
 
 ## <img width="16" height="16" src="https://img.icons8.com/office/16/info--v1.png" alt="info--v1"/> Información
-Repositorio dedicado a la creación de una aplicación móvil Android en Kotlin.
+Repositorio dedicado a la creación de una aplicación móvil Android en Kotlin, también se utiliza firebase como BaaS.
 La misma te brindara todos los recursos que necesitas para alcanzar un nivel proficiente en el dibujo realista.
-Aquí puedes encontrar un esquema con las interfaces que componenen a la app.
+Aquí puedes encontrar un esquema con las interfaces que componen a la app.
 
 ## <img width="16" height="16" src="https://img.icons8.com/office/16/info--v1.png" alt="info--v1"/> Esquemas
 <a href="https://ibb.co/Mkdf15p"><img src="https://i.ibb.co/WvC0zpF/header.png" alt="header" border="0"></a>
