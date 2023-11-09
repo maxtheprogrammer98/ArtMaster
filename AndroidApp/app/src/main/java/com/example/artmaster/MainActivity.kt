@@ -89,6 +89,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.graphicElements.itemsGenerator
 import com.example.artmaster.login.Login
+import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.example.artmaster.ui.theme.darkBlue
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
@@ -258,6 +259,11 @@ class MainActivity : ComponentActivity() {
         when(optionSelec){
             "Login / Logout" ->{
                 Intent(applicationContext, Login::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Registro" -> {
+                Intent(applicationContext, RegisterActivity::class.java).also {
                     startActivity(it)
                 }
             } else ->{

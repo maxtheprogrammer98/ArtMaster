@@ -39,7 +39,7 @@ import com.example.artmaster.R
 
 
 @Composable
-fun RegisterScreen(context: Context) {
+fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -183,7 +183,9 @@ fun RegisterScreen(context: Context) {
 
         SocialMediaBtn()
 
-        TextButton(onClick = {},
+        TextButton(onClick = {
+            navigateToLogin()
+        },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 20.dp)
