@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,12 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.R
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -52,12 +55,18 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
 
     val passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}\$".toRegex()
 
-    val usernameErrorMessage = "El Username debe contener más de 3 caracteres"
-    val emailErrorMessage = "El correo electrónico no es válido."
-    val passwordErrorMessage = "Tu contraseña debe contener al menos 8 caracteres,\n" +
-            " incluyendo al menos una letra mayúscula,\n" +
-            " una letra minúscula, un número y\n" +
-            " un carácter especial como @, #, \$, %, ^, &, + o !."
+    val usernameErrorMessage = stringResource(R.string.username_error_message)
+    val emailErrorMessage = stringResource(R.string.email_error_message)
+    val passwordErrorMessage = stringResource(R.string.password_error_message_01) +
+            stringResource(R.string.password_error_message_02) +
+            stringResource(R.string.password_error_message_03) +
+            stringResource(R.string.password_error_message_04)
+
+    val messageIsUsernameInvalid = stringResource(R.string.is_username_invalid)
+    val messageIsEmailInvalid = stringResource(R.string.is_email_invalid)
+    val messageIsPasswordInvalid = stringResource(R.string.is_password_invalid)
+    val messageCompleteAll = stringResource(R.string.complete_all_fields)
+    val messageError = stringResource(R.string.error_message_register_user)
 
 //  isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 //  isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password)
@@ -71,12 +80,12 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Logo Register",
+            contentDescription = stringResource(R.string.logo_register),
             modifier = Modifier.size(160.dp)
         )
 
         Text(
-            text = "CREA TU CUENTA",
+            text = stringResource(R.string.register_title),
             textAlign = TextAlign.Center,
             fontFamily = FontFamily.Monospace,
             modifier = Modifier
@@ -92,15 +101,14 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
                 username = it
                 isUsernameInvalid = username.length < 3 || username.isEmpty() || username.length > 24
             },
-            label = "Username",
+            label = stringResource(R.string.username_label_register),
             errorMessage = if (isUsernameInvalid) usernameErrorMessage else null,
             modifier = Modifier.fillMaxWidth(),
-            contDesc = "Icono Username",
-            icon = "person",
+            contDesc = stringResource(R.string.cont_desc_username_register),
+            icon = stringResource(R.string.icon_username_register),
             isPassword = false,
             isPasswordOpen = false,
             onPasswordVisibilityToggle = {
-                // Cuando el usuario hace clic en el ícono de alternancia de visibilidad
                 isPasswordOpen = !isPasswordOpen
             }
         )
@@ -112,15 +120,14 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
                 email = it
                 isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
             },
-            label = "Email",
+            label = stringResource(R.string.email_label_register),
             errorMessage = if (isEmailInvalid) emailErrorMessage else null,
             modifier = Modifier.fillMaxWidth(),
-            contDesc = "Icono Email",
-            icon = "email",
+            contDesc = stringResource(R.string.cont_desc_email_register),
+            icon = stringResource(R.string.icon_email_register),
             isPassword = false,
             isPasswordOpen = false,
             onPasswordVisibilityToggle = {
-                // Cuando el usuario hace clic en el ícono de alternancia de visibilidad
                 isPasswordOpen = !isPasswordOpen
             }
         )
@@ -131,33 +138,31 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
                 password = it
                 isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password)
             },
-            label = "Password",
+            label = stringResource(R.string.password_label_register),
             errorMessage = if (isPasswordInvalid) passwordErrorMessage else null,
             modifier = Modifier.fillMaxWidth(),
-            contDesc = "Icono Password",
-            icon = "password",
+            contDesc = stringResource(R.string.cont_desc_password_register),
+            icon = stringResource(R.string.icon_password_register),
             isPassword = true,
             isPasswordOpen = isPasswordVisible,
             onPasswordVisibilityToggle = {
-                // Cuando el usuario hace clic en el ícono de alternancia de visibilidad
                 isPasswordVisible = !isPasswordVisible
             }
         )
 
-
         Button(onClick = {
             if (isUsernameInvalid) {
-                Toast.makeText(context,"Completa el campo Username correctamente", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,messageIsUsernameInvalid, Toast.LENGTH_SHORT).show()
             }else if (isEmailInvalid) {
-                Toast.makeText(context,"Completa el campo Email correctamente", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,messageIsEmailInvalid, Toast.LENGTH_SHORT).show()
             }else if (isPasswordInvalid) {
-                Toast.makeText(context,"Completa el campo Password correctamente", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,messageIsPasswordInvalid, Toast.LENGTH_SHORT).show()
             }else if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(context,"Completa todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,messageCompleteAll, Toast.LENGTH_SHORT).show()
             }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
-                Toast.makeText(context,"Registro exitoso!", Toast.LENGTH_SHORT).show()
+                createUserFirebase(email, password, context)
             }else{
-                Toast.makeText(context,"Ocurrio un error.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,messageError, Toast.LENGTH_SHORT).show()
             }
         },
             colors = ButtonDefaults.buttonColors(
@@ -173,11 +178,41 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
             )
         ) {
             Text(
-                text = "REGISTRATE",
+                text = stringResource(R.string.btn_register),
                 fontFamily = FontFamily.Monospace,
                 //color = Color.Black,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
+            )
+        }
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+            ) {
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                color = Color.Gray,
+                thickness = 1.dp
+            )
+            
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = stringResource(R.string.or_register),
+                fontSize = 18.sp
+            )
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                color = Color.Gray,
+                thickness = 1.dp
             )
         }
 
@@ -191,7 +226,7 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
                 .padding(top = 20.dp)
         ) {
             Text(
-                text = "Ya tienes una cuenta? Inicia Sesion.",
+                text = stringResource(R.string.register_goToLogin),
                 fontFamily = FontFamily.Monospace,
                 color = if (isSystemInDarkTheme()) Color.White else Color.Black,
                 fontSize = 12.sp,
@@ -202,13 +237,36 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
 }
 
 
+/**
+ * SIGN UP USERS
+ */
+private fun createUserFirebase(email: String, password: String, context: Context){
+    FirebaseAuth
+        .getInstance()
+        .createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener {
+            if (it.isSuccessful){
+                Toast.makeText(
+                    context, context
+                        .getString(R.string.successful_register),
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+        .addOnFailureListener {
+            Toast.makeText(context,"Error: ${it.localizedMessage}", Toast.LENGTH_LONG).show()
+        }
+}
 
+
+/**
+ * SOCIAL MEDIA BTN
+ */
 @Composable
 fun SocialMediaBtn() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp)
+            .padding(top = 10.dp)
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -224,7 +282,7 @@ fun SocialMediaBtn() {
             Row {
                 Icon(
                     imageVector = Icons.Default.Favorite,
-                    contentDescription = "Google",
+                    contentDescription = stringResource(R.string.cont_desc_google),
                     modifier = Modifier.size(20.dp),
                     //tint = Color.Unspecified,
                 )
@@ -232,7 +290,7 @@ fun SocialMediaBtn() {
                 Spacer(modifier = Modifier.width(10.dp))
                 
                 Text(
-                    text = "Google",
+                    text = stringResource(R.string.google),
                     fontFamily = FontFamily.Monospace,
                     //color = Color.Black
                 )
@@ -251,7 +309,7 @@ fun SocialMediaBtn() {
             Row {
                 Icon(
                     imageVector = Icons.Default.Favorite,
-                    contentDescription = "Facebook",
+                    contentDescription = stringResource(R.string.cont_desc_facebook),
                     modifier = Modifier.size(20.dp),
                     //tint = Color.Unspecified,
                 )
@@ -259,7 +317,7 @@ fun SocialMediaBtn() {
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
-                    text = "Facebook",
+                    text = stringResource(R.string.facebook),
                     fontFamily = FontFamily.Monospace,
                     //color = Color.Black
                 )
