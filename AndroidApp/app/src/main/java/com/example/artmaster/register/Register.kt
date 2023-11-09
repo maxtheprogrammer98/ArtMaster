@@ -39,6 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Objects
 
 
 @Composable
@@ -67,6 +70,10 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
     val messageIsPasswordInvalid = stringResource(R.string.is_password_invalid)
     val messageCompleteAll = stringResource(R.string.complete_all_fields)
     val messageError = stringResource(R.string.error_message_register_user)
+
+    val favoritos: ArrayList<String> = ArrayList()
+    val completados: ArrayList<String> = ArrayList()
+    val isAdmin by remember { mutableStateOf(false) }
 
 //  isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 //  isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password)
@@ -160,7 +167,7 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
             }else if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(context,messageCompleteAll, Toast.LENGTH_SHORT).show()
             }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
-                createUserFirebase(email, password, context)
+                createUserFirebase(username, email, password, context, favoritos, completados, isAdmin) { navigateToLogin() }
             }else{
                 Toast.makeText(context,messageError, Toast.LENGTH_SHORT).show()
             }
@@ -240,16 +247,37 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
 /**
  * SIGN UP USERS
  */
-private fun createUserFirebase(email: String, password: String, context: Context){
+private fun createUserFirebase(username: String, email: String, password: String, context: Context, favoritos: ArrayList<String>, completados: ArrayList<String>, isAdmin: Boolean, navigateToLogin: () -> Unit){
     FirebaseAuth
         .getInstance()
         .createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener {
             if (it.isSuccessful){
-                Toast.makeText(
-                    context, context
-                        .getString(R.string.successful_register),
-                    Toast.LENGTH_SHORT).show()
+                val auth: FirebaseAuth = FirebaseAuth.getInstance()
+                val firebaseUser: FirebaseUser? = auth.currentUser
+                val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+                val id = Objects.requireNonNull<FirebaseUser>(auth.currentUser).uid
+                val map: MutableMap<String, Any> = HashMap()
+                map["id"] = id
+                map["name"] = username
+                map["email"] = email
+                map["password"] = password
+                map["favoritos"] = favoritos
+                map["completados"] = completados
+                map["isAdmin"] = isAdmin
+
+                assert(firebaseUser != null)
+                firebaseUser!!.sendEmailVerification()
+
+                firebaseFirestore.collection("usuarios").document(id).set(map)
+                    .addOnSuccessListener {
+                        navigateToLogin()
+
+                        Toast.makeText(
+                            context, context
+                                .getString(R.string.successful_register),
+                            Toast.LENGTH_SHORT).show()
+                    }
             }
         }
         .addOnFailureListener {
