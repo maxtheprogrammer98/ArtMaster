@@ -1,195 +1,266 @@
 package com.example.artmaster.login
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.R
 import com.example.artmaster.ui.theme.ArtMasterTheme
+import com.example.artmaster.MainActivity
+import com.example.artmaster.register.RegisterActivity
 
-class Login : AppCompatActivity() {
+class Login : MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ArtMasterTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                    LoginApp()
+                    CreateLogin()
                 }
             }
         }
+    }
+
+
+    /**
+     * creates a header with a profile icon
+     */
+    @Composable
+    fun InsertHeader(imageLogin : Painter, descriptionLogin : String){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .wrapContentSize(Alignment.BottomCenter)
+        ){
+            Image(
+                painter = imageLogin,
+                contentDescription = descriptionLogin,
+                modifier = Modifier
+                        .size(100.dp))
+        }
+    }
+
+    @Composable
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun InsertMailField(){
+        // base variable that stores the input
+        var inputMail by remember {
+            mutableStateOf("")
+        }
+
+        OutlinedTextField(
+            value = inputMail,
+            onValueChange = {inputMail = it},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            label = {
+                Text(text = stringResource(id = R.string.email))
+            },
+            supportingText = {
+                Text(text = stringResource(id = R.string.email_sample))
+            },
+            shape = CircleShape,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Email,
+                    contentDescription = "email icon")
+            }
+        )
+    }
+
+
+    @Composable
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun InsertPasswordField(){
+        // base variable that stores the input
+        var inputPassword by remember {
+            mutableStateOf("")
+        }
+
+        OutlinedTextField(
+            value = inputPassword ,
+            onValueChange = {inputPassword = it},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            label = {
+                Text(text = stringResource(id = R.string.password))
+            },
+            shape = CircleShape,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Info ,
+                    contentDescription = "password icon")
+            },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        )
+    }
+
+    @Composable
+    fun InsertTitle(text : String){
+        Text(
+            text = text,
+            fontSize = 24.sp,
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center))
     }
 
     /**
-     * creates login form
+     * creates the login using different modularized functions
      */
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-//@Preview
-    fun LoginApp(){
-        // variables that handle the user's input
-        var usersEmail by remember {
-            mutableStateOf("email@gmail.com")
-        }
+    //@Preview
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun CreateLogin(){
 
-        var usersPassword by rememberSaveable{
-            mutableStateOf("")
-        }
-        
-        // using a column as main container
-        Column(
-            // allowing vertical scrolling
-            modifier = Modifier.verticalScroll(ScrollState(0))
+        val scrollState = rememberScrollState()
+
+        //main container
+        Scaffold(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
         ){
-            Column(
-                // contains user icon
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .wrapContentSize(Alignment.Center)
-            ){
-                Image(
-                    painter = painterResource(id = R.mipmap.user) ,
-                    contentDescription = stringResource(id = R.string.ic_user),
-                    modifier = Modifier
-                        .height(100.dp)
-                        .width(100.dp))
-            }
+            //inserting main menu bar
+            super.TobBarMain()
 
+            //inserting login content
             Column(
-                // contains "welcome" text
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
-                    .wrapContentSize(Alignment.Center)
             ){
+                InsertHeader(
+                    imageLogin = painterResource(id = R.mipmap.user),
+                    descriptionLogin = stringResource(id = R.string.ic_user))
+
+                InsertTitle(
+                    text = stringResource(id = R.string.bienvenido))
+
+                InsertMailField()
+
+                InsertPasswordField()
+
                 Text(
-                    text = stringResource(id = R.string.bienvenido),
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp)
-            }
-
-            Column(
-                //contains text fields
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.Center)
-            ){
-                // email field
-                OutlinedTextField(
-                    value = usersEmail,
-                    onValueChange = {usersEmail = it},
-                    label = {
-                        Text(text = stringResource(id = R.string.email))
-                    },
+                    text = stringResource(id = R.string.password_olvidada),
                     modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                        .padding(10.dp)
+                        .clickable {
+                            Toast
+                                .makeText(
+                                    applicationContext,
+                                    "via mail se ha enviado un enlace para que puedas asignar una nueva password",
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show()
+                        },
+                    fontSize = 18.sp)
 
-                //password field
-                OutlinedTextField(
-                    value = usersPassword ,
-                    onValueChange = {usersPassword = it},
-                    label = {
-                        Text(text = stringResource(id = R.string.password))
-                    },
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth(),
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                )
-            }
-
-            // forgot password?
-            Text(
-                text = stringResource(id = R.string.password_olvidada),
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth())
-
-            //login button
-            Button(
-                onClick = {Log.i("login", "btn_login")},
-                modifier = Modifier
-                    .padding(30.dp, 20.dp)
-                    .fillMaxWidth()){
-                Text(text = stringResource(id = R.string.iniciar_sesion))
-            }
-
-
-            // alternative login options
-            Text(
-                text = stringResource(id = R.string.login_alt),
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(10.dp))
-
-            Row(
-                //sing in via facebook / google
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.Center)
-            ) {
+                //TODO: Make function that generates buttons
                 Button(
-                    onClick = { Log.i("login", "via fb")},
-                    modifier = Modifier.padding(20.dp)){
-                    Text(text = stringResource(id = R.string.login_fb))
+                    onClick = {
+                        Toast.makeText(applicationContext,
+                            "accion procesada",
+                            Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)){
+                    Text(text = stringResource(id = R.string.iniciar_sesion) )
+                }
+
+                Text(
+                    text = stringResource(id = R.string.login_alt),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                        .padding(10.dp),
+                    fontSize = 18.sp)
+
+                Button(
+                    onClick = {
+                        Toast.makeText(applicationContext,
+                            "accion procesada",
+                            Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)){
+                    Text(text = stringResource(id = R.string.login_fb) )
                 }
 
                 Button(
-                    onClick = { Log.i("login", "via google")},
-                    modifier = Modifier.padding(20.dp)){
-                    Text(text = stringResource(id = R.string.login_google))
+                    onClick = {
+                        Toast.makeText(applicationContext,
+                            "accion procesada",
+                            Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)){
+                    Text(text = stringResource(id = R.string.login_google) )
                 }
+
+
             }
+
         }
     }
+
+
+
+
+
 }
 
