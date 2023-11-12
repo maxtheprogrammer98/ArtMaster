@@ -66,8 +66,6 @@ import com.google.firebase.ktx.Firebase
 
 open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        // retrieves user's role in order to display the menu according to his/her privileges
-        getCurrentUserFB()
         super.onCreate(savedInstanceState)
         setContent {
             ArtMasterTheme {
@@ -183,6 +181,8 @@ open class MainActivity : ComponentActivity() {
             perfilOption,
             adminOption)
 
+        // determing the user's role to display menu accordingly
+        getCurrentUserFB()
 
         // 3 - creating TopBar
         TopAppBar(
@@ -304,7 +304,7 @@ open class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    @Preview
+    //@Preview
     fun BottomBar(){
         // 1 - creating object items
         val itemInicio = itemsGenerator(
@@ -378,9 +378,11 @@ open class MainActivity : ComponentActivity() {
         if(user != null){
             user.let {
                 userID = user.uid
-                isAdmin(userID)}
+                Log.i("test", "user identified")}
+                isAdmin(userID)
         } else{
             usersRole = "visitor"
+            Log.i("test", "visitor")
         }
     }
 
@@ -388,6 +390,7 @@ open class MainActivity : ComponentActivity() {
      * determines whether the user is an admin in order to enable him to acess to the admin panel
      */
     fun isAdmin(userID : String){
+        Log.i("isAdmin", "function started")
         // instanciating DB
         val db = Firebase.firestore
         // creating document reference
@@ -404,6 +407,8 @@ open class MainActivity : ComponentActivity() {
                         } else {
                             usersRole = "user"
                         }
+                        //prueba
+                        Log.i("test rol", "el rol del usuario es: " + usersRole)
                     } else {
                         Log.i("firestore", "error al conectar con BD")
                     }
