@@ -11,9 +11,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -133,9 +135,12 @@ class Login : MainActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
+                .heightIn(max = 1000.dp),
+            topBar = {
+                //inserting topbar
+                super.TobBarMain()
+            }
         ){
-            //inserting main menu bar
-            super.TobBarMain()
 
             //inserting login content
             Column(
@@ -312,7 +317,7 @@ class Login : MainActivity() {
             Toast.LENGTH_SHORT)
 
         // it initialize the auth service from FB
-        var auth = Firebase.auth
+        val auth = Firebase.auth
         //validating user
         auth.signInWithEmailAndPassword(emailUser,passwordUser)
         // monitoring request

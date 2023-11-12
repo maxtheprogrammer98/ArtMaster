@@ -2,6 +2,7 @@ package com.example.artmaster
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -43,28 +45,42 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.graphicElements.itemsGenerator
 import com.example.artmaster.login.Login
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // retrieves user's role in order to display the menu according to his/her privileges
+        getCurrentUserFB()
         super.onCreate(savedInstanceState)
         setContent {
             ArtMasterTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
+                    TobBarMain()
                 }
             }
-            TobBarMain()
         }
     }
+
+    //user's role (visitor / user / admin)
+    var usersRole = ""
 
     @Composable
     fun AddHeader(){
@@ -86,6 +102,7 @@ open class MainActivity : ComponentActivity() {
     @Composable
     //@Preview
     fun TobBarMain(){
+
         // 1 - creating flag variable to toggle menu
         var expanded by remember {
             mutableStateOf(false)
@@ -95,52 +112,68 @@ open class MainActivity : ComponentActivity() {
         val inicioOption = itemsGenerator(
             stringResource(id = R.string.inicio),
             stringResource(id = R.string.inicio),
-            Icons.Filled.Home
+            Icons.Filled.Home,
+            false,
+            true
         )
 
         val rutasOption = itemsGenerator(
             stringResource(id = R.string.rutas),
             stringResource(id = R.string.rutas),
-            Icons.Filled.Create
+            Icons.Filled.Create,
+            false,
+            true
         )
 
         val favsOption = itemsGenerator(
             stringResource(id = R.string.favoritos),
             stringResource(id = R.string.favoritos),
-            Icons.Filled.Favorite
+            Icons.Filled.Favorite,
+            false,
+            false
         )
 
         val notasOption = itemsGenerator(
             stringResource(id = R.string.notas),
             stringResource(id = R.string.notas),
-            Icons.Filled.DateRange
+            Icons.Filled.DateRange,
+            false,
+            false
         )
 
         val loginOption = itemsGenerator(
             stringResource(id = R.string.login),
             stringResource(id = R.string.login),
-            Icons.Filled.Person
+            Icons.Filled.Person,
+            false,
+            true
         )
 
         val registroOption = itemsGenerator(
             stringResource(id = R.string.registro),
             stringResource(id = R.string.registro),
-            Icons.Filled.AddCircle
+            Icons.Filled.AddCircle,
+            false,
+            true
         )
 
         val perfilOption = itemsGenerator(
             stringResource(id = R.string.perfil),
             stringResource(id = R.string.perfil),
-            Icons.Filled.AccountCircle
+            Icons.Filled.AccountCircle,
+            false,
+            false
         )
 
         val adminOption = itemsGenerator(
             stringResource(id = R.string.panel_admin),
             stringResource(id = R.string.panel_admin),
-            Icons.Filled.Warning
+            Icons.Filled.Warning,
+            true,
+            false
         )
 
-        // list that containing all the menu options
+        // list that containing all the menu options (admin / users)
         val allMenuOptions = listOf<itemsGenerator>(inicioOption,
             rutasOption,
             favsOption,
@@ -187,21 +220,61 @@ open class MainActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()){
                 //dynamically created options
-                allMenuOptions.forEach {
-                        option -> DropdownMenuItem(
-                    leadingIcon = {
-                        Icon(
-                            imageVector = option.icon ,
-                            contentDescription = option.contentDescription,
-                            modifier = Modifier.padding(15.dp, 0.dp))
-                    },
-                    text = {
-                        Text(text = option.name);
-                    },
-                    onClick = {
-                        validateSelecOption(option.name)
+                if (usersRole.equals("admin")){
+                    // all sections displayed
+                    allMenuOptions.forEach {
+                            option -> DropdownMenuItem(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = option.icon ,
+                                contentDescription = option.contentDescription,
+                                modifier = Modifier.padding(15.dp, 0.dp))
+                        },
+                        text = {
+                            Text(text = option.name);
+                        },
+                        onClick = {
+                            validateSelecOption(option.name)
+                        }
+                        )
                     }
-                )
+                }else if(usersRole.equals("user")){
+                    // the admin panel is not shown
+                    allMenuOptions.filter { !it.onlyAdmin }.forEach { option ->
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = option.icon ,
+                                    contentDescription = option.contentDescription,
+                                    modifier = Modifier.padding(15.dp, 0.dp))
+                            },
+                            text = {
+                                Text(text = option.name);
+                            },
+                            onClick = {
+                                validateSelecOption(option.name)
+                            }
+                        )
+                    }
+                } else{
+                    // displays only the sections available for visitors
+                    allMenuOptions.filter {it.visitorCanAccess }.forEach { option ->
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = option.icon ,
+                                    contentDescription = option.contentDescription,
+                                    modifier = Modifier.padding(15.dp, 0.dp))
+                            },
+                            text = {
+                                Text(text = option.name);
+                            },
+                            onClick = {
+                                validateSelecOption(option.name)
+                            }
+                        )
+                    }
+
                 }
             }
         }
@@ -231,23 +304,30 @@ open class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
+    @Preview
     fun BottomBar(){
         // 1 - creating object items
         val itemInicio = itemsGenerator(
             "inicio",
             "seccion inicio",
-            Icons.Filled.Home)
+            Icons.Filled.Home,
+            false,
+            true)
 
         val itemFavs = itemsGenerator(
             "favs",
             "seccion favoritos",
-            Icons.Filled.Favorite
+            Icons.Filled.Favorite,
+            false,
+            false
         )
 
         val itemRutas = itemsGenerator(
             "rutas",
             "seccion rutas",
-            Icons.Filled.Create
+            Icons.Filled.Create,
+            false,
+            true
         )
 
         // 2 - storing items in arrayList (to iterate it later on)
@@ -262,30 +342,72 @@ open class MainActivity : ComponentActivity() {
         NavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentSize()
-                .background(colorResource(id = R.color.dark_blue)),
+                .wrapContentSize(),
+            containerColor = colorResource(id = R.color.dark_blue)
         ){
             sectionsApp.forEach {
                     section -> NavigationBarItem(
-                selected = screenSelected.any { it.name == section.name },
-                onClick = {  },
-                icon = {
-                    Icon(
-                        imageVector = section.icon,
-                        contentDescription = section.contentDescription,
-                        tint = colorResource(id = R.color.white))
-                },
-                label = {
-                    Text(
-                        text = section.name,
-                        color = colorResource(id = R.color.white))
-                }
+                        selected = screenSelected.any { it.name == section.name },
+                        onClick = { },
+                        icon = {
+                        Icon(
+                            imageVector = section.icon,
+                            contentDescription = section.contentDescription)
+                        },
+                        label = {
+                            Text(
+                                text = section.name,
+                                color = Color.White)
+                        }
                 )
             }
 
         }
 
+    }
 
+    /**
+     * obtains the current user (if already signed in)
+     */
+    fun getCurrentUserFB(){
+        // instancing firebase auth
+        val user = Firebase.auth.currentUser
+        // gettind user's ID
+        var userID = ""
+        // if user is signed in
+        if(user != null){
+            user.let {
+                userID = user.uid
+                isAdmin(userID)}
+        } else{
+            usersRole = "visitor"
+        }
+    }
+
+    /**
+     * determines whether the user is an admin in order to enable him to acess to the admin panel
+     */
+    fun isAdmin(userID : String){
+        // instanciating DB
+        val db = Firebase.firestore
+        // creating document reference
+        val docRef = db.collection("usuarios").document(userID)
+        // GET REQUEST
+        docRef.get()
+            .addOnSuccessListener { OnSuccessListener<DocumentSnapshot> {
+                documentSnapshot ->
+                    if (documentSnapshot.exists()){
+                        val isUserAdmin = documentSnapshot.getBoolean("isAdmin")
+                        // extracting user's role
+                        if (isUserAdmin == true){
+                            usersRole = "admin"
+                        } else {
+                            usersRole = "user"
+                        }
+                    } else {
+                        Log.i("firestore", "error al conectar con BD")
+                    }
+            } }
     }
 }
 
