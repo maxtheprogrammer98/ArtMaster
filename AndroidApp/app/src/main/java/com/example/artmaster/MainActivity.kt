@@ -57,12 +57,15 @@ import com.example.artmaster.login.Login
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.Objects
 
 open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -182,6 +185,7 @@ open class MainActivity : ComponentActivity() {
             adminOption)
 
         // determing the user's role to display menu accordingly
+        // prior to creating topbar
         getCurrentUserFB()
 
         // 3 - creating TopBar
@@ -390,29 +394,31 @@ open class MainActivity : ComponentActivity() {
      * determines whether the user is an admin in order to enable him to acess to the admin panel
      */
     fun isAdmin(userID : String){
-        Log.i("isAdmin", "function started")
+        Log.i("testing", "function triggered")
         // instanciating DB
         val db = Firebase.firestore
         // creating document reference
         val docRef = db.collection("usuarios").document(userID)
         // GET REQUEST
         docRef.get()
-            .addOnSuccessListener { OnSuccessListener<DocumentSnapshot> {
-                documentSnapshot ->
-                    if (documentSnapshot.exists()){
-                        val isUserAdmin = documentSnapshot.getBoolean("isAdmin")
-                        // extracting user's role
-                        if (isUserAdmin == true){
-                            usersRole = "admin"
-                        } else {
-                            usersRole = "user"
-                        }
-                        //prueba
-                        Log.i("test rol", "el rol del usuario es: " + usersRole)
+            // verfies DB connection
+            .addOnSuccessListener { document ->
+                if (document != null){
+                    // extracing document
+                    val documentData = document.data
+                    // determining user's role
+                    val isUserAdmin = documentData?.get("isAdmin")
+                    Log.i("testing", "is admin?: " + isUserAdmin.toString())
+                    // assigning user's role to display menu accordingly
+                    if (isUserAdmin == true){
+                        usersRole = "admin"
+                        Log.i("testing", "it's admin")
                     } else {
-                        Log.i("firestore", "error al conectar con BD")
+                        usersRole = "user"
+                        Log.i("testing", "it's user")
                     }
-            } }
+                }
+            }
     }
 }
 
