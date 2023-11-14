@@ -1,11 +1,11 @@
 <resources>
-    <!-- nombres base !-->
+    <!-- basic strings !-->
     <string name="app_name">ArtMaster</string>
     <string name="header">header app</string>
     <string name="artMaster">ArtMaster</string>
-    <!-- varios !-->
+    <!-- various !-->
     <string name="toast_menu_else">La seccion aun se encuentra en construccion</string>
-    <!-- secciones !-->
+    <!-- sections !-->
     <string name="inicio">Inicio</string>
     <string name="rutas">Rutas</string>
     <string name="favoritos">Favoritos</string>
@@ -26,4 +26,6 @@
     <string name="login_alt">Tambien te puedes loguar via facebook o google</string>
     <string name="iniciar_sesion">Iniciar sesion</string>
     <string name="password_olvidada_toast">Por mail se ha enviado un enlace para que puedas asignar una clave nueva</string>
+    <!-- logout !-->
+    <string name="hasta_luego">Hasta luego!</string>
 </resources>

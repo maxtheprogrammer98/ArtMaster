@@ -55,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.graphicElements.itemsGenerator
 import com.example.artmaster.login.Login
+import com.example.artmaster.login.Logout
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.android.gms.tasks.OnCompleteListener
@@ -80,6 +81,9 @@ open class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    //TODO: Research how to store data locally, in order to implement it here
+    //TODO: Encapsulate variables and functions, general review
 
     //user's role (visitor / user / admin)
     var usersRole = ""
@@ -291,8 +295,16 @@ open class MainActivity : ComponentActivity() {
     fun validateSelecOption(optionSelec : String){
         when(optionSelec){
             "Login / Logout" ->{
-                Intent(applicationContext, Login::class.java).also {
-                    startActivity(it)
+                if (isUserLogged()){
+                    // if user's logged in, then it's redirected to logout
+                    Intent(applicationContext, Logout::class.java).also {
+                        startActivity(it)
+                    }
+                } else {
+                    // otherwise it's redirected to login section
+                    Intent(applicationContext, Login::class.java).also {
+                        startActivity(it)
+                    }
                 }
             }
             "Registro" -> {
@@ -350,21 +362,41 @@ open class MainActivity : ComponentActivity() {
                 .wrapContentSize(),
             containerColor = colorResource(id = R.color.dark_blue)
         ){
-            sectionsApp.forEach {
-                    section -> NavigationBarItem(
-                        selected = screenSelected.any { it.name == section.name },
-                        onClick = { },
-                        icon = {
+            if (usersRole.equals("user") || usersRole.equals("admin")){
+                // displays all icons
+                sectionsApp.forEach {
+                        section -> NavigationBarItem(
+                    selected = screenSelected.any { it.name == section.name },
+                    onClick = { /*TODO: add intent function*/},
+                    icon = {
                         Icon(
                             imageVector = section.icon,
                             contentDescription = section.contentDescription)
-                        },
-                        label = {
-                            Text(
-                                text = section.name,
-                                color = Color.White)
-                        }
-                )
+                    },
+                    label = {
+                        Text(
+                            text = section.name,
+                            color = Color.White)
+                    }
+                    )
+                }
+            } else {
+                // otherwise only home & learning paths are shown
+                sectionsApp.filter{ it.visitorCanAccess}.forEach {
+                    section -> NavigationBarItem(
+                    selected = screenSelected.any { it.name == section.name },
+                    onClick = { /*TODO: add intent function*/ },
+                    icon = {
+                        Icon(
+                            imageVector = section.icon,
+                            contentDescription = section.contentDescription)
+                    },
+                    label = {
+                        Text(
+                            text = section.name,
+                            color = Color.White)
+                    })
+                }
             }
 
         }
@@ -388,6 +420,24 @@ open class MainActivity : ComponentActivity() {
         } else{
             usersRole = "visitor"
             Log.i("test", "visitor")
+        }
+    }
+
+    /**
+     * determines whether the user is loged in or not
+     */
+    fun isUserLogged():Boolean{
+        // variable flag
+        var loggedFlag:Boolean
+        // instantiating firebase auth service
+        val authServiceUser = Firebase.auth.currentUser
+        // validating if there's a current user loged in
+        if(authServiceUser != null){
+          loggedFlag = true
+          return loggedFlag
+        } else {
+            loggedFlag = false
+            return loggedFlag
         }
     }
 

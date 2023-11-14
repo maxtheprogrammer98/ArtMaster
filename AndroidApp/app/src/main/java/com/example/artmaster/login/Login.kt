@@ -78,7 +78,7 @@ class Login : MainActivity() {
         }
     }
 
-
+    //TODO: Replace with interface function
     /**
      * creates a header with a profile icon
      */
