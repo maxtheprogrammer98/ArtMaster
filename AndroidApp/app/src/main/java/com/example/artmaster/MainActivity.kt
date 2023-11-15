@@ -89,6 +89,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.graphicElements.itemsGenerator
 import com.example.artmaster.login.Login
+import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.example.artmaster.ui.theme.darkBlue
@@ -266,7 +267,12 @@ class MainActivity : ComponentActivity() {
                 Intent(applicationContext, RegisterActivity::class.java).also {
                     startActivity(it)
                 }
-            } else ->{
+            }
+            "Perfil" -> {
+                Intent(applicationContext, ProfileActivity::class.java).also {
+                    startActivity(it)
+                }
+            }else ->{
                 Toast.makeText(applicationContext,
                     "la seccion aun se encuentra en construccion",
                     Toast.LENGTH_SHORT).show()

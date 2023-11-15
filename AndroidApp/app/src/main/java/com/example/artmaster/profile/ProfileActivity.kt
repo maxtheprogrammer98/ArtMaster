@@ -1,4 +1,4 @@
-package com.example.artmaster.register
+package com.example.artmaster.profile
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,20 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import com.example.artmaster.login.Login
-import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
-class RegisterActivity: ComponentActivity() {
+class ProfileActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ArtMasterTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    RegisterScreen(
-                        context = this,
-                        navigateToLogin = { navigateToLogin() },
-                        navigateToProfile = { navigateToProfile() }
-                    )
+                    ProfileScreen(navigateToLogin = { navigateToLogin() })
                 }
             }
         }
@@ -28,12 +23,6 @@ class RegisterActivity: ComponentActivity() {
 
     private fun navigateToLogin() {
         Intent(applicationContext, Login::class.java).also {
-            startActivity(it)
-        }
-    }
-
-    private fun navigateToProfile() {
-        Intent(applicationContext, ProfileActivity::class.java).also {
             startActivity(it)
             finish()
         }

@@ -45,7 +45,7 @@ import java.util.Objects
 
 
 @Composable
-fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
+fun RegisterScreen(context: Context, navigateToLogin: () -> Unit, navigateToProfile: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -167,7 +167,7 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
             }else if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(context,messageCompleteAll, Toast.LENGTH_SHORT).show()
             }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
-                createUserFirebase(username, email, password, context, favoritos, completados, isAdmin) { navigateToLogin() }
+                createUserFirebase(username, email, password, context, favoritos, completados, isAdmin) { navigateToProfile() }
             }else{
                 Toast.makeText(context,messageError, Toast.LENGTH_SHORT).show()
             }
@@ -247,7 +247,7 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit) {
 /**
  * SIGN UP USERS
  */
-private fun createUserFirebase(username: String, email: String, password: String, context: Context, favoritos: ArrayList<String>, completados: ArrayList<String>, isAdmin: Boolean, navigateToLogin: () -> Unit){
+private fun createUserFirebase(username: String, email: String, password: String, context: Context, favoritos: ArrayList<String>, completados: ArrayList<String>, isAdmin: Boolean, navigateToProfile: () -> Unit){
     FirebaseAuth
         .getInstance()
         .createUserWithEmailAndPassword(email, password)
@@ -258,10 +258,8 @@ private fun createUserFirebase(username: String, email: String, password: String
                 val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
                 val id = Objects.requireNonNull<FirebaseUser>(auth.currentUser).uid
                 val map: MutableMap<String, Any> = HashMap()
-                map["id"] = id
                 map["name"] = username
                 map["email"] = email
-                map["password"] = password
                 map["favoritos"] = favoritos
                 map["completados"] = completados
                 map["isAdmin"] = isAdmin
@@ -271,7 +269,7 @@ private fun createUserFirebase(username: String, email: String, password: String
 
                 firebaseFirestore.collection("usuarios").document(id).set(map)
                     .addOnSuccessListener {
-                        navigateToLogin()
+                        navigateToProfile()
 
                         Toast.makeText(
                             context, context
