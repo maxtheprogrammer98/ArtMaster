@@ -28,4 +28,6 @@
     <string name="password_olvidada_toast">Por mail se ha enviado un enlace para que puedas asignar una clave nueva</string>
     <!-- logout !-->
     <string name="hasta_luego">Hasta luego!</string>
+    <string name="btn_aceptar">Aceptar</string>
+    <string name="cambiar_visibilidad">mostrar password</string>
 </resources>

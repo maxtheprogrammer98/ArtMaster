@@ -62,6 +62,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QueryDocumentSnapshot
@@ -69,9 +70,14 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.Objects
 
+/**
+ * this class contains the topbar and bottombar menu
+ * which can be accessed via inheretance
+ */
 open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             ArtMasterTheme {
                 // A surface container using the 'background' color from the theme
@@ -86,20 +92,7 @@ open class MainActivity : ComponentActivity() {
     //TODO: Encapsulate variables and functions, general review
 
     //user's role (visitor / user / admin)
-    var usersRole = ""
-
-    @Composable
-    fun AddHeader(){
-        Row (modifier = Modifier.fillMaxWidth()) {
-            Image(
-                painter = painterResource(id = R.mipmap.header),
-                contentDescription = stringResource(R.string.header),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(0.dp, 60.dp)
-            )
-        }
-    }
+    private var usersRole = ""
 
     /**
      * creates a topbar with a dropdown menu
