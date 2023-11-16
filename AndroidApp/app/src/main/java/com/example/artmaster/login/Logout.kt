@@ -164,7 +164,7 @@ class Logout : MainActivity(), AddingLoginHeader{
                                 } else {
                                     // password is shown
                                     showPassword = VisualTransformation.None
-                                }},
+                                }}
                             ) {
                             Icon(
                                 imageVector = Icons.Filled.Settings ,

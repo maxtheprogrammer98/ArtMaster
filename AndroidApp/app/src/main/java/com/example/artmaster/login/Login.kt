@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -34,6 +35,7 @@ import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -53,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -130,6 +133,10 @@ class Login : MainActivity() {
 
         val scrollState = rememberScrollState()
 
+        var showPassword by remember {
+            mutableStateOf(VisualTransformation.None)
+        }
+
         //main container
         Scaffold(
             modifier = Modifier
@@ -194,8 +201,24 @@ class Login : MainActivity() {
                             imageVector = Icons.Filled.Info ,
                             contentDescription = "password icon")
                     },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    visualTransformation = showPassword,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                if (showPassword == VisualTransformation.None){
+                                    // password is hidden
+                                    showPassword = PasswordVisualTransformation()
+                                } else {
+                                    // password is shown
+                                    showPassword = VisualTransformation.None
+                                }
+                            }){
+                                Icon(
+                                    imageVector = Icons.Filled.Settings ,
+                                    contentDescription = stringResource(id = R.string.cambiar_visibilidad))
+                        }
+                    }
                 )
 
 
