@@ -55,4 +55,49 @@ interface AuthenticateUsers {
                 toastDBerror.show()
             }
     }
+
+    /**
+     * sends an email to the user with a link to change his password
+     */
+    fun resetUsersPassword(context: Context){
+        // toast messages
+        val loginError = Toast.makeText(
+            context,
+            "no estas logueado!",
+            Toast.LENGTH_SHORT
+        )
+
+        val resetSuccessful = Toast.makeText(
+            context,
+            "se ha enviado a tu mail un link para que actualices tu contraseña",
+            Toast.LENGTH_SHORT
+        )
+
+        val authError = Toast.makeText(
+            context,
+            "ha ocurrido un error al realizar la peticion a firebase auth",
+            Toast.LENGTH_SHORT
+        )
+
+        //instantiating firebase auth service
+        val auth = Firebase.auth
+        // identifiyng current user
+        val user = Firebase.auth.currentUser
+        if(user != null){
+            //extracting user's email
+            val usersmail = user.email.toString()
+            //executes request
+            auth.sendPasswordResetEmail(usersmail)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful){
+                        resetSuccessful.show()
+                    } else{
+                        authError.show()
+                    }
+                }
+        } else {
+            // otherwise, an alert is displayed
+            loginError.show()
+        }
+    }
 }

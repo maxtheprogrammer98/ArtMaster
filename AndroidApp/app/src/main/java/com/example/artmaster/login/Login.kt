@@ -206,13 +206,7 @@ class Login : MainActivity(), AddingLoginHeader, AuthenticateUsers {
                         .wrapContentSize(Alignment.Center)
                         .padding(10.dp)
                         .clickable {
-                            Toast
-                                .makeText(
-                                    applicationContext,
-                                    "via mail se ha enviado un enlace para que puedas asignar una nueva password",
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show()
+                            resetUsersPassword(applicationContext)
                         },
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center)

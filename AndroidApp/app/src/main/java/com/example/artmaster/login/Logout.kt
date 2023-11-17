@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +48,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-class Logout : MainActivity(), AddingLoginHeader{
+class Logout : MainActivity(), AddingLoginHeader, AuthenticateUsers{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
@@ -182,7 +183,10 @@ class Logout : MainActivity(), AddingLoginHeader{
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(10.dp)
-                        .fillMaxWidth())
+                        .fillMaxWidth()
+                        .clickable {
+                            resetUsersPassword(applicationContext)
+                        })
                 
                 // --------------------- ACCEPT BTN -------------------------------//
 
