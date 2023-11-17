@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
+import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.firebase.FirebaseApp
@@ -289,10 +290,25 @@ open class MainActivity : ComponentActivity() {
                 }
             }
             "Registro" -> {
-                Intent(applicationContext, RegisterActivity::class.java).also {
+                if(!isUserLogged()){
+                    // visitor not logged
+                    Intent(applicationContext, RegisterActivity::class.java).also {
+                        startActivity(it)
+                    }
+                } else{
+                    //if the user's already logged, he cannot access to this section
+                    Toast.makeText(
+                        applicationContext,
+                        "ya estas registrado!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            "Perfil" -> {
+                Intent(applicationContext, ProfileActivity::class.java).also {
                     startActivity(it)
                 }
-            } else ->{
+            }else ->{
             Toast.makeText(applicationContext,
                 "la seccion aun se encuentra en construccion",
                 Toast.LENGTH_SHORT).show()

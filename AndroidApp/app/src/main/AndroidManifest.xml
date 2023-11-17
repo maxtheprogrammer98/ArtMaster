@@ -16,7 +16,12 @@
         <activity
             android:name=".login.Login"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat"/>
+            android:theme="@style/Theme.ArtMaster"/>
+
+        <activity
+            android:name=".login.Logout"
+            android:exported="false"
+            android:theme="@style/Theme.ArtMaster"/>
 
         <activity
             android:name=".MainActivity"
