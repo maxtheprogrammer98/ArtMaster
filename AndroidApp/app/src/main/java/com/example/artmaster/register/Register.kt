@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -45,7 +46,7 @@ import java.util.Objects
 
 
 @Composable
-fun RegisterScreen(context: Context, navigateToLogin: () -> Unit, navigateToProfile: () -> Unit) {
+fun RegisterScreen(navigateToLogin: () -> Unit, navigateToProfile: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -75,6 +76,8 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit, navigateToProf
     val completados: ArrayList<String> = ArrayList()
     val isAdmin by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
 //  isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 //  isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password)
 
@@ -88,7 +91,7 @@ fun RegisterScreen(context: Context, navigateToLogin: () -> Unit, navigateToProf
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = stringResource(R.string.logo_register),
-            modifier = Modifier.size(160.dp)
+            modifier = Modifier.size(160.dp).padding(top = 20.dp)
         )
 
         Text(
