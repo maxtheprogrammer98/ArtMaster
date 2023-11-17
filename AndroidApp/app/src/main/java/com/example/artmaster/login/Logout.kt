@@ -1,11 +1,9 @@
 package com.example.artmaster.login
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -34,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,8 +38,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.ui.theme.ArtMasterTheme
@@ -59,7 +55,7 @@ class Logout : MainActivity(), AddingLoginHeader{
             ArtMasterTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                    createLogOut()
+                    CreateLogOut()
                 }
             }
         }
@@ -70,9 +66,9 @@ class Logout : MainActivity(), AddingLoginHeader{
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     //@Preview
-    fun createLogOut(){
+    fun CreateLogOut(){
         // flag and remember variables
-        var scrollingState = rememberScrollState()
+        val scrollingState = rememberScrollState()
 
         var emailInput by remember {
             mutableStateOf("")
@@ -90,10 +86,17 @@ class Logout : MainActivity(), AddingLoginHeader{
         Scaffold(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = 900.dp)
-                .verticalScroll(scrollingState),
+                .verticalScroll(scrollingState)
+                .heightIn(max = 800.dp),
+
             topBar = {
+                // inserting topbar from parent class
                 super.TobBarMain()
+            },
+
+            bottomBar = {
+                // inserting bottombar from parent class
+                super.BottomBar()
             }
         ) {
             // ---------------------- COLUMN GENERAL CONTAINER ----------------------//
@@ -166,9 +169,9 @@ class Logout : MainActivity(), AddingLoginHeader{
                                     showPassword = VisualTransformation.None
                                 }}
                             ) {
-                            Icon(
-                                imageVector = Icons.Filled.Settings ,
-                                contentDescription = stringResource(id = R.string.cambiar_visibilidad))
+                                Icon(
+                                    painter = painterResource(id = R.mipmap.icpassword) ,
+                                    contentDescription = stringResource(id = R.string.esconder_password))
                         }
                     }
                 )
@@ -187,9 +190,12 @@ class Logout : MainActivity(), AddingLoginHeader{
                     onClick = { logOutUser(emailInput,passwordInput) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
+                        .padding(20.dp)
+                        .heightIn(min = 60.dp),
                     shape = CircleShape){
-                    Text(text = stringResource(id = R.string.btn_aceptar))
+                    Text(
+                        text = stringResource(id = R.string.btn_aceptar),
+                        fontSize = 18.sp)
                 }
             }
         }

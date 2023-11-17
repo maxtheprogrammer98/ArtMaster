@@ -1,6 +1,7 @@
 package com.example.artmaster.login
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -68,7 +69,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.app
 import com.google.firebase.auth.auth
 
-class Login : MainActivity() {
+class Login : MainActivity(), AddingLoginHeader, AuthenticateUsers {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -81,37 +82,6 @@ class Login : MainActivity() {
         }
     }
 
-    //TODO: Replace with interface function
-    /**
-     * creates a header with a profile icon
-     */
-    @Composable
-    fun InsertHeader(imageLogin : Painter, descriptionLogin : String){
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .wrapContentSize(Alignment.BottomCenter)
-        ){
-            Image(
-                painter = imageLogin,
-                contentDescription = descriptionLogin,
-                modifier = Modifier
-                        .size(100.dp))
-        }
-    }
-
-
-    @Composable
-    fun InsertTitle(text : String){
-        Text(
-            text = text,
-            fontSize = 24.sp,
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center))
-    }
 
     /**
      * creates login that implements FB
@@ -142,10 +112,16 @@ class Login : MainActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
-                .heightIn(max = 1000.dp),
+                .heightIn(max = 800.dp),
+
             topBar = {
-                //inserting topbar
+                //inserting topbar from parent class
                 super.TobBarMain()
+            },
+
+            bottomBar = {
+                //inserting bottombar from parent class
+                super.BottomBar()
             }
         ){
 
@@ -215,8 +191,8 @@ class Login : MainActivity() {
                                 }
                             }){
                                 Icon(
-                                    imageVector = Icons.Filled.Settings ,
-                                    contentDescription = stringResource(id = R.string.cambiar_visibilidad))
+                                    painter = painterResource(id = R.mipmap.icpassword),
+                                    contentDescription = stringResource(id = R.string.esconder_password))
                         }
                     }
                 )
@@ -245,125 +221,24 @@ class Login : MainActivity() {
                 Button(
                     onClick = {
                         // triggers authenticating function
-                        authenticateUsers(inputMail,inputPassword)
+                        authenticateUsers(inputMail,inputPassword, applicationContext)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
+                        .padding(20.dp)
+                        .heightIn(min = 60.dp),
                     ){
-                    Text(text = stringResource(id = R.string.iniciar_sesion))
+                    Text(
+                        text = stringResource(id = R.string.iniciar_sesion),
+                        fontSize = 18.sp)
                     Icon(
                         imageVector = Icons.Filled.Done ,
                         contentDescription = stringResource(id = R.string.iniciar_sesion),
                         modifier = Modifier
                             .padding(10.dp, 0.dp))
-
                 }
-
-                Divider(
-                    thickness = 2.dp,
-                    modifier = Modifier.padding(10.dp)
-                )
-
-                // --------------------- ALTERNATIVE LOGIN OPTIONS ------------------------//
-                Text(
-                    text = stringResource(id = R.string.login_alt),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentSize(Alignment.Center)
-                        .padding(10.dp),
-                    fontSize = 16.sp)
-
-                // --------------------- BTN LOGIN VIA FB ------------------------//
-                Button(
-                    onClick = {
-                        Toast.makeText(applicationContext,
-                            "accion procesada",
-                            Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)){
-                    Text(
-                        text = stringResource(id = R.string.login_fb),
-                        modifier = Modifier.padding(10.dp,0.dp))
-                    Icon(
-                        painter = painterResource(id = R.mipmap.fbicon2),
-                        contentDescription = stringResource(id = R.string.login_fb),
-                        modifier = Modifier.size(25.dp))
-                }
-
-                // --------------------- BTN LOGIN VIA GOOGLE ------------------------//
-                Button(
-                    onClick = {
-                        Toast.makeText(applicationContext,
-                            "accion procesada",
-                            Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)){
-                    Text(
-                        text = stringResource(id = R.string.login_google),
-                        modifier = Modifier.padding(10.dp,0.dp))
-                    Icon(
-                        painter = painterResource(id = R.mipmap.googleicon),
-                        contentDescription = stringResource(id = R.string.login_google),
-                        modifier = Modifier.size(25.dp))
-                }
-
-
             }
-
         }
-    }
-
-    /**
-     * autentica al usuario en base a su email y password
-     * usando las herramientas provistas for firebase
-     */
-    fun authenticateUsers(emailUser : String, passwordUser : String){
-        //toast alerts
-        val toastSuccess = Toast.makeText(
-            applicationContext,
-            "el logueo ha sido exitoso",
-            Toast.LENGTH_SHORT)
-
-        val toastFailure = Toast.makeText(
-            applicationContext,
-            "ha ocurrido un error en el proceso de logueo, no ha sido posible iniciar sesion",
-            Toast.LENGTH_SHORT)
-
-        val toastDBerror = Toast.makeText(
-            applicationContext,
-            "no se ha podido conectar con la BD",
-            Toast.LENGTH_SHORT)
-
-        // it initialize the auth service from FB
-        val auth = Firebase.auth
-        //validating user
-        auth.signInWithEmailAndPassword(emailUser,passwordUser)
-        // monitoring request
-            .addOnCompleteListener(this){ task ->
-                // SUCCESS
-                if (task.isSuccessful){
-                    toastSuccess.show()
-                    // storing user's data in variable
-                    val user = auth.currentUser
-                    if (user != null) {
-                        Toast.makeText(
-                            applicationContext,
-                            "Bienvenido! ${user.email}",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    // FAILURE
-                    toastFailure.show()
-                }
-            }.addOnFailureListener(this){
-                // ERROR TRYING TO CONNECT WITH DB
-                toastDBerror.show()
-            }
     }
 
 

@@ -6,15 +6,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
@@ -35,7 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationDrawerItemColors
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -51,24 +47,16 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.artmaster.graphicElements.itemsGenerator
+import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.Objects
 
 /**
  * this class contains the topbar and bottombar menu
@@ -108,7 +96,7 @@ open class MainActivity : ComponentActivity() {
         }
 
         // 2 - creating objets to populate dropdown menu
-        val inicioOption = itemsGenerator(
+        val inicioOption = ItemsGenerator(
             stringResource(id = R.string.inicio),
             stringResource(id = R.string.inicio),
             Icons.Filled.Home,
@@ -116,7 +104,7 @@ open class MainActivity : ComponentActivity() {
             true
         )
 
-        val rutasOption = itemsGenerator(
+        val rutasOption = ItemsGenerator(
             stringResource(id = R.string.rutas),
             stringResource(id = R.string.rutas),
             Icons.Filled.Create,
@@ -124,7 +112,7 @@ open class MainActivity : ComponentActivity() {
             true
         )
 
-        val favsOption = itemsGenerator(
+        val favsOption = ItemsGenerator(
             stringResource(id = R.string.favoritos),
             stringResource(id = R.string.favoritos),
             Icons.Filled.Favorite,
@@ -132,7 +120,7 @@ open class MainActivity : ComponentActivity() {
             false
         )
 
-        val notasOption = itemsGenerator(
+        val notasOption = ItemsGenerator(
             stringResource(id = R.string.notas),
             stringResource(id = R.string.notas),
             Icons.Filled.DateRange,
@@ -140,7 +128,7 @@ open class MainActivity : ComponentActivity() {
             false
         )
 
-        val loginOption = itemsGenerator(
+        val loginOption = ItemsGenerator(
             stringResource(id = R.string.login),
             stringResource(id = R.string.login),
             Icons.Filled.Person,
@@ -148,7 +136,7 @@ open class MainActivity : ComponentActivity() {
             true
         )
 
-        val registroOption = itemsGenerator(
+        val registroOption = ItemsGenerator(
             stringResource(id = R.string.registro),
             stringResource(id = R.string.registro),
             Icons.Filled.AddCircle,
@@ -156,7 +144,7 @@ open class MainActivity : ComponentActivity() {
             true
         )
 
-        val perfilOption = itemsGenerator(
+        val perfilOption = ItemsGenerator(
             stringResource(id = R.string.perfil),
             stringResource(id = R.string.perfil),
             Icons.Filled.AccountCircle,
@@ -164,7 +152,7 @@ open class MainActivity : ComponentActivity() {
             false
         )
 
-        val adminOption = itemsGenerator(
+        val adminOption = ItemsGenerator(
             stringResource(id = R.string.panel_admin),
             stringResource(id = R.string.panel_admin),
             Icons.Filled.Warning,
@@ -173,7 +161,7 @@ open class MainActivity : ComponentActivity() {
         )
 
         // list that containing all the menu options (admin / users)
-        val allMenuOptions = listOf<itemsGenerator>(inicioOption,
+        val allMenuOptions = listOf<ItemsGenerator>(inicioOption,
             rutasOption,
             favsOption,
             notasOption,
@@ -317,14 +305,14 @@ open class MainActivity : ComponentActivity() {
     //@Preview
     fun BottomBar(){
         // 1 - creating object items
-        val itemInicio = itemsGenerator(
+        val itemInicio = ItemsGenerator(
             "inicio",
             "seccion inicio",
             Icons.Filled.Home,
             false,
             true)
 
-        val itemFavs = itemsGenerator(
+        val itemFavs = ItemsGenerator(
             "favs",
             "seccion favoritos",
             Icons.Filled.Favorite,
@@ -332,7 +320,7 @@ open class MainActivity : ComponentActivity() {
             false
         )
 
-        val itemRutas = itemsGenerator(
+        val itemRutas = ItemsGenerator(
             "rutas",
             "seccion rutas",
             Icons.Filled.Create,
@@ -341,7 +329,7 @@ open class MainActivity : ComponentActivity() {
         )
 
         // 2 - storing items in arrayList (to iterate it later on)
-        val sectionsApp = listOf<itemsGenerator>(itemInicio,itemFavs,itemRutas)
+        val sectionsApp = listOf<ItemsGenerator>(itemInicio,itemFavs,itemRutas)
 
         // 3 - variable that holds the current screen selected
         val screenSelected by remember {
@@ -359,20 +347,22 @@ open class MainActivity : ComponentActivity() {
                 // displays all icons
                 sectionsApp.forEach {
                         section -> NavigationBarItem(
-                    selected = screenSelected.any { it.name == section.name },
-                    onClick = { /*TODO: add intent function*/},
-                    icon = {
-                        Icon(
-                            imageVector = section.icon,
-                            contentDescription = section.contentDescription)
-                    },
-                    label = {
-                        Text(
-                            text = section.name,
-                            color = Color.White)
+                            selected = screenSelected.any { it.name == section.name },
+                            onClick = { /*TODO: add intent function*/},
+                            icon = {
+                                Icon(
+                                    imageVector = section.icon,
+                                    contentDescription = section.contentDescription,
+                                    tint = colorResource(id = R.color.white))
+                            },
+                            label = {
+                            Text(
+                                text = section.name,
+                                color = Color.White)
+                            },
+                            modifier = Modifier.background(colorResource(id = R.color.dark_blue))
+                        )
                     }
-                    )
-                }
             } else {
                 // otherwise only home & learning paths are shown
                 sectionsApp.filter{ it.visitorCanAccess}.forEach {
