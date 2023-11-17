@@ -24,6 +24,10 @@
     <string name="login_google">Google</string>
     <string name="login_alt">Tambien te puedes loguar via facebook o google</string>
     <string name="iniciar_sesion">Iniciar sesion</string>
+    <string name="password_olvidada_toast">Por mail se ha enviado un enlace para que puedas asignar una clave nueva</string>
+    <string name="esconder_password">Mostrar / esconder password</string>
+    <string name="email_sample">ejemplo: juan@gmail.com</string>
+    <!-- registro !-->
     <string name="username_error_message">El Username debe contener más de 3 caracteres</string>
     <string name="email_error_message">El correo electrónico no es válido.</string>
     <string name="password_error_message_01">Tu contraseña debe contener al menos 8 caracteres,\n</string>
@@ -54,4 +58,8 @@
     <string name="google">Google</string>
     <string name="cont_desc_facebook">Iniciar con Facebook</string>
     <string name="facebook">Facebook</string>
+    <!-- logout !-->
+    <string name="hasta_luego">Hasta luego!</string>
+    <string name="btn_aceptar">Aceptar</string>
+    <string name="cambiar_visibilidad">mostrar password</string>
 </resources>

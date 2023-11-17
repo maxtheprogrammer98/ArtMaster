@@ -87,7 +87,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.artmaster.graphicElements.itemsGenerator
+import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.login.Login
 import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
@@ -99,7 +99,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlin.math.exp
 
-class MainActivity : ComponentActivity() {
+open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -138,56 +138,72 @@ class MainActivity : ComponentActivity() {
         }
 
         // 2 - creating objets to populate dropdown menu
-        val inicioOption = itemsGenerator(
+        val inicioOption = ItemsGenerator(
             stringResource(id = R.string.inicio),
             stringResource(id = R.string.inicio),
-            Icons.Filled.Home
+            Icons.Filled.Home,
+            false,
+            true
         )
 
-        val rutasOption = itemsGenerator(
+        val rutasOption = ItemsGenerator(
             stringResource(id = R.string.rutas),
             stringResource(id = R.string.rutas),
-            Icons.Filled.Create
+            Icons.Filled.Create,
+            false,
+            true
         )
 
-        val favsOption = itemsGenerator(
+        val favsOption = ItemsGenerator(
             stringResource(id = R.string.favoritos),
             stringResource(id = R.string.favoritos),
-            Icons.Filled.Favorite
+            Icons.Filled.Favorite,
+            false,
+            false
         )
 
-        val notasOption = itemsGenerator(
+        val notasOption = ItemsGenerator(
             stringResource(id = R.string.notas),
             stringResource(id = R.string.notas),
-            Icons.Filled.DateRange
+            Icons.Filled.DateRange,
+            false,
+            false
         )
 
-        val loginOption = itemsGenerator(
+        val loginOption = ItemsGenerator(
             stringResource(id = R.string.login),
             stringResource(id = R.string.login),
-            Icons.Filled.Person
+            Icons.Filled.Person,
+            false,
+            true
         )
 
-        val registroOption = itemsGenerator(
+        val registroOption = ItemsGenerator(
             stringResource(id = R.string.registro),
             stringResource(id = R.string.registro),
-            Icons.Filled.AddCircle
+            Icons.Filled.AddCircle,
+            false,
+            true
         )
 
-        val perfilOption = itemsGenerator(
+        val perfilOption = ItemsGenerator(
             stringResource(id = R.string.perfil),
             stringResource(id = R.string.perfil),
-            Icons.Filled.AccountCircle
+            Icons.Filled.AccountCircle,
+            false,
+            false
         )
 
-        val adminOption = itemsGenerator(
+        val adminOption = ItemsGenerator(
             stringResource(id = R.string.panel_admin),
             stringResource(id = R.string.panel_admin),
-            Icons.Filled.Warning
+            Icons.Filled.Warning,
+            true,
+            false
         )
 
         // list that containing all the menu options
-        val allMenuOptions = listOf<itemsGenerator>(inicioOption,
+        val allMenuOptions = listOf<ItemsGenerator>(inicioOption,
             rutasOption,
             favsOption,
             notasOption,
@@ -285,25 +301,31 @@ class MainActivity : ComponentActivity() {
 //@Preview
     fun BottomBar(){
         // 1 - creating object items
-        val itemInicio = itemsGenerator(
+        val itemInicio = ItemsGenerator(
             "inicio",
             "seccion inicio",
-            Icons.Filled.Home)
+            Icons.Filled.Home,
+            false,
+            true)
 
-        val itemFavs = itemsGenerator(
+        val itemFavs = ItemsGenerator(
             "favs",
             "seccion favoritos",
-            Icons.Filled.Favorite
+            Icons.Filled.Favorite,
+            false,
+            true
         )
 
-        val itemRutas = itemsGenerator(
+        val itemRutas = ItemsGenerator(
             "rutas",
             "seccion rutas",
-            Icons.Filled.Create
+            Icons.Filled.Create,
+            false,
+            false
         )
 
         // 2 - storing items in arrayList (to iterate it later on)
-        val sectionsApp = listOf<itemsGenerator>(itemInicio,itemFavs,itemRutas)
+        val sectionsApp = listOf<ItemsGenerator>(itemInicio,itemFavs,itemRutas)
 
         // 3 - variable that holds the current screen selected
         val screenSelected by remember {
