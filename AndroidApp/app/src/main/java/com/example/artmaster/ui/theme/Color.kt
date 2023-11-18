@@ -13,3 +13,4 @@ val Pink40 = Color(0xFF7D5260)
 //personalized ones
 val darkBlue = Color(0xFF001142)
 val greenMain = Color(0xFF018B7F)
+val lightGray = Color(0xFFD0D1D1)

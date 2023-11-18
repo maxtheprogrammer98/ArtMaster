@@ -27,6 +27,7 @@
     <string name="password_olvidada_toast">Por mail se ha enviado un enlace para que puedas asignar una clave nueva</string>
     <string name="esconder_password">Mostrar / esconder password</string>
     <string name="email_sample">ejemplo: juan@gmail.com</string>
+    <string name="registro_redirect">ir al registro</string>
     <!-- registro !-->
     <string name="username_error_message">El Username debe contener más de 3 caracteres</string>
     <string name="email_error_message">El correo electrónico no es válido.</string>
@@ -62,4 +63,8 @@
     <string name="hasta_luego">Hasta luego!</string>
     <string name="btn_aceptar">Aceptar</string>
     <string name="cambiar_visibilidad">mostrar password</string>
+    <!--home !-->
+    <string name="slideshow">Imagen slideshow</string>
+    <string name="flecha_anterior">Anterior</string>
+    <string name="flecha_siguiente">Siguiente</string>
 </resources>

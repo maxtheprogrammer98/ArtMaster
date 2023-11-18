@@ -211,6 +211,22 @@ class Login : MainActivity(), AddingLoginHeader, AuthenticateUsers {
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center)
 
+                // --------------------- REGISTER REDIRECT ------------------------//
+                Text(
+                    text = stringResource(id = R.string.registro_redirect),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                        .padding(10.dp)
+                        .clickable {
+                            // redirects user to register section
+                            Intent(applicationContext, RegisterActivity::class.java).also {
+                                startActivity(it)
+                            }
+                        },
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center)
+
                 // --------------------- BTN LOGIN ------------------------//
                 Button(
                     onClick = {

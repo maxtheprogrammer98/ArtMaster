@@ -12,36 +12,34 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ArtMaster"
         tools:targetApi="31">
-
         <activity
-            android:name=".login.Login"
-            android:exported="false"
-            android:theme="@style/Theme.ArtMaster"/>
-
-        <activity
-            android:name=".login.Logout"
-            android:exported="false"
-            android:theme="@style/Theme.ArtMaster"/>
-
-        <activity
-            android:name=".MainActivity"
+            android:name=".home.Home"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ArtMaster">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name=".register.RegisterActivity">
-        </activity>
+            android:name=".login.Login"
+            android:exported="false"
+            android:theme="@style/Theme.ArtMaster" />
 
         <activity
-            android:name=".profile.ProfileActivity">
+            android:name=".login.Logout"
+            android:exported="false"
+            android:theme="@style/Theme.ArtMaster" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ArtMaster">
         </activity>
+
+        <activity android:name=".register.RegisterActivity"/>
+        <activity android:name=".profile.ProfileActivity"/>
     </application>
 
 </manifest>
