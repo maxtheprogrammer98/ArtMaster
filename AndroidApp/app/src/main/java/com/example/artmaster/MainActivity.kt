@@ -49,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.graphicElements.ItemsGenerator
+import com.example.artmaster.home.Home
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
 import com.example.artmaster.profile.ProfileActivity
@@ -309,11 +310,17 @@ open class MainActivity : ComponentActivity() {
                 Intent(applicationContext, ProfileActivity::class.java).also {
                     startActivity(it)
                 }
-            }else ->{
+            }
+            "Inico" ->{
+                Intent(applicationContext, Home::class.java).also {
+                    startActivity(it)
+                }
+            }
+            else ->{
             Toast.makeText(applicationContext,
                 "la seccion aun se encuentra en construccion",
                 Toast.LENGTH_SHORT).show()
-        }
+            }
         }
     }
 

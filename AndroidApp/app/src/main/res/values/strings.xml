@@ -67,4 +67,8 @@
     <string name="slideshow">Imagen slideshow</string>
     <string name="flecha_anterior">Anterior</string>
     <string name="flecha_siguiente">Siguiente</string>
+    <string name="imagen">imagen seccion</string>
+    <string name="seccion_rutas">En esta seccion podrás encontrar una amplia variedad de caminos de aprendizaje</string>
+    <string name="seccion_favoritos">Aqui podrás ver los tutoriales que has guardado en favoritos</string>
+    <string name="seccion_notas">En esta parte de la aplicacion podras crear notas con notificaciones personalizadas</string>
 </resources>
