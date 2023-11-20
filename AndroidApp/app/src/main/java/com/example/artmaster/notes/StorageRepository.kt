@@ -1,5 +1,6 @@
 package com.example.artmaster.notes
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
@@ -81,15 +82,20 @@ class StorageRepository() {
         noteId: String,
         onResult: (Boolean) -> Unit
     ) {
-        val updateData = hashMapOf<String, Any>(
-            "content" to content,
-            "title" to title,
-        )
-        notesRef.document(noteId)
-            .update(updateData)
-            .addOnCompleteListener {
-                onResult(it.isSuccessful)
-            }
+        if (noteId.isNotBlank()) {
+            Log.d("UpdateNote", "Updating note with ID: $noteId")
+            val updateData = hashMapOf<String, Any>(
+                "content" to content,
+                "title" to title,
+            )
+            notesRef.document(noteId)
+                .set(updateData)
+                .addOnCompleteListener {
+                    onResult(it.isSuccessful)
+                }
+        } else {
+            Log.d("UpdateNote", "Error updating note")
+        }
     }
 
     fun addNote(
@@ -100,20 +106,30 @@ class StorageRepository() {
         onComplete: (Boolean) -> Unit,
     ) {
         val documentId = notesRef.document().id
-        val note = Notes(
-            userId,
-            title,
-            content,
-            timestamp,
-            documentId = documentId
-        )
-        notesRef
-            .document(documentId)
-            .set(note)
-            .addOnCompleteListener { result ->
-                onComplete.invoke(result.isSuccessful)
-            }
+
+        if (documentId.isNotBlank()) {
+            val note = Notes(
+                userId,
+                title,
+                content,
+                timestamp,
+                documentId = documentId
+            )
+
+            notesRef
+                .document(documentId)
+                .set(note)
+                .addOnCompleteListener { result ->
+                    onComplete.invoke(result.isSuccessful)
+                }
+        } else {
+            // Manejar el caso en que documentId está vacío o nulo
+            // Puedes imprimir un mensaje de registro o lanzar una excepción según tus necesidades.
+            Log.d("StorageRepository", "ST: Error to add note")
+            onComplete.invoke(false)
+        }
     }
+
 
 
 }

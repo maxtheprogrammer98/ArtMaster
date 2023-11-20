@@ -1,11 +1,14 @@
 package com.example.artmaster.notes
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +21,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -46,11 +50,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
+import com.example.artmaster.login.Login
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -61,11 +67,15 @@ class NoteActivity: MainActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArtMasterTheme {
-                Surface(color = androidx.compose.material3.MaterialTheme.colorScheme.background) {
+                Surface(color = MaterialTheme.colors.background) {
                     NoteScreen(
-                        noteViewModel = null,
+                        noteViewModel = NoteViewModel(),
                         onNoteClick = {},
-                        navToDetailScreen = { /*TODO*/ }
+                        navToDetailScreen = {
+                            Intent(applicationContext, DetailActivity::class.java).also {
+                                startActivity(it)
+                            }
+                        }
                     )
                 }
             }
@@ -109,7 +119,7 @@ class NoteActivity: MainActivity() {
             },
             bottomBar = {
                 super.BottomBar()
-            }
+            },
 
 
         ) {padding ->
@@ -126,7 +136,8 @@ class NoteActivity: MainActivity() {
                     is Resources.Success -> {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(1),
-                            contentPadding = PaddingValues(16.dp)
+                            contentPadding = PaddingValues(16.dp),
+
                         ) {
                             items(
                                 noteUiState.notesList.data ?: emptyList()
@@ -146,7 +157,7 @@ class NoteActivity: MainActivity() {
                                 onDismissRequest = {
                                     openDialog = false
                                 },
-                                title = { Text(text = "Delete Note?") },
+                                title = { Text(text = "Eliminar nota?") },
                                 confirmButton = {
                                     Button(
                                         onClick = {
@@ -159,12 +170,12 @@ class NoteActivity: MainActivity() {
                                             backgroundColor = Color.Red
                                         ),
                                     ) {
-                                        Text(text = "Delete")
+                                        Text(text = "Borrar")
                                     }
                                 },
                                 dismissButton = {
                                     Button(onClick = { openDialog = false }) {
-                                        Text(text = "Cancel")
+                                        Text(text = "Cancelar")
                                     }
                                 }
                             )
@@ -212,24 +223,30 @@ fun NoteItem(
                 onClick = { onClick.invoke() }
             )
             .padding(8.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        backgroundColor = MaterialTheme.colors.onSurface
     ) {
         Column {
             Text(
                 text = notes.title,
                 style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
+                color = MaterialTheme.colors.background,
                 overflow = TextOverflow.Clip,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(4.dp).padding(horizontal = 4.dp)
                 )
             Spacer(modifier = Modifier.size(4.dp))
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = notes.content,
                     style = MaterialTheme.typography.body1,
+                    fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(4.dp),
+                    color = MaterialTheme.colors.background,
+                    modifier = Modifier.padding(4.dp).padding(horizontal = 4.dp),
                     maxLines = 4,
                 )
             }
@@ -237,10 +254,12 @@ fun NoteItem(
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = formatDate(notes.timestamp),
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.body2,
+                    fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colors.background,
                     modifier = Modifier
-                        .padding(4.dp)
+                        .padding(4.dp).padding(end = 4.dp)
                         .align(Alignment.End),
                     maxLines = 4,
                 )
@@ -253,6 +272,6 @@ fun NoteItem(
 }
 
 private fun formatDate(timestamp: Timestamp): String {
-    val sdf = SimpleDateFormat("DD-mm-yy hh:mm", Locale.getDefault())
+    val sdf = SimpleDateFormat("dd-MM-yy ~ hh:mm", Locale.getDefault())
     return sdf.format(timestamp.toDate())
 }

@@ -46,6 +46,11 @@
         <activity
             android:name=".notes.NoteActivity">
         </activity>
+
+        <activity
+            android:name=".notes.DetailActivity"
+            android:parentActivityName=".notes.NoteActivity">
+        </activity>
     </application>
 
 </manifest>
