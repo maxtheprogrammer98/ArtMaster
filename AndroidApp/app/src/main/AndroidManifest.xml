@@ -42,6 +42,10 @@
         <activity
             android:name=".profile.ProfileActivity">
         </activity>
+
+        <activity
+            android:name=".notes.NoteActivity">
+        </activity>
     </application>
 
 </manifest>

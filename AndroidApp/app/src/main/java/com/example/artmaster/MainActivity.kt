@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
+import com.example.artmaster.notes.NoteActivity
 import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
@@ -306,6 +307,11 @@ open class MainActivity : ComponentActivity() {
             }
             "Perfil" -> {
                 Intent(applicationContext, ProfileActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Notas" -> {
+                Intent(applicationContext, NoteActivity::class.java).also {
                     startActivity(it)
                 }
             }else ->{
