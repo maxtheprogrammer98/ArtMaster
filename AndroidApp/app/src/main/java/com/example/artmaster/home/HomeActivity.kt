@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -34,11 +33,10 @@ import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.example.artmaster.R
-import com.example.artmaster.home.InsertSlideshow
-import com.example.artmaster.graphicElements.headerMain
+import com.example.artmaster.graphicElements.HeaderMain
 
 
-class Home : MainActivity(){
+class HomeActivity : MainActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -111,7 +109,7 @@ class Home : MainActivity(){
                     .padding(0.dp, 60.dp, 0.dp, 0.dp)
             ){
                 //adding header
-                headerMain()
+                HeaderMain()
 
                 //inserting slideshow
                 InsertSlideshow(

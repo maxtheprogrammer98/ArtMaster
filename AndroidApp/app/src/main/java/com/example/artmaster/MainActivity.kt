@@ -31,7 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -44,12 +43,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.graphicElements.ItemsGenerator
-import com.example.artmaster.home.Home
+import com.example.artmaster.home.HomeActivity
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
 import com.example.artmaster.profile.ProfileActivity
@@ -312,7 +310,7 @@ open class MainActivity : ComponentActivity() {
                 }
             }
             "Inico" ->{
-                Intent(applicationContext, Home::class.java).also {
+                Intent(applicationContext, HomeActivity::class.java).also {
                     startActivity(it)
                 }
             }

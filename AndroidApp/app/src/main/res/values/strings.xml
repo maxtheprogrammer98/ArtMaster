@@ -72,4 +72,8 @@
     <string name="seccion_favoritos">Aqui podrás ver los tutoriales que has guardado en favoritos</string>
     <string name="seccion_notas">En esta parte de la aplicacion podras crear notas con notificaciones personalizadas</string>
     <string name="seccion_perfil">En este apartado podras modificar o actualizar tus datos si los deseas, ademas podrias ver tu progreso desde aqui</string>
+    <!--rutas !-->
+    <string name="rutas_titulo">Rutas de aprendizaje</string>
+    <string name="rutas_descripcion"> En esta sección podrás encontrar distintas rutas que te ayudaran a adentrarte en este maravilloso mundo
+    del arte realista, si eres principiante te recomendamos comenzar con la ruta "FUNDAMENTOS"</string>
 </resources>
