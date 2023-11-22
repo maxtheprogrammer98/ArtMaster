@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,13 +29,13 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.firebase.Timestamp
@@ -66,7 +68,7 @@ class NoteActivity: MainActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArtMasterTheme {
-                Surface() {
+                Surface(color = MaterialTheme.colorScheme.background) {
                     NoteScreen(
                         noteViewModel = NoteViewModel(),
                         onNoteClick = {noteId ->
@@ -138,7 +140,7 @@ class NoteActivity: MainActivity() {
 
         ) {padding ->
             // Column to hold the main content
-            Column(modifier = Modifier.padding(padding)) {
+            Column(modifier = Modifier.fillMaxSize().padding(padding).background(color = MaterialTheme.colorScheme.background)) {
                 // Check the state of the notes list and display content accordingly
                 when(noteUiState.notesList) {
                     is Resources.Loading -> {
@@ -252,18 +254,18 @@ fun NoteItem(
             .padding(8.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
+        backgroundColor = MaterialTheme.colorScheme.primary
     ) {
         // Column to arrange content within the card
         Column {
             // Title of the note
             Text(
                 text = notes.title,
-                style = MaterialTheme.typography.h6,
                 fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
                 overflow = TextOverflow.Clip,
                 modifier = Modifier
                     .padding(4.dp)
@@ -275,10 +277,10 @@ fun NoteItem(
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = notes.content,
-                    style = MaterialTheme.typography.body1,
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
                         .padding(4.dp)
                         .padding(horizontal = 4.dp),
@@ -291,10 +293,10 @@ fun NoteItem(
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = formatDate(notes.timestamp),
-                    style = MaterialTheme.typography.body2,
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
                         .padding(4.dp)
                         .padding(end = 4.dp)

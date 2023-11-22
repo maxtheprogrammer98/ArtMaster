@@ -136,7 +136,7 @@ class DetailActivity: MainActivity() {
                 // Input field for the note title
                 CustomOutlinedTextField(
                     value = detailUiState.title,
-                    onValueChange = { detailViewModel?.onContentChange(it) },
+                    onValueChange = { detailViewModel?.onTitleChange(it) },
                     label = { Text(text = "Titulo") },
                     modifier = Modifier
                         .fillMaxWidth()
