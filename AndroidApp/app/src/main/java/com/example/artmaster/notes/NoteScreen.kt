@@ -1,14 +1,11 @@
 package com.example.artmaster.notes
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,7 +32,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.rememberScaffoldState
@@ -53,24 +49,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
-import com.example.artmaster.login.Login
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+/**
+ * Activity for handling the notes screen.
+ * Displays the UI for viewing and interacting with a list of notes.
+ */
 class NoteActivity: MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ArtMasterTheme {
-                Surface(color = MaterialTheme.colors.background) {
+                Surface() {
                     NoteScreen(
                         noteViewModel = NoteViewModel(),
-                        onNoteClick = {},
+                        onNoteClick = {noteId ->
+                            // Start DetailActivity with the selected noteId
+                            Log.d("noteID", "onNoteScreen: id: $noteId")
+                            Intent(applicationContext, DetailActivity::class.java).apply {
+                                putExtra("noteId", noteId)  // Pass the noteId as an extra
+                                startActivity(this)
+                            }
+                        },
                         navToDetailScreen = {
                             Intent(applicationContext, DetailActivity::class.java).also {
                                 startActivity(it)
@@ -82,6 +88,7 @@ class NoteActivity: MainActivity() {
         }
     }
 
+    // Main UI composition for the notes screen
     @OptIn(androidx.compose.animation.ExperimentalAnimationApi::class)
     @Composable
     fun NoteScreen(
@@ -89,21 +96,26 @@ class NoteActivity: MainActivity() {
         onNoteClick: (id: String) -> Unit,
         navToDetailScreen: () -> Unit,
     ) {
+        // Retrieve the UI state from the ViewModel or use a default state
         val noteUiState = noteViewModel?.noteUiState ?: NoteUiState()
-
+        // State variables for managing the delete dialog
         var openDialog by remember {
             mutableStateOf(false)
         }
         var selectedNote: Notes? by remember {
             mutableStateOf(null)
         }
+        // Coroutine scope for managing coroutines
         val scope = rememberCoroutineScope()
+        // Scaffold state for managing the scaffold (app bar, snackbar, etc.)
         val scaffoldState = rememberScaffoldState()
 
+        // Launch the effect to load notes when the composition is first created
         LaunchedEffect(key1 = Unit) {
             noteViewModel?.loadNotes()
         }
 
+        // Main scaffold composition
         Scaffold(
             scaffoldState = scaffoldState,
             floatingActionButton = {
@@ -115,17 +127,22 @@ class NoteActivity: MainActivity() {
                 }
             },
             topBar = {
+                // Custom top bar from the MainActivity
                 super.TobBarMain()
             },
             bottomBar = {
+                // Custom bottom bar from the MainActivity
                 super.BottomBar()
             },
 
 
         ) {padding ->
+            // Column to hold the main content
             Column(modifier = Modifier.padding(padding)) {
+                // Check the state of the notes list and display content accordingly
                 when(noteUiState.notesList) {
                     is Resources.Loading -> {
+                    // Show a loading indicator when notes are being loaded
                         CircularProgressIndicator(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -134,6 +151,8 @@ class NoteActivity: MainActivity() {
                     }
 
                     is Resources.Success -> {
+                        Log.d("NoteScreen", "Notes: ${noteUiState.notesList.data}")
+                        // Show the list of notes when successfully loaded
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(1),
                             contentPadding = PaddingValues(16.dp),
@@ -142,6 +161,7 @@ class NoteActivity: MainActivity() {
                             items(
                                 noteUiState.notesList.data ?: emptyList()
                             ) {note ->
+                                // Compose item for each note
                                 NoteItem(notes = note, onLongClick = {
                                     openDialog = true
                                     selectedNote = note
@@ -152,7 +172,9 @@ class NoteActivity: MainActivity() {
 
                             }
                         }
+                        // Animated visibility for the delete dialog
                         AnimatedVisibility(visible = openDialog) {
+                            // AlertDialog for confirming note deletion
                             AlertDialog(
                                 onDismissRequest = {
                                     openDialog = false
@@ -165,6 +187,10 @@ class NoteActivity: MainActivity() {
                                                 noteViewModel?.deleteNote(it)
                                             }
                                             openDialog = false
+                                            scope.launch {
+                                                scaffoldState.snackbarHostState
+                                                    .showSnackbar("Nota eliminada exitosamente")
+                                            }
                                         },
                                         colors = ButtonDefaults.buttonColors(
                                             backgroundColor = Color.Red
@@ -184,7 +210,7 @@ class NoteActivity: MainActivity() {
                         }
 
                     }
-
+                    // Show an error message if loading notes fails
                     else -> {
                         Text(
                             text = noteUiState
@@ -197,7 +223,7 @@ class NoteActivity: MainActivity() {
             }
 
         }
-
+        // Launch effect to handle the case when there is no user logged in
         LaunchedEffect(key1 = noteViewModel?.hasUser){
             if (noteViewModel?.hasUser == false){
                 Log.d("Notes", "Notes error: No user login")
@@ -208,14 +234,15 @@ class NoteActivity: MainActivity() {
 
 }
 
-
+// Composable function for rendering a single note item
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteItem(
     notes: Notes,
-    onLongClick:() -> Unit,
-    onClick:() -> Unit,
+    onLongClick: () -> Unit,
+    onClick: () -> Unit,
 ) {
+    // Card to represent a note item
     Card(
         modifier = Modifier
             .combinedClickable(
@@ -225,52 +252,62 @@ fun NoteItem(
             .padding(8.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        backgroundColor = MaterialTheme.colors.onSurface
+        backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
     ) {
+        // Column to arrange content within the card
         Column {
+            // Title of the note
             Text(
                 text = notes.title,
                 style = MaterialTheme.typography.h6,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
-                color = MaterialTheme.colors.background,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
                 overflow = TextOverflow.Clip,
-                modifier = Modifier.padding(4.dp).padding(horizontal = 4.dp)
-                )
+                modifier = Modifier
+                    .padding(4.dp)
+                    .padding(horizontal = 4.dp)
+            )
+            // Spacer for vertical separation
             Spacer(modifier = Modifier.size(4.dp))
+            // Content of the note with ellipsis for overflow
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = notes.content,
                     style = MaterialTheme.typography.body1,
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colors.background,
-                    modifier = Modifier.padding(4.dp).padding(horizontal = 4.dp),
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .padding(horizontal = 4.dp),
                     maxLines = 4,
                 )
             }
+            // Spacer for vertical separation
             Spacer(modifier = Modifier.padding(4.dp))
+            // Timestamp of the note with ellipsis for overflow
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = formatDate(notes.timestamp),
                     style = MaterialTheme.typography.body2,
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colors.background,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .padding(4.dp).padding(end = 4.dp)
+                        .padding(4.dp)
+                        .padding(end = 4.dp)
                         .align(Alignment.End),
                     maxLines = 4,
                 )
             }
         }
-
-
     }
-
 }
 
+
+// Function to format a timestamp into a readable date-time string
 private fun formatDate(timestamp: Timestamp): String {
     val sdf = SimpleDateFormat("dd-MM-yy ~ hh:mm", Locale.getDefault())
     return sdf.format(timestamp.toDate())
