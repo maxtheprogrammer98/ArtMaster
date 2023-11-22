@@ -50,6 +50,7 @@ import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.home.HomeActivity
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
+import com.example.artmaster.paths.RutasActivity
 import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
@@ -309,8 +310,13 @@ open class MainActivity : ComponentActivity() {
                     startActivity(it)
                 }
             }
-            "Inico" ->{
+            "Inicio" ->{
                 Intent(applicationContext, HomeActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Rutas" ->{
+                Intent(applicationContext, RutasActivity::class.java).also {
                     startActivity(it)
                 }
             }
