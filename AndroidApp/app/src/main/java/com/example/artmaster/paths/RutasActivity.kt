@@ -3,7 +3,6 @@ package com.example.artmaster.paths
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,15 +34,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
 import com.example.artmaster.graphicElements.HeaderMain
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.example.artmaster.R
-import com.example.artmaster.graphicElements.PathsGenerator
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseException
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
-import com.google.firebase.initialize
-import kotlin.coroutines.suspendCoroutine
+import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.tasks.await
+
 
 class RutasActivity : MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,12 +130,10 @@ class RutasActivity : MainActivity() {
     fun CreateCards(){
         //--------------- BASE ARRAY ------------------------//
         var learningPaths by remember {
-            mutableStateOf(ArrayList<PathsGenerator>())
+            mutableStateOf(ArrayList<PathsModels>())
         }
         // ------------- RETRIEVING INFORMATION -----------------//
-        LaunchedEffect(Unit){
-            getRutas(learningPaths)
-        }
+
         Log.i("testing", "learningPath: ${learningPaths.size}")
         // ----------- PATH CARDS---------//
         learningPaths.forEach {
@@ -186,42 +186,31 @@ class RutasActivity : MainActivity() {
     }
 
     /**
-     * it makes a get request to retrieve all the routes stored in the DB
+     * it makes an asynchronous get request to retrieve all the routes stored in the Firestore DB
      */
-    fun getRutas(pathsArray:ArrayList<PathsGenerator>){
-        // instantiating FireStore
+    //TODO: Move this code to another class, it's necessary to extend the class "viewModel"
+    // in order to use the needed functionalities
+    suspend fun getPathsFromFS():ArrayList<PathsModels>{
+        // instaintiating FS database
         val db = Firebase.firestore
-        // referencing collection
+        // collection reference
         val rutasCollection = db.collection("rutas")
-        //executing get request
-        rutasCollection.get()
-            // success listener
-            .addOnSuccessListener { documents ->
-                if(!documents.isEmpty){
-                    // arraylist that will update the main one
-                    var updatedArray = ArrayList<PathsGenerator>()
-                    for(document in documents){
-                        val pathDocument = PathsGenerator(
-                            // creating object from document
-                            ID = document.id,
-                            nombre = document.getString("nombre").toString(),
-                            informacion = document.getString("informacion").toString(),
-                            imagen = document.getString("imagen").toString(),
-                            dificultad = document.getString("dificultad").toString()
-                        )
-                        // adding it into arraylist
-                        Log.i("test", "document addded: ${pathDocument.ID} / ${pathDocument.nombre}")
-                        updatedArray.add(pathDocument)
-                    }
-                    //updating main arraylist
-                    pathsArray = updatedArray
+        // retrieved information
+        var rutasRetrieved = ArrayList<PathsModels>()
 
-                }
+        // get request
+        try {
+            rutasCollection.get().await().map {
+                val result = it.toObject(PathsModels::class.java)
+                rutasRetrieved.add(result)
             }
-            // failure listener
-            .addOnFailureListener { exception ->
-                Log.e("error", "error connection DB", exception)
-            }
+
+        }catch (e : FirebaseFirestoreException){
+            Log.e("error", "error connecting to DB", e)
+        }
+        // returnes the fetched data
+        return rutasRetrieved
     }
+
 
 }
