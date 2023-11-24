@@ -121,10 +121,14 @@ class NoteActivity: MainActivity() {
         Scaffold(
             scaffoldState = scaffoldState,
             floatingActionButton = {
-                FloatingActionButton(onClick = { navToDetailScreen.invoke() }) {
+                FloatingActionButton(
+                    onClick = { navToDetailScreen.invoke() },
+                    backgroundColor = MaterialTheme.colorScheme.onPrimary
+                ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
             },
@@ -314,3 +318,4 @@ private fun formatDate(timestamp: Timestamp): String {
     val sdf = SimpleDateFormat("dd-MM-yy ~ hh:mm", Locale.getDefault())
     return sdf.format(timestamp.toDate())
 }
+

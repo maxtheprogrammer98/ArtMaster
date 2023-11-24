@@ -6,13 +6,16 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -20,17 +23,25 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
+import com.example.artmaster.alarm.AlarmItem
+import com.example.artmaster.alarm.AndroidAlarmScheluder
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 /**
  * Activity for handling the details screen.
@@ -40,6 +51,7 @@ class DetailActivity: MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val noteId = intent.getStringExtra("noteId")
+        val schedule = AndroidAlarmScheluder(this)
         setContent {
             ArtMasterTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -61,6 +73,7 @@ class DetailActivity: MainActivity() {
         noteId: String,
         onNavigate:() -> Unit
     ) {
+        val context = LocalContext.current
         // Retrieve the UI state from the ViewModel or use a default state
         val detailUiState = detailViewModel?.detailUiState ?: DetailUiState()
         // Determine if the forms are not blank
@@ -70,6 +83,9 @@ class DetailActivity: MainActivity() {
         val isNoteIdNotBlank = noteId.isNotBlank()
         // Determine the appropriate icon based on the state
         val icon = if (isNoteIdNotBlank) Icons.Default.Refresh else Icons.Default.Check
+
+        val scheduler = AndroidAlarmScheluder(context)
+        var alarmItem: AlarmItem? = null
 
         // Perform actions when the composition is launched
         LaunchedEffect(key1 = Unit) {
@@ -101,7 +117,8 @@ class DetailActivity: MainActivity() {
                             }else {
                                 detailViewModel?.addNote()
                             }
-                        }
+                        },
+                        backgroundColor = MaterialTheme.colorScheme.primary
                     ) {
                         Icon(imageVector = icon, contentDescription = null)
                     }
@@ -153,6 +170,62 @@ class DetailActivity: MainActivity() {
                         .padding(16.dp)
                         .weight(1f)
                 )
+
+                if (isNoteIdNotBlank) {
+                    IconButton(onClick = {
+                         alarmItem = AlarmItem(
+                             time = LocalDateTime.now()
+                                 .plusSeconds(10),
+                             message = detailUiState.title
+                         )
+                        alarmItem?.let(scheduler::schedule)
+
+                        scope.launch {
+                            scaffoldState.snackbarHostState
+                                .showSnackbar("Se agrego recordatorio")
+                        }
+                    }, modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "Agregar Recordatorio",
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+
+                    IconButton(onClick = {
+                        alarmItem?.let(scheduler::cancel)
+
+                        scope.launch {
+                            scaffoldState.snackbarHostState
+                                .showSnackbar("Se cancelo recordatorio")
+                        }
+                    }, modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                tint = Color.Red
+                            )
+                            Text(
+                                text = "Cancelar Recordatorio",
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+
+                }
             }
 
         }
