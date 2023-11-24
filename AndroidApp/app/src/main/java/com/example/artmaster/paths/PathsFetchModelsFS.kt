@@ -1,0 +1,57 @@
+package com.example.artmaster.paths
+
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+
+/**
+ * this class includes the different functionalities that are needed
+ * to fetch data from firestore
+ */
+class PathsFetchModelsFS : ViewModel(){
+    // variable that stores the retrieved data
+    val state = mutableStateOf(
+        arrayListOf<PathsModels>()
+    )
+
+    // initializes the fetching method whenever the class is refered to
+    init {
+        getData()
+    }
+
+    // fecthing data
+    suspend fun fetchDataFS():ArrayList<PathsModels>{
+        // instaintiating FS database
+        val db = Firebase.firestore
+        // collection reference
+        val rutasCollection = db.collection("rutas")
+        // retrieved information
+        var rutasRetrieved = ArrayList<PathsModels>()
+
+        // get request
+        try {
+            rutasCollection.get().await().map {
+                val result = it.toObject(PathsModels::class.java)
+                rutasRetrieved.add(result)
+            }
+
+        }catch (e : FirebaseFirestoreException){
+            Log.e("error", "error connecting to DB", e)
+        }
+        // returnes the fetched data
+        return rutasRetrieved
+    }
+
+    // getting fetched data
+    private fun getData(){
+        viewModelScope.launch {
+            state.value = fetchDataFS()
+        }
+    }
+}

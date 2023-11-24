@@ -127,11 +127,9 @@ class RutasActivity : MainActivity() {
      */
     @SuppressLint("MutableCollectionMutableState")
     @Composable
-    fun CreateCards(){
+    fun CreateCards(dataViewModel: PathsFetchModelsFS = viewModel()){
         //--------------- BASE ARRAY ------------------------//
-        var learningPaths by remember {
-            mutableStateOf(ArrayList<PathsModels>())
-        }
+        val learningPaths = dataViewModel.state.value
         // ------------- RETRIEVING INFORMATION -----------------//
 
         Log.i("testing", "learningPath: ${learningPaths.size}")
@@ -183,33 +181,6 @@ class RutasActivity : MainActivity() {
                 }
             }
         }
-    }
-
-    /**
-     * it makes an asynchronous get request to retrieve all the routes stored in the Firestore DB
-     */
-    //TODO: Move this code to another class, it's necessary to extend the class "viewModel"
-    // in order to use the needed functionalities
-    suspend fun getPathsFromFS():ArrayList<PathsModels>{
-        // instaintiating FS database
-        val db = Firebase.firestore
-        // collection reference
-        val rutasCollection = db.collection("rutas")
-        // retrieved information
-        var rutasRetrieved = ArrayList<PathsModels>()
-
-        // get request
-        try {
-            rutasCollection.get().await().map {
-                val result = it.toObject(PathsModels::class.java)
-                rutasRetrieved.add(result)
-            }
-
-        }catch (e : FirebaseFirestoreException){
-            Log.e("error", "error connecting to DB", e)
-        }
-        // returnes the fetched data
-        return rutasRetrieved
     }
 
 
