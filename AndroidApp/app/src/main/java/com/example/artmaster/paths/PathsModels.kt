@@ -13,5 +13,5 @@ data class PathsModels(
     val informacion:String = "",
     val imagen:String = "",
     val dificultad:String = "",
-    val tutoriales: ArrayList<String> = ArrayList<String>()
+    val tutoriales: ArrayList<String> = ArrayList<String>() //includes the tutorials IDs that belong to this path
 )

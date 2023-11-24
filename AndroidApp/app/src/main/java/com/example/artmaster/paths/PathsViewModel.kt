@@ -14,7 +14,7 @@ import kotlinx.coroutines.tasks.await
  * this class includes the different functionalities that are needed
  * to fetch data from firestore
  */
-class PathsFetchModelsFS : ViewModel(){
+class PathsViewModel : ViewModel(){
     // variable that stores the retrieved data
     val state = mutableStateOf(
         arrayListOf<PathsModels>()

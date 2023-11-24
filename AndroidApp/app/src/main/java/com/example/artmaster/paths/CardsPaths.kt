@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,11 +32,10 @@ import com.example.artmaster.R
  */
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun CreateCards(dataViewModel: PathsFetchModelsFS = viewModel()){
+fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
     //--------------- BASE ARRAY ------------------------//
     val learningPaths = dataViewModel.state.value
     // ------------- RETRIEVING INFORMATION -----------------//
-
     Log.i("testing", "learningPath: ${learningPaths.size}")
     // ----------- PATH CARDS---------//
     learningPaths.forEach {
@@ -107,6 +105,11 @@ fun CreateCards(dataViewModel: PathsFetchModelsFS = viewModel()){
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold)
         }
+        // ------ PROGRESS BAR -----------//
+
+        //TODO: Insert progress bar here
+
+
         // ----------- BUTTON ---------//
         Button(
             onClick = { /*TODO: add validating function*/ },
@@ -123,8 +126,7 @@ fun CreateCards(dataViewModel: PathsFetchModelsFS = viewModel()){
 }
 
 @Composable
-fun CreateProgressBar(progressValue:Float){
-    LinearProgressIndicator(
-        progress = progressValue,
-    )
+fun CreateProgressBar(dataViewModel:UsersViewModelPath = viewModel(), tutorialsPath:ArrayList<String>){
+    // 1 - comparing arrays
+
 }
