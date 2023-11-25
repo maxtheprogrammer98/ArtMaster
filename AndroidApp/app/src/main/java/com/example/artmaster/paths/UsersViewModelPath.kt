@@ -48,7 +48,7 @@ class UsersViewModelPath : ViewModel(){
         // instantiating firestore
         val db = Firebase.firestore
         // fetching document
-        userID?.let {
+        userID.let{
             try {
                 val userDocument = db.collection("usuarios").document(it).get().await()
                 // deserializing document
@@ -66,8 +66,6 @@ class UsersViewModelPath : ViewModel(){
             userState.value = UsersModels()
         }
     }
-
-
 
 
 }

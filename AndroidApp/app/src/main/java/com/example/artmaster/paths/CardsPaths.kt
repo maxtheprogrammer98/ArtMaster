@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -107,8 +108,19 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
         }
         // ------ PROGRESS BAR -----------//
 
-        //TODO: Insert progress bar here
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center)
+                .padding(15.dp)
+        ){
+            Text(
+                text = "Progreso",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold)
+        }
 
+        CreateProgressBar(tutorialsPath = path.tutoriales)
 
         // ----------- BUTTON ---------//
         Button(
@@ -127,6 +139,36 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
 
 @Composable
 fun CreateProgressBar(dataViewModel:UsersViewModelPath = viewModel(), tutorialsPath:ArrayList<String>){
-    // 1 - comparing arrays
+    // 1 - merge the two arrays
+    val completedArray = dataViewModel.userState.value.completados
+    val mergedList = ArrayList<String>().apply {
+        addAll(completedArray)
+        addAll(tutorialsPath)
+    }
+    // 2 - counting how many repeated elements are
+    val completedQuantity = countElementOccurrences(mergedList)
 
+    // 3 - calculatiing progress
+    val percentage = calculatePercentage(tutorialsPath.size, completedQuantity.size)
+    val floatPercentage = percentage.toFloat()
+
+    // 4 - creating ProgressBar
+    LinearProgressIndicator(
+        progress = floatPercentage,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+            .height(50.dp),
+        trackColor = Color.Green
+    )
+}
+
+// calculating functions
+fun countElementOccurrences(list: List<String>): Map<String, Int> {
+    // Using groupBy and eachCount to count occurrences of each element
+    return list.groupBy { it }.mapValues { it.value.size }
+}
+
+fun calculatePercentage(total: Int, quantity: Int): Double {
+    return (quantity.toDouble() / total) * 100.0
 }
