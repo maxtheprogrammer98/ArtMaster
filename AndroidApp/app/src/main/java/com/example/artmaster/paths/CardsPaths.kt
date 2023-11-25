@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.R
+import kotlinx.coroutines.awaitAll
 
 /**
  * generates cards dynamically from fetched data from Firestore
@@ -131,26 +132,19 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
 
 @Composable
 fun CreateProgressBar(dataViewModel:UsersViewModelPath = viewModel(), tutorialsPath:ArrayList<String>){
-    // 1 - merge the two reference arrays
+    // arraylist containing all the completed tutorials
     val completedArray = dataViewModel.userState.value.completados
-    Log.i("progressbar", "completed tutorials: ${completedArray.size}")
 
-    val mergedList = ArrayList<String>().apply {
-        addAll(completedArray)
-        addAll(tutorialsPath)
-    }
-    Log.i("progressbar", "elements merged array: ${mergedList.size}")
+    // returns how many tutorials from this path are already done
+    val completedFromPath = mergeAndCountOccurrences(completedArray,tutorialsPath)
 
-    // 2 - counting how many repeated elements there are
-    val completedQuantity = countElementOccurrences(mergedList)
-    Log.i("progressbar", "elements: ${completedQuantity}")
+    // returns completion percentage
+    val percentageDone = getPercentageValue(tutorialsPath.size,completedFromPath)
 
-    //TODO:FIX THESE CALCULATIONS
-    // 3 - calculatiing progress
-    val percentage = calculatePercentage(tutorialsPath.size, completedQuantity.size)
-    val floatPercentage = percentage.toFloat()
 
-    // 4.1 - creating percentage info
+    //TODO: FIX POSSIBLE ANSYNCHRONITIY PROBLEM!?
+
+    // creating percentage info
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,12 +152,12 @@ fun CreateProgressBar(dataViewModel:UsersViewModelPath = viewModel(), tutorialsP
             .wrapContentWidth(Alignment.CenterHorizontally)
     ){
         Text(
-            text = stringResource(id = R.string.progreso) + " ${percentage}%",
+            text = stringResource(id = R.string.progreso) + " $percentageDone%",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center)
     }
 
-    // 4.2 - creating ProgressBar
+    // creating ProgressBar
     Column(
         // wrapper
         modifier = Modifier
@@ -175,28 +169,41 @@ fun CreateProgressBar(dataViewModel:UsersViewModelPath = viewModel(), tutorialsP
     ){
         // progress bar
         LinearProgressIndicator(
-            progress = floatPercentage,
-            trackColor = Color.Green,
+            progress = 0f,
+            trackColor = Color.White,
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
                 .fillMaxWidth()
                 .height(50.dp),
-            color = Color.White
+            color = Color.Green
         )
     }
 }
 
-// calculating functions
-fun countElementOccurrences(list: List<String>): Map<String, Int> {
-    // Using groupBy and eachCount to count occurrences of each element
-    return list.groupBy { it }.mapValues { it.value.size }
+fun mergeAndCountOccurrences(list1: ArrayList<String>, list2: ArrayList<String>): Int {
+    val mergedList = ArrayList<String>()
+    mergedList.addAll(list1)
+    mergedList.addAll(list2)
+
+    val elementCountMap = mergedList.groupingBy { it }.eachCount()
+
+    // Sum the occurrences of all elements
+    val totalOccurrences = elementCountMap.values.sum()
+
+    Log.i("progressbar", "occurraences: $totalOccurrences")
+    return totalOccurrences
 }
 
-fun calculatePercentage(total: Int, completed: Int): Int {
-    if (total != 0){
-        return (completed * 100) / total
-    } else {
-        // avoiding division by cero error
-        return 0
+fun getPercentageValue(total: Int, completed: Int):Int{
+    // refe variable
+    val result:Int
+    // validating
+    if(total != 0){
+        result = (completed * 100) / total
+    }else{
+        result = 0
     }
+    Log.i("progressbar", "percentage: $result")
+    return result
 }
+
