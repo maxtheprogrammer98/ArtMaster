@@ -58,12 +58,13 @@ class UsersViewModelPath : ViewModel(){
             }
         }
         // returning deserialized object
+        Log.i("userModel", "user's done tutos: ${userModel.completados.size}")
         return userModel
     }
 
     private fun getUserData(){
         viewModelScope.launch {
-            userState.value = UsersModels()
+            userState.value = fetchUserData()
         }
     }
 

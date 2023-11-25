@@ -9,14 +9,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -36,16 +41,15 @@ import com.example.artmaster.R
 fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
     //--------------- BASE ARRAY ------------------------//
     val learningPaths = dataViewModel.state.value
-    // ------------- RETRIEVING INFORMATION -----------------//
-    Log.i("testing", "learningPath: ${learningPaths.size}")
     // ----------- PATH CARDS---------//
     learningPaths.forEach {
             path -> Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(),
-        shape = RectangleShape
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.medium)
+                    .shadow(5.dp, RectangleShape),
+                elevation = CardDefaults.cardElevation(),
     ){
         //TODO: implement picasso to render images
 
@@ -108,18 +112,6 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
         }
         // ------ PROGRESS BAR -----------//
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center)
-                .padding(15.dp)
-        ){
-            Text(
-                text = "Progreso",
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold)
-        }
-
         CreateProgressBar(tutorialsPath = path.tutoriales)
 
         // ----------- BUTTON ---------//
@@ -127,11 +119,11 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
             onClick = { /*TODO: add validating function*/ },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
-                .padding(12.dp)){
+                .height(75.dp)
+                .padding(16.dp)){
             Text(
                 text = stringResource(id = R.string.btn_aceptar),
-                fontSize = 18.sp)
+                fontSize = 16.sp)
             }
         }
     }
@@ -139,28 +131,59 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel()){
 
 @Composable
 fun CreateProgressBar(dataViewModel:UsersViewModelPath = viewModel(), tutorialsPath:ArrayList<String>){
-    // 1 - merge the two arrays
+    // 1 - merge the two reference arrays
     val completedArray = dataViewModel.userState.value.completados
+    Log.i("progressbar", "completed tutorials: ${completedArray.size}")
+
     val mergedList = ArrayList<String>().apply {
         addAll(completedArray)
         addAll(tutorialsPath)
     }
-    // 2 - counting how many repeated elements are
-    val completedQuantity = countElementOccurrences(mergedList)
+    Log.i("progressbar", "elements merged array: ${mergedList.size}")
 
+    // 2 - counting how many repeated elements there are
+    val completedQuantity = countElementOccurrences(mergedList)
+    Log.i("progressbar", "elements: ${completedQuantity}")
+
+    //TODO:FIX THESE CALCULATIONS
     // 3 - calculatiing progress
     val percentage = calculatePercentage(tutorialsPath.size, completedQuantity.size)
     val floatPercentage = percentage.toFloat()
 
-    // 4 - creating ProgressBar
-    LinearProgressIndicator(
-        progress = floatPercentage,
+    // 4.1 - creating percentage info
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
-            .height(50.dp),
-        trackColor = Color.Green
-    )
+            .padding(5.dp)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    ){
+        Text(
+            text = stringResource(id = R.string.progreso) + " ${percentage}%",
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center)
+    }
+
+    // 4.2 - creating ProgressBar
+    Column(
+        // wrapper
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .padding(16.dp)
+            .shadow(0.dp, CircleShape)
+    ){
+        // progress bar
+        LinearProgressIndicator(
+            progress = floatPercentage,
+            trackColor = Color.Green,
+            modifier = Modifier
+                .clip(MaterialTheme.shapes.medium)
+                .fillMaxWidth()
+                .height(50.dp),
+            color = Color.White
+        )
+    }
 }
 
 // calculating functions
@@ -169,6 +192,11 @@ fun countElementOccurrences(list: List<String>): Map<String, Int> {
     return list.groupBy { it }.mapValues { it.value.size }
 }
 
-fun calculatePercentage(total: Int, quantity: Int): Double {
-    return (quantity.toDouble() / total) * 100.0
+fun calculatePercentage(total: Int, completed: Int): Int {
+    if (total != 0){
+        return (completed * 100) / total
+    } else {
+        // avoiding division by cero error
+        return 0
+    }
 }
