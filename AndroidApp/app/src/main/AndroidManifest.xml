@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ArtMaster"
         tools:targetApi="31">
         <activity
+            android:name=".tutorials.TutorialsActivity"
+            android:exported="false" />
+        <activity
             android:name=".paths.PathsActivity"
             android:exported="false" />
         <activity
@@ -36,7 +39,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ArtMaster"></activity>
+            android:theme="@style/Theme.ArtMaster" />
         <activity android:name=".register.RegisterActivity" />
         <activity android:name=".profile.ProfileActivity" />
     </application>

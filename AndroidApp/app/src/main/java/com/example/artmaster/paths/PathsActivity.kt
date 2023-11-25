@@ -95,7 +95,7 @@ class PathsActivity : MainActivity() {
                 }
 
                 // ----------------- CARDS -----------------//
-                CreateCards()
+                CreateCards(context = applicationContext)
             }
         }
     }
