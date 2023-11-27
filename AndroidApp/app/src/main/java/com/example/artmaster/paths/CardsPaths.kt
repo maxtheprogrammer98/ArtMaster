@@ -118,14 +118,17 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
         // ----------- BUTTON ---------//
         Button(
             onClick = {
-                openTutorials(path.id,context)
+                openTutorials(
+                    pathID = path.id,
+                    context = context
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(75.dp)
                 .padding(16.dp)){
             Text(
-                text = stringResource(id = R.string.btn_aceptar),
+                text = stringResource(id = R.string.abrir_tutorial),
                 fontSize = 16.sp)
             }
         }
@@ -136,7 +139,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
  * Starts a new activity where the tutorials will be displayed
  * based on the ID path selected
  */
-private fun openTutorials(pathID:String, context: Context){
+fun openTutorials(pathID:String, context: Context){
     val intent = Intent(context, TutorialsActivity::class.java)
     intent.putExtra("IDPATH", pathID)
     context.startActivity(intent)

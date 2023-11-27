@@ -6,5 +6,5 @@ data class TutorialsModels(
     val rutaID:String = "",
     val imagen:String = "",
     val video:String = "",
-    val calificacion:String = ""
+    val calificacion:Float = 0.0f
 )
