@@ -55,6 +55,8 @@
             android:parentActivityName=".notes.NoteActivity">
         </activity>
 
+        <activity android:name=".alarm.TimePickerActivity"/>
+
         <receiver android:name=".alarm.AlarmReceiver"/>
     </application>
 

@@ -1,9 +1,10 @@
 package com.example.artmaster.alarm
 
-import java.time.LocalDateTime
+//import java.time.LocalDateTime
+import java.util.Date
 
 data class AlarmItem(
-    val time: LocalDateTime,
+    var time: Date?,
     val title: String,
     val content: String
 )

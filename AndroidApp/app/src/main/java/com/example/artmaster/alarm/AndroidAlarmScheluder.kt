@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import java.time.ZoneId
+import java.util.Date
 
 class AndroidAlarmScheluder(
     private val context: Context
@@ -13,20 +14,32 @@ class AndroidAlarmScheluder(
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     override fun schedule(item: AlarmItem) {
+        val currentTime = System.currentTimeMillis()
+
+        // Check if the selected time is in the past
+        if (item.time!!.time <= currentTime) {
+            // If so, schedule it for the next occurrence on the following day
+            val tomorrow = Date(currentTime + 24 * 60 * 60 * 1000)
+            item.time = tomorrow
+        }
+
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("EXTRA_TITLE", item.title)
             putExtra("EXTRA_CONTENT", item.content)
         }
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            item.time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
-            PendingIntent.getBroadcast(
-                context,
-                item.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+
+        item.time?.let {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                it.time,
+                PendingIntent.getBroadcast(
+                    context,
+                    item.hashCode(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
             )
-        )
+        }
     }
 
     override fun cancel(item: AlarmItem) {
