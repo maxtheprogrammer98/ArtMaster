@@ -32,9 +32,13 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -47,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -112,6 +117,9 @@ class NoteActivity: MainActivity() {
         // Scaffold state for managing the scaffold (app bar, snackbar, etc.)
         val scaffoldState = rememberScaffoldState()
 
+        // State for managing the search query
+        var searchQuery by remember { mutableStateOf("") }
+
         // Launch the effect to load notes when the composition is first created
         LaunchedEffect(key1 = Unit) {
             noteViewModel?.loadNotes()
@@ -145,8 +153,46 @@ class NoteActivity: MainActivity() {
         ) {padding ->
             // Column to hold the main content
             Column(modifier = Modifier.fillMaxSize().padding(padding).background(color = MaterialTheme.colorScheme.background)) {
+
+                // Add a search bar
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Buscar notas", color = MaterialTheme.colorScheme.background.copy(alpha = 0.4f)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(16.dp)
+                        ),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(
+                                onClick = { searchQuery = "" },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.background
+                                )
+                            }
+                        }
+                    }
+                )
+
+
+
                 // Check the state of the notes list and display content accordingly
-                when(noteUiState.notesList) {
+                when(val notesList = noteUiState.notesList) {
                     is Resources.Loading -> {
                     // Show a loading indicator when notes are being loaded
                         CircularProgressIndicator(
@@ -165,7 +211,7 @@ class NoteActivity: MainActivity() {
 
                         ) {
                             items(
-                                noteUiState.notesList.data ?: emptyList()
+                                filterNotes(notesList.data ?: emptyList(), searchQuery)
                             ) {note ->
                                 // Compose item for each note
                                 NoteItem(notes = note, onLongClick = {
@@ -319,3 +365,10 @@ private fun formatDate(timestamp: Timestamp): String {
     return sdf.format(timestamp.toDate())
 }
 
+
+// Function to filter notes based on the search query
+private fun filterNotes(notes: List<Notes>, query: String): List<Notes> {
+    return notes.filter {
+        it.title.contains(query, ignoreCase = true) || it.content.contains(query, ignoreCase = true)
+    }
+}
