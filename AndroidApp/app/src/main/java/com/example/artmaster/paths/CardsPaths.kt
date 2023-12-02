@@ -3,7 +3,6 @@ package com.example.artmaster.paths
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,6 +16,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +42,10 @@ import com.example.artmaster.tutorials.TutorialsActivity
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
+    //--------------- ID PATH ------------------------//
+//    var pathID by remember {
+//        mutableStateOf("")
+//    }
     //--------------- BASE ARRAY ------------------------//
     val learningPaths = dataViewModel.state.value
     // ----------- PATH CARDS---------//
@@ -51,7 +58,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                     .shadow(5.dp, RectangleShape),
                 elevation = CardDefaults.cardElevation(),
     ){
-        //TODO: implement picasso to render images
+        //TODO: implement picasso to render images or painter
 
         // ----------- IMAGE ---------//
         Column(
@@ -118,10 +125,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
         // ----------- BUTTON ---------//
         Button(
             onClick = {
-                openTutorials(
-                    pathID = path.id,
-                    context = context
-                )
+                openTutorials(context, path.nombre)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -139,8 +143,8 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
  * Starts a new activity where the tutorials will be displayed
  * based on the ID path selected
  */
-fun openTutorials(pathID:String, context: Context){
+fun openTutorials(context: Context, idPath : String){
     val intent = Intent(context, TutorialsActivity::class.java)
-    intent.putExtra("IDPATH", pathID)
+    intent.putExtra("ID_PATH" , idPath)
     context.startActivity(intent)
 }

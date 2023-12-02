@@ -1,123 +1,131 @@
 package com.example.artmaster.tutorials
 
-import android.content.Context
-import android.provider.Telephony.Mms.Rate
-import android.widget.RatingBar
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.R
-import com.google.android.material.color.utilities.Score
 
+//TODO: ADD path info as parameter? (possible solution)
 /**
- * create cards that display the different tutorials that belong to the selected path
- * @param dataViewModel
- * it referes to the viewModel "TutorialsViewModel" that fetches data from firestore
- * @param context
- * from where the function will be executed
+ * renders dynamically the tutorials cards based on the path selected
  */
 @Composable
-fun CreateCards(dataViewModel: TutorialsViewModel = viewModel(), context:Context, pathID:String){
-    // --------------- BASE ARRAY -----------------------//
-    val tutorialsPath = dataViewModel.tutorialsState.value
-    // --------------- GENERATING CARDS  -----------------//
-    tutorialsPath.filter{it.rutaID.equals(pathID)}.forEach{
+@SuppressLint("MutableCollectionMutableState")
+//@Preview
+fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel() ){
+    // variable that stores fetched documents
+    val tutorialsData = dataViewModel.stateTutorials.value
+    //-------------- GENERATING CARDS ----------------//
+    tutorialsData.forEach {
         tutorial -> Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .shadow(3.dp, CircleShape, true, Color.DarkGray, Color.DarkGray)
+                .padding(15.dp)
+                .heightIn(400.dp, 800.dp)
+                .clip(MaterialTheme.shapes.medium),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp
+            )
         ){
-            // ---------------- IMAGE -----------------//
-            Row(
+            // ---------- TITLE ----------//
+            Column(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .widthIn(80.dp, 120.dp)
+                    .fillMaxWidth()
+                    .height(50.dp)
                     .wrapContentSize(Alignment.Center)
             ){
-                Image(
-                    painter = painterResource(id = R.mipmap.articon),
-                    contentDescription = "imagen de $tutorial.nombre")
+                Text(
+                    text = tutorial.nombre,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp)
             }
 
-            // ---------------- MAIN CONTAINER -----------------//
-            Row(
+            // ---------- PREVIEW  ----------//
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .wrapContentSize(Alignment.Center)
             ){
-                // ---------------- TITLE -----------------//
-                Column(
+                //TODO: implement Picasso to render the image
+                Image(
+                    painter = painterResource(id = R.mipmap.articon),
+                    contentDescription = "preview ${tutorial.nombre}",
+                    modifier = Modifier
+                        .size(100.dp),
+                    alignment = Alignment.Center)
+            }
+
+            // ---------- DESCRIPTION  ----------//
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center)
+            ){
+                Text(
+                    text = tutorial.descripcion,
+                    textAlign = TextAlign.Center)
+            }
+
+            // ---------- DESCRIPTION  ----------//
+            //TODO: Add rating bar
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center)
+            ){
+                Text(
+                    text = "calificacion: ${tutorial.calificacion}",
+                    textAlign = TextAlign.Center)
+            }
+
+            // ---------- BUTTONS ------------ //
+            Column {
+                // ---------- BUTTON OPEN  ----------//
+                Button(
+                    onClick = { /*TODO: add function btn visit*/},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(40.dp)
-                        .wrapContentSize(Alignment.Center)
+                        .padding(20.dp)
                 ){
                     Text(
-                        text = tutorial.nombre,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold)
+                        text = stringResource(id = R.string.abrir_tutorial))
                 }
 
-                // ---------------- SCORE -----------------//
-                Column(
+                // ---------- BUTTON FAVS  ----------//
+                Button(
+                    onClick = { /*TODO: add function btn visit*/ },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp)
-                        .wrapContentSize()
+                        .padding(20.dp)
                 ){
-                    //TODO: add star rating later on
                     Text(
-                        text = "puntaje: 0",
-                        fontWeight = FontWeight.Bold)
-                }
-                // ---------------- BTNS (open and fav) -----------------//
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ){
-                    Button(
-                        onClick = { /*TODO: redirect to tutorial*/ }
-                    ){
-                        Text(text = stringResource(id = R.string.abrir_tutorial))
-                    }
-
-                    Button(onClick = { /*TODO: add to favs*/ }
-                    ){
-                        Text(text = stringResource(id = R.string.favoritos))
-                    }
+                        text = stringResource(id = R.string.favoritos))
                 }
             }
         }

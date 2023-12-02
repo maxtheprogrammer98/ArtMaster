@@ -7,46 +7,52 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+/**
+ * enables the app to deserialize the firebase documents based
+ * on the created model
+ */
 class TutorialsViewModel : ViewModel(){
-    // mutable variable reference
-    val tutorialsState = mutableStateOf(
-        ArrayList<TutorialsModels>())
+    // variable that stores the fetch data
+    val stateTutorials = mutableStateOf(
+        arrayListOf<TutorialsModels>()
+    )
 
+    //initializing function that returns data
     init {
-        getTutorialsData()
+        getData()
     }
 
-    suspend fun fetchTutorials():ArrayList<TutorialsModels>{
-        // instantiating firestore
+    //function that fetchs data asynchronically
+    suspend fun fetchTutorialsDocs() : ArrayList<TutorialsModels>{
+        // variable that stores fetched documents
+        val fetchedDocuments = ArrayList<TutorialsModels>()
+        // instantiating firebase
         val db = Firebase.firestore
-        // collection reference
-        val tutorialsCollection = db.collection("tutoriales")
-        // retrieved information
-        var tutorialsFetched = ArrayList<TutorialsModels>()
-        // get request
+        // referencing collection
+        val collectionRef = db.collection("tutoriales")
+        // fetching process
         try {
-            tutorialsCollection
-                // TODO: FIND OUT HOW TO ADD whereEqualTo query based on the intent info
-                //.whereEqualTo("rutaID", "fundamentos")
-                .get()
-                .await().map {
-                // deserializing documents and transforming them into models
-                val result =it.toObject(TutorialsModels::class.java)
-                tutorialsFetched.add(result)
-            }
-        } catch (e:FirebaseFirestoreException){
-            Log.e("error", "error while fetching data", e)
+            collectionRef.get()
+                .await()
+                .map {
+                    val result = it.toObject(TutorialsModels::class.java)
+                    fetchedDocuments.add(result)
+                }
+        } catch ( e : FirebaseFirestoreException){
+            Log.e("error", "error while fetching tutorials documents", e)
         }
-        // returning fetched information
-        return tutorialsFetched
+        //return statement
+        return fetchedDocuments
     }
 
-    private fun getTutorialsData(){
+    // process asynchronous request
+    fun getData(){
         viewModelScope.launch {
-            tutorialsState.value = fetchTutorials()
+            stateTutorials.value = fetchTutorialsDocs()
         }
     }
 }
