@@ -79,4 +79,6 @@
     <string name="btn_abrir_ruta">Abrir Ruta</string>
     <string name="progreso">Progreso: </string>
     <string name="abrir_tutorial">Abrir</string>
+    <string name="buscar_tutorial">Buscar tutorial</string>
+    <string name="borrar_busqueda">Borrar input</string>
 </resources>

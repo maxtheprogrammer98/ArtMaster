@@ -36,11 +36,11 @@ import com.example.artmaster.R
 @Composable
 @SuppressLint("MutableCollectionMutableState")
 //@Preview
-fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel() ){
+fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel(), pathName:String){
     // variable that stores fetched documents
     val tutorialsData = dataViewModel.stateTutorials.value
     //-------------- GENERATING CARDS ----------------//
-    tutorialsData.forEach {
+    tutorialsData.filter{ it.rutaNombre.equals(pathName)}.forEach {
         tutorial -> Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,21 +62,24 @@ fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel() ){
                     text = tutorial.nombre,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp)
+
+                //TODO: add done / undone icon here!
             }
 
             // ---------- PREVIEW  ----------//
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(250.dp)
                     .wrapContentSize(Alignment.Center)
             ){
-                //TODO: implement Picasso to render the image
+                //TODO: implement Picasso or similar library to render the image
                 Image(
                     painter = painterResource(id = R.mipmap.articon),
                     contentDescription = "preview ${tutorial.nombre}",
                     modifier = Modifier
                         .size(100.dp),
+                        //.clip(MaterialTheme.shapes.extraLarge)
                     alignment = Alignment.Center)
             }
 
@@ -111,7 +114,7 @@ fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel() ){
                     onClick = { /*TODO: add function btn visit*/},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
+                        .padding(15.dp,10.dp)
                 ){
                     Text(
                         text = stringResource(id = R.string.abrir_tutorial))
@@ -122,7 +125,7 @@ fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel() ){
                     onClick = { /*TODO: add function btn visit*/ },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
+                        .padding(15.dp,10.dp)
                 ){
                     Text(
                         text = stringResource(id = R.string.favoritos))

@@ -25,12 +25,12 @@ class TutorialsActivity : MainActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val intent = intent.getStringExtra("ID_PATH")
-        Log.i("pathid", "is equal to: $intent")
+        val intentInfo = intent.getStringExtra("NAME_PATH")
+        Log.i("pathNombre", "is equal to: $intentInfo")
 
         setContent {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                TutorialsLayout()
+                TutorialsLayout(intentInfo.toString())
             }
         }
     }
@@ -38,7 +38,7 @@ class TutorialsActivity : MainActivity(){
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    fun TutorialsLayout(){
+    fun TutorialsLayout(pathName:String){
         // ------------------------ VARIABLES ----------------------//
         val scrollingState = rememberScrollState()
 
@@ -60,11 +60,13 @@ class TutorialsActivity : MainActivity(){
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollingState)
-                    .padding(0.dp,70.dp)
+                    .padding(0.dp, 70.dp)
             ){
                 //TODO: INSERT COMPOSABLE FILE (PRESENTATION)
 
-                GenerateCardsTutorials()
+                CreateSerachBar()
+
+                GenerateCardsTutorials(pathName = pathName)
             }
         }
     }

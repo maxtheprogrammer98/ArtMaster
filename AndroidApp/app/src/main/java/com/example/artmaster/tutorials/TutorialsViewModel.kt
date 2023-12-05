@@ -36,7 +36,10 @@ class TutorialsViewModel : ViewModel(){
         val collectionRef = db.collection("tutoriales")
         // fetching process
         try {
-            collectionRef.get()
+            collectionRef
+                //TODO: research how to filter directly from here:
+                //.whereEqualTo("nombre","" )
+                .get()
                 .await()
                 .map {
                     val result = it.toObject(TutorialsModels::class.java)

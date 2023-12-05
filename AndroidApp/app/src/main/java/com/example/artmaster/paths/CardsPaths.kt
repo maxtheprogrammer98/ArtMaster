@@ -143,8 +143,8 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
  * Starts a new activity where the tutorials will be displayed
  * based on the ID path selected
  */
-fun openTutorials(context: Context, idPath : String){
+fun openTutorials(context: Context, namePath : String){
     val intent = Intent(context, TutorialsActivity::class.java)
-    intent.putExtra("ID_PATH" , idPath)
+    intent.putExtra("NAME_PATH" , namePath)
     context.startActivity(intent)
 }
