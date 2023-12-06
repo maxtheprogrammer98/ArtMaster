@@ -2,6 +2,7 @@ package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.shapes.Shape
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +34,7 @@ import com.example.artmaster.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @SuppressLint("MutableCollectionMutableState")
-fun CreateSerachBar(dataViewModel: TutorialsViewModel = viewModel()){
+fun CreateSerachBar(dataViewModel: TutorialsViewModel = viewModel(), pathName:String){
     // -------------- BASE VARIABLES -----------------//
     // data from fetched models
     var tutorialModels = dataViewModel.stateTutorials.value
@@ -65,10 +66,9 @@ fun CreateSerachBar(dataViewModel: TutorialsViewModel = viewModel()){
             leadingIcon = {
                 IconButton(
                     onClick = {
+                        // TODO : fix filter process!
                         // filters the tutorials whose name match the input
-                        tutorialModels.filter {
-                            it.nombre.contains(searchQuery)
-                        }
+                        dataViewModel.getFilterData(input = searchQuery, path = pathName)
                     }
                 ){
                     Icon(

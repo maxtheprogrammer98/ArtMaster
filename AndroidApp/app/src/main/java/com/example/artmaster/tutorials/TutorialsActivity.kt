@@ -64,7 +64,7 @@ class TutorialsActivity : MainActivity(){
             ){
                 //TODO: INSERT COMPOSABLE FILE (PRESENTATION)
 
-                CreateSerachBar()
+                CreateSerachBar(pathName = pathName)
 
                 GenerateCardsTutorials(pathName = pathName)
             }

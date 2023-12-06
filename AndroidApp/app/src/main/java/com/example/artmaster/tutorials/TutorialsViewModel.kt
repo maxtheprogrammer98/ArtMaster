@@ -1,5 +1,6 @@
 package com.example.artmaster.tutorials
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -17,6 +18,7 @@ import kotlinx.coroutines.tasks.await
  */
 class TutorialsViewModel : ViewModel(){
     // variable that stores the fetch data
+    @SuppressLint("MutableCollectionMutableState")
     val stateTutorials = mutableStateOf(
         arrayListOf<TutorialsModels>()
     )
@@ -26,7 +28,9 @@ class TutorialsViewModel : ViewModel(){
         getData()
     }
 
-    //function that fetchs data asynchronically
+    /**
+     * function that fetchs data asynchronically
+     */
     suspend fun fetchTutorialsDocs() : ArrayList<TutorialsModels>{
         // variable that stores fetched documents
         val fetchedDocuments = ArrayList<TutorialsModels>()
@@ -58,4 +62,45 @@ class TutorialsViewModel : ViewModel(){
             stateTutorials.value = fetchTutorialsDocs()
         }
     }
+
+    /**
+     * Gets the matching tutorials based on the input and path specified
+     */
+    suspend fun filterModels(input:String, path:String) : ArrayList<TutorialsModels>{
+        // temporal storage
+        val queryTutorials = ArrayList<TutorialsModels>()
+        // instantiating firebase
+        val db = Firebase.firestore
+        // collection reference
+        val tutorialsCollection = db.collection("tutoriales")
+        // get request
+        try {
+            tutorialsCollection
+                .whereEqualTo("nombre", input)
+                .whereEqualTo("rutaNombre", path)
+                .get()
+                .await()
+                .map {
+                    val result = it.toObject(TutorialsModels::class.java)
+                    queryTutorials.add(result)
+                }
+        } catch (e : FirebaseFirestoreException){
+            Log.e("fb_error", "error while executing fetch request", e)
+        }
+        // returning queried models
+        return queryTutorials
+    }
+
+    /**
+     * triggers the function that filters the tutorials based on the input and path provided
+     */
+    fun getFilterData(input:String, path:String){
+        viewModelScope.launch {
+            stateTutorials.value = filterModels(
+                input = input,
+                path = path)
+        }
+    }
+
+
 }
