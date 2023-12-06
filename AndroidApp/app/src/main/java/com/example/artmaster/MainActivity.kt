@@ -54,7 +54,9 @@ import com.example.artmaster.paths.PathsActivity
 import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
+import com.example.artmaster.user.UserModels
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -485,6 +487,7 @@ open class MainActivity : ComponentActivity() {
                 }
             }
     }
+
 }
 
 

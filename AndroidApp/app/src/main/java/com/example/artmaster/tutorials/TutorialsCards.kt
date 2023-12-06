@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.R
+import com.example.artmaster.user.UserModels
+import com.example.artmaster.user.UsersViewModel
 
 //TODO: ADD path info as parameter? (possible solution)
 /**
@@ -36,9 +42,15 @@ import com.example.artmaster.R
 @Composable
 @SuppressLint("MutableCollectionMutableState")
 //@Preview
-fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel(), pathName:String){
+fun GenerateCardsTutorials(
+    dataViewModel: TutorialsViewModel = viewModel(),
+    pathName:String ,
+    usersViewModel: UsersViewModel = viewModel()
+){
     // variable that stores fetched documents
     val tutorialsData = dataViewModel.stateTutorials.value
+    // variable that stores user's profile
+    val userProfile = usersViewModel.userStateProfile.value
     //-------------- GENERATING CARDS ----------------//
     tutorialsData.filter{ it.rutaNombre.equals(pathName)}.forEach {
         tutorial -> Card(
@@ -63,7 +75,10 @@ fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel(), path
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp)
 
-                //TODO: add done / undone icon here!
+                AddDoneIcon(
+                    userDoneTutorials = userProfile.completados,
+                    tutorialName = tutorial.nombre)
+
             }
 
             // ---------- PREVIEW  ----------//
@@ -114,7 +129,7 @@ fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel(), path
                     onClick = { /*TODO: add function btn visit*/},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp,10.dp)
+                        .padding(15.dp, 10.dp)
                 ){
                     Text(
                         text = stringResource(id = R.string.abrir_tutorial))
@@ -125,12 +140,37 @@ fun GenerateCardsTutorials(dataViewModel: TutorialsViewModel = viewModel(), path
                     onClick = { /*TODO: add function btn visit*/ },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp,10.dp)
+                        .padding(15.dp, 10.dp)
                 ){
                     Text(
                         text = stringResource(id = R.string.favoritos))
                 }
             }
         }
+    }
+}
+
+/**
+ * determines whether the tutorial is completed or not based on the provided arguments
+ */
+@Composable
+fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
+    // flag reference value
+    var done = false
+    // validating process
+    for(elem in userDoneTutorials){
+        if (elem.equals(tutorialName)){
+            done = true
+        }
+    }
+    // creating icon based on flag state
+    if(done){
+        Icon(
+            imageVector = Icons.Filled.Done,
+            contentDescription = stringResource(id = R.string.tutorial_completado))
+    }else{
+        Icon(
+            imageVector = Icons.Filled.Clear,
+            contentDescription = stringResource(id = R.string.tutorial_no_completado))
     }
 }
