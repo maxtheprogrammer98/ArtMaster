@@ -83,5 +83,6 @@
     <string name="borrar_busqueda">Borrar input</string>
     <string name="tutorial_completado">Tutorial Completado</string>
     <string name="tutorial_no_completado">Tutorial Incompletado</string>
+    <string name="eliminar_fav">Eliminar de fav</string>
 
 </resources>

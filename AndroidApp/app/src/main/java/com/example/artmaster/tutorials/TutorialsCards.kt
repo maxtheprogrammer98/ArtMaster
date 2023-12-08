@@ -1,6 +1,7 @@
 package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,8 +36,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.R
+import com.example.artmaster.user.GetUserID
 import com.example.artmaster.user.UserModels
 import com.example.artmaster.user.UsersViewModel
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 //TODO: ADD path info as parameter? (possible solution)
 /**
@@ -137,7 +145,7 @@ fun GenerateCardsTutorials(
 
                 // ---------- BUTTON FAVS  ----------//
                 Button(
-                    onClick = { /*TODO: add function btn visit*/ },
+                    onClick = { /*TODO: add function btn favs*/ },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(15.dp, 10.dp)
@@ -173,4 +181,94 @@ fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
             imageVector = Icons.Filled.Clear,
             contentDescription = stringResource(id = R.string.tutorial_no_completado))
     }
+}
+
+
+/**
+ * determines whether the tutorial is already stored as "fav"
+ * based on the given arguments, and displays the btn accordingly
+ */
+@Composable
+fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
+    // boolean flag
+    var favFlag = false
+    // checking if the tutorial is saved as fav
+    userProfile.favoritos.forEach {
+        favorito ->
+        if(favorito.equals(tutorialsModel.documentId)){
+            favFlag = true
+        }
+    }
+    //creating button depending on flag state
+    if (favFlag){
+        // if the tutorial is already stored as fav can be deleted
+        Button(
+            onClick = {
+                removeFavTutorial(tutorialsModel.documentId, userProfile)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(15.dp, 10.dp)
+        ){
+            Text(
+                text = stringResource(id = R.string.eliminar_fav))
+        }
+    } else{
+        // if not, the tutorial can be added to favs
+        Button(
+            onClick = {
+                addFavTutorial(tutorialsModel.documentId, userProfile)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(15.dp, 10.dp)
+        ){
+            Text(
+                text = stringResource(id = R.string.favoritos))
+        }
+    }
+
+}
+
+/**
+ * updates the user profile with the new fav tutorial
+ */
+fun addFavTutorial(IDtutorial:String, userModel: UserModels){
+    // instantiating FB
+    val db = Firebase.firestore
+    // document reference
+    val userDocument = db.collection("usuarios").document(userModel.documentId)
+    // update request on document
+    userDocument
+        .update("favoritos", FieldValue.arrayUnion(IDtutorial))
+        .addOnCompleteListener { documentTask ->
+            if(documentTask.isSuccessful){
+               Log.i("tutorials", "tutorial added!")
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.e("tutorials", "error trying to update tutorial", exception)
+        }
+}
+
+
+/**
+ * removes the tutorial from the user's profile
+ */
+fun removeFavTutorial(IDtutorial:String, userModel: UserModels){
+    // instantiating FB
+    val db = Firebase.firestore
+    // document reference
+    val userDocument = db.collection("usuarios").document(userModel.documentId)
+    // update request on document
+    userDocument
+        .update("favoritos", FieldValue.arrayRemove(IDtutorial))
+        .addOnCompleteListener { documentTask ->
+            if (documentTask.isSuccessful){
+                Log.i("tutorials", "tutorial removed!")
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.e("tutorials", "error while removing tutorial", exception)
+        }
 }

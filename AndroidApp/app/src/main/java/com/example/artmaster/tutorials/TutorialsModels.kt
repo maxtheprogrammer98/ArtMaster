@@ -1,10 +1,13 @@
 package com.example.artmaster.tutorials
 
+import com.google.firebase.firestore.DocumentId
+
 /**
  * defines how to deserialize firebase models
  */
 data class TutorialsModels(
-    val id:String = "",
+    @DocumentId
+    val documentId:String = "",
     val nombre:String = "",
     val rutaNombre:String = "",
     val imagen:String = "",
