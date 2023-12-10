@@ -1,5 +1,6 @@
 package com.example.artmaster.user
 
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -16,6 +17,7 @@ interface GetUserID{
             userID = user.uid
         }
         // returning statement
+        Log.i("user auth" , "userID: $userID")
         return userID
     }
 }

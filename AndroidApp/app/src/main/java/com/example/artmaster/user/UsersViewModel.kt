@@ -7,6 +7,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import android.util.Log
 
 class UsersViewModel : ViewModel(), GetUserID{
     // variable that stores user's ID
@@ -33,7 +34,8 @@ class UsersViewModel : ViewModel(), GetUserID{
             .get()
             .await()
             .map {
-                val result = it.toObject(UserModels::class.java)
+                Log.i("fetch request", userID)
+                val result = it.toObject(UserModels::class.java).copy(id = userID)
                 userProfile = result
             }
         // returning statement

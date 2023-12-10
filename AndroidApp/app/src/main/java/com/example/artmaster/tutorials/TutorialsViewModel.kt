@@ -46,7 +46,8 @@ class TutorialsViewModel : ViewModel(){
                 .get()
                 .await()
                 .map {
-                    val result = it.toObject(TutorialsModels::class.java)
+                    val documentID = it.id
+                    val result = it.toObject(TutorialsModels::class.java).copy(id = documentID)
                     fetchedDocuments.add(result)
                 }
         } catch ( e : FirebaseFirestoreException){

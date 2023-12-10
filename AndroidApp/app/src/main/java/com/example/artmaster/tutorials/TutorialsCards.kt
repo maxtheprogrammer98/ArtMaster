@@ -144,15 +144,9 @@ fun GenerateCardsTutorials(
                 }
 
                 // ---------- BUTTON FAVS  ----------//
-                Button(
-                    onClick = { /*TODO: add function btn favs*/ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp, 10.dp)
-                ){
-                    Text(
-                        text = stringResource(id = R.string.favoritos))
-                }
+                AddFavButton(
+                    userProfile = userProfile,
+                    tutorialsModel = tutorial)
             }
         }
     }
@@ -183,19 +177,19 @@ fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
     }
 }
 
-
+//TODO: Turn into asnynchronous function
 /**
  * determines whether the tutorial is already stored as "fav"
  * based on the given arguments, and displays the btn accordingly
  */
 @Composable
 fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
+    Log.i("tutorials", "first test, user ID: ${userProfile.id}")
     // boolean flag
     var favFlag = false
     // checking if the tutorial is saved as fav
-    userProfile.favoritos.forEach {
-        favorito ->
-        if(favorito.equals(tutorialsModel.documentId)){
+    for (elem in userProfile.favoritos){
+        if (elem.equals(tutorialsModel.id)){
             favFlag = true
         }
     }
@@ -204,7 +198,7 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
         // if the tutorial is already stored as fav can be deleted
         Button(
             onClick = {
-                removeFavTutorial(tutorialsModel.documentId, userProfile)
+                removeFavTutorial(tutorialsModel.id, userProfile)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -217,7 +211,7 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
         // if not, the tutorial can be added to favs
         Button(
             onClick = {
-                addFavTutorial(tutorialsModel.documentId, userProfile)
+                addFavTutorial(tutorialsModel.id, userProfile)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -236,8 +230,10 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
 fun addFavTutorial(IDtutorial:String, userModel: UserModels){
     // instantiating FB
     val db = Firebase.firestore
+    val documentID = userModel.id
+    Log.i("tutorials", "userID: $documentID")
     // document reference
-    val userDocument = db.collection("usuarios").document(userModel.documentId)
+    val userDocument = db.collection("usuarios").document(documentID)
     // update request on document
     userDocument
         .update("favoritos", FieldValue.arrayUnion(IDtutorial))
@@ -258,8 +254,9 @@ fun addFavTutorial(IDtutorial:String, userModel: UserModels){
 fun removeFavTutorial(IDtutorial:String, userModel: UserModels){
     // instantiating FB
     val db = Firebase.firestore
+    val documentID = userModel.id
     // document reference
-    val userDocument = db.collection("usuarios").document(userModel.documentId)
+    val userDocument = db.collection("usuarios").document(documentID)
     // update request on document
     userDocument
         .update("favoritos", FieldValue.arrayRemove(IDtutorial))
