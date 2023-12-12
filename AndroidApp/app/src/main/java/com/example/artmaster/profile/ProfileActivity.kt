@@ -3,7 +3,6 @@ package com.example.artmaster.profile
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.login.Login
-import com.example.artmaster.register.RegisterScreen
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
 class ProfileActivity: MainActivity() {
@@ -29,7 +27,7 @@ class ProfileActivity: MainActivity() {
         setContent {
             ArtMasterTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    profileMenu()
+                    ProfileMenu()
                 }
             }
         }
@@ -38,7 +36,7 @@ class ProfileActivity: MainActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun profileMenu(){
+    fun ProfileMenu(){
 
         val scrollState = rememberScrollState()
 

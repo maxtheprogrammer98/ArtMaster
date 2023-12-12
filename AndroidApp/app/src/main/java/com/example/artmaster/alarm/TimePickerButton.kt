@@ -31,7 +31,7 @@ class TimePickerActivity : ComponentActivity() {
 fun SelectTimeButton() {
     var selectedTime by remember { mutableStateOf<Date?>(null) }
     val context = LocalContext.current
-    val density = LocalDensity.current.density
+    LocalDensity.current.density
 
     // Function to show the time picker dialog
     fun showTimePicker() {

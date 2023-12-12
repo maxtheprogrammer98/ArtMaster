@@ -50,7 +50,7 @@ class DetailViewModel(
     }
 
     // Set the edit fields in the UI based on the selected note
-    fun setEditFields(note: Notes) {
+    private fun setEditFields(note: Notes) {
         detailUiState = detailUiState.copy(
             title = note.title,
             content = note.content,

@@ -1,11 +1,9 @@
 package com.example.artmaster.alarm
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import java.time.ZoneId
 import java.util.Date
 
 class AndroidAlarmScheluder(
