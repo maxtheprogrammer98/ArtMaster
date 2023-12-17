@@ -1,10 +1,22 @@
 package com.example.artmaster.profile
 
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -14,20 +26,29 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.artmaster.R
+import coil.compose.rememberAsyncImagePainter
+import com.example.artmaster.launchPhotoPicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -37,6 +58,14 @@ fun ProfileScreen(
     navigateToLogin: () -> Unit
 ) {
 
+
+    var selectedImage by remember { mutableStateOf<Uri?>(null) }
+
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri -> selectedImage = uri }
+    )
+
     val user = dataViewModel.state.value
 
     Column(
@@ -44,17 +73,26 @@ fun ProfileScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        ProfileHeader(user, navigateToLogin)
+        ProfileHeader(user, navigateToLogin, selectedImage = selectedImage)
         Spacer(modifier = Modifier.height(16.dp))
         ProfileInfoItem(Icons.Default.Person, "Nombre", user.name, true, onEditClick = {})
         Spacer(modifier = Modifier.height(8.dp))
         ProfileInfoItem(Icons.Default.Email, "Correo Electrónico", user.email, false)
         Spacer(modifier = Modifier.height(32.dp))
+
+        // Button to pick a new photo
+        Button(onClick = {
+            launchPhotoPicker(singlePhotoPickerLauncher)
+        }) {
+            Text("Subir foto de perfil")
+        }
+
+
     }
 }
 
 @Composable
-fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
+fun ProfileHeader(user: User, navigateToLogin: () -> Unit, selectedImage: Uri?) {
     val auth = FirebaseAuth.getInstance()
 
 
@@ -65,13 +103,16 @@ fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
             .padding(top = 40.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = null,
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape)
-        )
+        selectedImage?.let { imageUrl ->
+            // Display selected image
+            Image(
+                painter = rememberAsyncImagePainter(model = imageUrl),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+            )
+        }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -101,7 +142,9 @@ fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
                     .padding(4.dp)
                 )
         }
+
     }
+
 }
 
 @Composable
