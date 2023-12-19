@@ -12,7 +12,6 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 
 class UserViewModel : ViewModel() {
     val state = mutableStateOf(User())
@@ -37,14 +36,19 @@ class UserViewModel : ViewModel() {
         userId?.let {
             try {
                 val document = db.collection("usuarios").document(it).get().await()
+                Log.d("user", "Firestore document data: ${document.data}")
                 user = document.toObject(User::class.java) ?: User()
+                Log.d("user", "current user: $user")
             } catch (e: FirebaseFirestoreException) {
                 Log.d("error", "getUser: $e")
             }
         }
 
+
         return user
     }
+
+
 
     fun updateUserPhoto(photoUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {

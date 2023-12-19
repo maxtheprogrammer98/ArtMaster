@@ -242,6 +242,18 @@ fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         }
+
+
+        if (user.isAdmin) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Image(
+                painterResource(id = R.drawable.ic_odin),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(42.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(onClick = {
             auth.signOut()
