@@ -4,15 +4,12 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,22 +18,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -55,15 +49,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
+import com.example.artmaster.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -72,6 +65,7 @@ fun ProfileScreen(
     dataViewModel: UserViewModel = viewModel(),
     navigateToLogin: () -> Unit
 ) {
+    val context = LocalContext.current
 
     val user = dataViewModel.state.value
 
@@ -91,28 +85,44 @@ fun ProfileScreen(
         mutableStateOf<List<Uri?>>(emptyList())
     }
 
-    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+    val profilePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             selectedImage = uri
             // Update user's photo in ViewModel and Firebase
             uri?.let { dataViewModel.updateUserPhoto(it) }
-
+            Toast.makeText(
+                context,
+                "Se actualizo tu foto de perfil.",
+                Toast.LENGTH_LONG
+            ).show()
         }
     )
 
     val singlePhotoPickerLaun = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> selectedImages = listOf(uri) }
+        onResult = {
+            uri -> selectedImages = listOf(uri)
+            Toast.makeText(
+                context,
+                "Se agregaro tu dibujo",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     )
 
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = if (maxSelectionCount > 1) {
             maxSelectionCount
-        } else {
-            2
-        }),
-        onResult = { uris -> selectedImages = uris }
+        } else { 2 }),
+        onResult = {
+            uris -> selectedImages = uris
+            Toast.makeText(
+                context,
+                "Se agregaron tus dibujos",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     )
 
     fun launchPhotoPicker() {
@@ -128,13 +138,20 @@ fun ProfileScreen(
     }
 
 
+    fun launchPhotoProfilePicker() {
+        profilePhotoPickerLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        ProfileHeader(user, navigateToLogin, selectedImage = selectedImage)
+        ProfileHeader(user, navigateToLogin)
         Spacer(modifier = Modifier.height(16.dp))
         ProfileInfoItem(Icons.Default.Person, "Nombre", user.name, true, onEditClick = {})
         Spacer(modifier = Modifier.height(8.dp))
@@ -149,7 +166,7 @@ fun ProfileScreen(
         ) {
             // Button to pick a new profile photo
             Button(onClick = {
-                launchPhotoPicker(singlePhotoPickerLauncher)
+                launchPhotoProfilePicker()
             }) {
                 Text("Subir foto de perfil")
             }
@@ -167,55 +184,9 @@ fun ProfileScreen(
     }
 }
 
-fun launchPhotoPicker(launcher: ActivityResultLauncher<String>) {
-    launcher.launch("image/*")
-}
-
 
 @Composable
-fun ImageLayoutView(selectedImages: List<Uri?>) {
-
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(128.dp),
-        contentPadding = PaddingValues(
-            start = 12.dp,
-            top = 16.dp,
-            end = 12.dp,
-            bottom = 70.dp
-        ),
-        content = {
-            items(selectedImages) {uri ->
-                Card(
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(160.dp)
-                        .padding(4.dp)
-                        .fillMaxWidth(),
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primary)
-                    ) {
-                        AsyncImage(
-                            model = uri,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(4.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
-            }
-        }
-    )
-
-}
-
-
-@Composable
-fun ProfileHeader(user: User, navigateToLogin: () -> Unit, selectedImage: Uri?) {
+fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
     val auth = FirebaseAuth.getInstance()
 
 
@@ -226,22 +197,34 @@ fun ProfileHeader(user: User, navigateToLogin: () -> Unit, selectedImage: Uri?) 
             .padding(top = 40.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-// Use user.photoUrl instead of selectedImage
         Spacer(modifier = Modifier.width(8.dp))
 
         user.photoUrl?.let { imageUrl ->
-            Image(
-                painter = rememberAsyncImagePainter(
-                    ImageRequest.Builder(LocalContext.current).data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
-                        transformations(CircleCropTransformation())
-                    }).build()
-                ),
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .crossfade(1000)
+                    .build(),
+                loading = {
+                    CircularProgressIndicator()
+                },
                 contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CircleShape)
             )
             Log.d("ProfileScreen", "Photo URL: $imageUrl")
+        } ?: run {
+            // If user.photoUrl is null, display the default profile photo
+            Image(
+                painter = painterResource(id = R.drawable.profile_default),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+            )
         }
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -323,46 +306,76 @@ fun ProfileInfoItem(
                     BasicTextField(
                         value = editedValue,
                         onValueChange = { editedValue = it },
-                        textStyle = LocalTextStyle.current.copy(fontSize = 16.sp),
+                        textStyle = LocalTextStyle.current.copy(
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.surface
+                        ),
                         modifier = Modifier
                             .weight(1f)
                             .background(
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = MaterialTheme.colorScheme.primary,
                                 RoundedCornerShape(4.dp)
                             )
                             .padding(4.dp)
                     )
-                    IconButton(onClick = {
-                        if (editedValue.length in 3..24) {
-                            // Save edit on Firestore
-                            onEditClick?.invoke(editedValue)
+                    IconButton(
+                        onClick = {
+                            if (editedValue.length in 3..24) {
+                                // Save edit on Firestore
+                                onEditClick?.invoke(editedValue)
 
-                            // Update the field on Firestore
-                            userId?.let { userId ->
-                                updateUserField(userId, "name", editedValue)
+                                // Update the field on Firestore
+                                userId?.let { userId ->
+                                    updateUserField(userId, "name", editedValue)
+                                }
+
+                                Toast.makeText(
+                                    context,
+                                    "Nombre editado",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                isEditing = false
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "El nombre debe tener entre 3 y 24 caracteres.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    ) {
+                        if (isEditing) {
+                            // Conditionally change the icon based on the editing state
+                            val editIcon = if (editedValue.length in 3..24) {
+                                Icons.Default.Check
+                            } else {
+                                Icons.Default.Warning // You can change this to another icon or remove it
                             }
 
-                            Toast.makeText(
-                                context,
-                                "Nombre editado",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            isEditing = false
+                            Icon(
+                                imageVector = editIcon,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
                         } else {
-                            Toast.makeText(
-                                context,
-                                "El nombre debe tener entre 3 y 24 caracteres.",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            // Use a different icon when not editing
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
-                    }) {
+                    }
+
+                    IconButton(onClick = { isEditing = false }) {
                         Icon(
-                            imageVector = Icons.Default.Check,
+                            imageVector = Icons.Default.Close,
                             contentDescription = null,
                             modifier = Modifier.size(16.dp)
                         )
                     }
+
                 }
             } else {
                 Row(

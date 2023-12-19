@@ -54,7 +54,7 @@ class UserViewModel : ViewModel() {
                 try {
                     // Upload photo to Firebase Storage
                     val storageRef = FirebaseStorage.getInstance().reference
-                    val photoRef = storageRef.child("profile_photos/$it/${UUID.randomUUID()}")
+                    val photoRef = storageRef.child("profile_photos/$it/profile_photo.jpg")
                     val uploadTask = photoRef.putFile(photoUri)
                     uploadTask.await()
 
@@ -64,7 +64,7 @@ class UserViewModel : ViewModel() {
                     // Update the user's photo URL in Firestore
                     updateUserField(it, "photoUrl", photoUrl.toString())
                 } catch (e: Exception) {
-                    Log.d("ProfileScreen", "ERROR: ${e}")
+                    Log.d("ProfileScreen", "ERROR: $e")
 
                     // Handle exceptions
                 }
