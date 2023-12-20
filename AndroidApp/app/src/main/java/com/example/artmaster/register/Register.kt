@@ -74,6 +74,8 @@ fun RegisterScreen(navigateToLogin: () -> Unit, navigateToProfile: () -> Unit) {
 
     val favoritos: ArrayList<String> = ArrayList()
     val completados: ArrayList<String> = ArrayList()
+    val drawingArray: ArrayList<String> = ArrayList()
+    val photoUrl by remember { mutableStateOf("") }
     val isAdmin by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -170,7 +172,17 @@ fun RegisterScreen(navigateToLogin: () -> Unit, navigateToProfile: () -> Unit) {
             }else if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(context,messageCompleteAll, Toast.LENGTH_SHORT).show()
             }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
-                createUserFirebase(username, email, password, context, favoritos, completados, isAdmin) { navigateToProfile() }
+                createUserFirebase(
+                    username,
+                    email,
+                    password,
+                    context,
+                    favoritos,
+                    completados,
+                    isAdmin,
+                    photoUrl,
+                    drawingArray
+                ) { navigateToProfile() }
             }else{
                 Toast.makeText(context,messageError, Toast.LENGTH_SHORT).show()
             }
@@ -250,7 +262,18 @@ fun RegisterScreen(navigateToLogin: () -> Unit, navigateToProfile: () -> Unit) {
 /**
  * SIGN UP USERS
  */
-private fun createUserFirebase(username: String, email: String, password: String, context: Context, favoritos: ArrayList<String>, completados: ArrayList<String>, isAdmin: Boolean, navigateToProfile: () -> Unit){
+private fun createUserFirebase(
+    username: String,
+    email: String,
+    password: String,
+    context: Context,
+    favoritos: ArrayList<String>,
+    completados: ArrayList<String>,
+    isAdmin: Boolean,
+    photoUrl: String,
+    drawingArray: ArrayList<String>,
+    navigateToProfile: () -> Unit
+){
     FirebaseAuth
         .getInstance()
         .createUserWithEmailAndPassword(email, password)
@@ -266,6 +289,8 @@ private fun createUserFirebase(username: String, email: String, password: String
                 map["favoritos"] = favoritos
                 map["completados"] = completados
                 map["isAdmin"] = isAdmin
+                map["photoUrl"] = photoUrl
+                map["drawingArray"] = drawingArray
 
                 assert(firebaseUser != null)
                 firebaseUser!!.sendEmailVerification()
