@@ -70,7 +70,7 @@ fun ProfileScreen(
     val user = dataViewModel.state.value
 
     val maxSelectionCount by remember {
-        mutableIntStateOf(20)
+        mutableIntStateOf(1)
     }
 
     val buttonText = if (maxSelectionCount > 1) {
@@ -99,10 +99,12 @@ fun ProfileScreen(
         }
     )
 
-    val singlePhotoPickerLaun = rememberLauncherForActivityResult(
+    val singleDrawingPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = {
-            uri -> selectedImages = listOf(uri)
+        onResult = { uri ->
+            selectedImages = listOf(uri)
+            uri?.let { dataViewModel.updateUserDrawing(it) }
+
             Toast.makeText(
                 context,
                 "Se agregaro tu dibujo",
@@ -111,12 +113,14 @@ fun ProfileScreen(
         }
     )
 
-    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+    val multipleDrawingPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = if (maxSelectionCount > 1) {
             maxSelectionCount
         } else { 2 }),
-        onResult = {
-            uris -> selectedImages = uris
+        onResult = { uris ->
+            selectedImages = uris
+
+
             Toast.makeText(
                 context,
                 "Se agregaron tus dibujos",
@@ -125,13 +129,13 @@ fun ProfileScreen(
         }
     )
 
-    fun launchPhotoPicker() {
+    fun launchDrawingPicker() {
         if (maxSelectionCount > 1) {
-            multiplePhotoPickerLauncher.launch(
+            multipleDrawingPickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
         } else {
-            singlePhotoPickerLaun.launch(
+            singleDrawingPickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
         }
@@ -173,13 +177,13 @@ fun ProfileScreen(
 
             // Button to pick several photos
             Button(onClick = {
-                launchPhotoPicker()
+                launchDrawingPicker()
             }) {
                 Text(buttonText)
             }
         }
 
-        ImageLayoutView(selectedImages = selectedImages)
+        ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) })
 
     }
 }

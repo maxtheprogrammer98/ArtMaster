@@ -14,13 +14,16 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 
 
 @Composable
@@ -48,8 +51,15 @@ fun ImageLayoutView(selectedImages: List<Uri?>) {
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.primary)
                     ) {
-                        AsyncImage(
-                            model = uri,
+                        SubcomposeAsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(uri)
+                                .crossfade(true)
+                                .crossfade(1000)
+                                .build(),
+                            loading = {
+                                LinearProgressIndicator()
+                            },
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()

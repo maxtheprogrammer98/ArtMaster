@@ -5,5 +5,6 @@ data class User(
     val email: String = "",
     val photoUrl: String? = null,
     @JvmField
-    val isAdmin: Boolean = false
+    val isAdmin: Boolean = false,
+    val drawingArray: List<String> = emptyList()
 )
