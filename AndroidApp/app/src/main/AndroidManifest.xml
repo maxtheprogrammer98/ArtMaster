@@ -57,6 +57,8 @@
 
         <activity android:name=".alarm.TimePickerActivity"/>
 
+        <activity android:name=".adminPanel.AdminPanelActivity"/>
+
         <receiver android:name=".alarm.AlarmReceiver"/>
     </application>
 

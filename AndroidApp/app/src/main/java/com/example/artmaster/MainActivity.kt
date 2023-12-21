@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.artmaster.adminPanel.AdminPanelActivity
 import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
@@ -312,6 +313,11 @@ open class MainActivity : ComponentActivity() {
             }
             "Notas" -> {
                 Intent(applicationContext, NoteActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Panel Admin" -> {
+                Intent(applicationContext, AdminPanelActivity::class.java).also {
                     startActivity(it)
                 }
             }else ->{
