@@ -96,6 +96,7 @@ class PathsActivity: MainActivity() {
         onPathClick: (id: String) -> Unit,
         navToDetailPathScreen: () -> Unit,
     ) {
+        Log.d("PathScreen", "Initializing PathScreen")
         // Retrieve the UI state from the ViewModel or use a default state
         val pathUiState = pathViewModel?.pathUiState ?: PathUiState()
         // State variables for managing the delete dialog
@@ -115,8 +116,9 @@ class PathsActivity: MainActivity() {
         var searchQuery by remember { mutableStateOf("") }
 
 
-        // Launch the effect to load notes when the composition is first created
+        // Launch the effect to load path when the composition is first created
         LaunchedEffect(key1 = Unit) {
+            Log.d("PathScreen", "LaunchedEffect: Loading paths")
             pathViewModel?.loadPaths()
         }
 
@@ -189,6 +191,7 @@ class PathsActivity: MainActivity() {
                 // Check the state of the paths list and display content accordingly
                 when(val pathsList = pathUiState.pathList) {
                     is PathResources.Loading -> {
+                        Log.d("PathScreen", "PathResources.Loading: ${pathUiState.pathList.data}")
                         // Show a loading indicator when notes are being loaded
                         CircularProgressIndicator(
                             modifier = Modifier
@@ -198,7 +201,7 @@ class PathsActivity: MainActivity() {
                     }
 
                     is PathResources.Success -> {
-                        Log.d("PathScreen", "Paths: ${pathUiState.pathList.data}")
+                        Log.d("PathScreen", "PathResources.Success: ${pathUiState.pathList.data}")
                         // Show the list of paths when successfully loaded
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(1),
@@ -286,6 +289,7 @@ fun PathItem(
     onLongClick: () -> Unit,
     onClick: () -> Unit,
 ) {
+    Log.d("PathItem", "Path: $paths")
     // Card to represent a path item
     androidx.compose.material.Card(
         modifier = Modifier
@@ -300,6 +304,12 @@ fun PathItem(
     ) {
         // Column to arrange content within the card
         Column {
+            // Inside PathItem composable
+            Text(text = "PathItem: ${paths.nombre}")
+            // Inside PathItem composable
+            Text(text = "Nombre: ${paths.nombre}, Dificultad: ${paths.dificultad}")
+
+
             // Name of the path
             Text(
                 text = paths.nombre,
@@ -351,9 +361,10 @@ fun PathItem(
 }
 
 
-// Function to filter notes based on the search query
 private fun filterPaths(paths: List<Paths>, query: String): List<Paths> {
-    return paths.filter {
+    val filteredPaths = paths.filter {
         it.nombre.contains(query, ignoreCase = true) || it.dificultad.contains(query, ignoreCase = true)
     }
+    Log.d("PathScreen", "Filtered Paths: $filteredPaths")
+    return filteredPaths
 }

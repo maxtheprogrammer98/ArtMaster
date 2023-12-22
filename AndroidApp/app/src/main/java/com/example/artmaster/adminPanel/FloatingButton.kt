@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.artmaster.adminPaths.DetailPathActivity
 import com.example.artmaster.notes.NoteActivity
 
 
@@ -84,13 +85,15 @@ fun MultiFloatingButton(
 
                             Identifier.Users.name -> {
                                 Toast.makeText(context, "Agregar usuarios", Toast.LENGTH_SHORT).show()
-                                context.startActivity(Intent(context, NoteActivity::class.java))
+                                //context.startActivity(Intent(context, DetailUserActivity::class.java))
                             }
                             Identifier.Tutorials.name -> {
                                 Toast.makeText(context, "Agregar tutoriales", Toast.LENGTH_SHORT).show()
+                                //context.startActivity(Intent(context, DetailTutorialActivity::class.java))
                             }
                             Identifier.Paths.name -> {
                                 Toast.makeText(context, "Agregar rutas", Toast.LENGTH_SHORT).show()
+                                context.startActivity(Intent(context, DetailPathActivity::class.java))
                             }
                         }
 

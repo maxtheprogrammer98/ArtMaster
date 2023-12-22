@@ -1,6 +1,7 @@
 package com.example.artmaster.adminPaths
 
 import android.util.Log
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -20,7 +21,11 @@ class PathsRepository {
         .firestore.collection(PATHS_COLLECTION_REF)
 
 
+    // Check if there is a logged-in user
+    fun hasUser(): Boolean = Firebase.auth.currentUser != null
 
+
+    // Get all paths as a Flow of Resources
     fun getAllPaths(): Flow<PathResources<List<Paths>>> = callbackFlow {
         var snapshotStateListener: ListenerRegistration? = null
 
@@ -28,22 +33,18 @@ class PathsRepository {
             snapshotStateListener = pathsRef
                 .orderBy("nombre", Query.Direction.ASCENDING)
                 .addSnapshotListener { snapshot, e ->
-                    val response = if (e == null) {
-                        if (snapshot != null) {
-                            val paths = snapshot.toObjects(Paths::class.java)
-                            PathResources.Success(data = paths)
-                        } else {
-                            PathResources.Success(data = emptyList())
-                        }
+                    val response = if (snapshot != null) {
+                        val paths = snapshot.toObjects(Paths::class.java)
+                        PathResources.Success(data = paths)
                     } else {
-                        PathResources.Error(throwable = e.cause)
+                        PathResources.Error(throwable = e?.cause)
                     }
                     trySend(response)
                 }
 
         } catch (e: Exception) {
             // Handle exceptions and send an error resource
-            trySend(PathResources.Error(e))
+            trySend(PathResources.Error(e.cause))
             e.printStackTrace()
         }
 
