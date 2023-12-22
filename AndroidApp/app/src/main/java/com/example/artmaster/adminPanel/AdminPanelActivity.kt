@@ -1,5 +1,6 @@
 package com.example.artmaster.adminPanel
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -41,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
+import com.example.artmaster.adminPaths.PathsActivity
+import com.example.artmaster.notes.DetailActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
 
@@ -53,7 +56,11 @@ class AdminPanelActivity: MainActivity() {
                     AdminPanelScreen(
                         navigateToUsers = { /* Implement navigation to Users activity */ },
                         navigateToTutoriales = { /* Implement navigation to Tutoriales activity */ },
-                        navigateToRutas = { /* Implement navigation to Rutas activity */ }
+                        navigateToRutas = {
+                            Intent(applicationContext, PathsActivity::class.java).also {
+                                startActivity(it)
+                            }
+                        }
                     )
                 }
             }

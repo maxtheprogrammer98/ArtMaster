@@ -59,6 +59,12 @@
 
         <activity android:name=".adminPanel.AdminPanelActivity"/>
 
+        <activity android:name=".adminPaths.PathsActivity"/>
+
+        <activity
+            android:name=".adminPaths.DetailPathActivity"
+            android:parentActivityName=".adminPaths.PathsActivity" />
+
         <receiver android:name=".alarm.AlarmReceiver"/>
     </application>
 
