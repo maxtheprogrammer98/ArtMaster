@@ -44,8 +44,8 @@ class PathsRepository {
 
         } catch (e: Exception) {
             // Handle exceptions and send an error resource
+            Log.e("PathsRepository", "Error in getAllPaths", e)
             trySend(PathResources.Error(e.cause))
-            e.printStackTrace()
         }
 
         awaitClose {

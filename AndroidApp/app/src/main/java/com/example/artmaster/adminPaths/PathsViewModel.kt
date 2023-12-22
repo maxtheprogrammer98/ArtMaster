@@ -25,12 +25,8 @@ class PathsViewModel(
         private set
 
     // Check if a user is logged in
-    val hasUser: Boolean
+    private val hasUser: Boolean
         get() = repository.hasUser()
-
-    // This flow will represent the state of your paths
-    private val _pathsState = MutableStateFlow(pathUiState.pathList)
-    val pathsState: StateFlow<PathResources<List<Paths>>> = _pathsState
 
 
     // Load the user's paths
@@ -38,7 +34,7 @@ class PathsViewModel(
         Log.d("PathsViewModel", "Loading paths...")
         if (hasUser) {
             viewModelScope.launch {
-                    try {
+                try {
                     Log.d("PathViewModel", "Loading paths")
                     repository.getAllPaths().collect { resource ->
                         when (resource) {

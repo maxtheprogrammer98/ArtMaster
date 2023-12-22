@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class PathsActivity: MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +74,7 @@ class PathsActivity: MainActivity() {
                             // Start DetailActivity with the selected noteId
                             Log.d("pathID", "onPathScreen: id: $pathID")
                             Intent(applicationContext, DetailPathActivity::class.java).apply {
-                                putExtra("noteId", pathID)  // Pass the noteId as an extra
+                                putExtra("pathID", pathID)  // Pass the noteId as an extra
                                 startActivity(this)
                             }
                         },
@@ -151,7 +152,10 @@ class PathsActivity: MainActivity() {
             ) { padding ->
 
             // Column to hold the main content
-            Column(modifier = Modifier.fillMaxSize().padding(padding).background(color = MaterialTheme.colorScheme.background)) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(color = MaterialTheme.colorScheme.background)) {
 
                 // Add a search bar
                 TextField(
@@ -187,6 +191,7 @@ class PathsActivity: MainActivity() {
                         }
                     }
                 )
+
 
                 // Check the state of the paths list and display content accordingly
                 when(val pathsList = pathUiState.pathList) {
@@ -231,7 +236,7 @@ class PathsActivity: MainActivity() {
                                 onDismissRequest = {
                                     openDialog = false
                                 },
-                                title = { Text(text = "Eliminar nota?") },
+                                title = { Text(text = "Eliminar ruta?") },
                                 confirmButton = {
                                     Button(
                                         onClick = {
@@ -241,7 +246,7 @@ class PathsActivity: MainActivity() {
                                             openDialog = false
                                             scope.launch {
                                                 scaffoldState.snackbarHostState
-                                                    .showSnackbar("Nota eliminada exitosamente")
+                                                    .showSnackbar("Ruta eliminada exitosamente")
                                             }
                                         },
                                         colors = ButtonDefaults.buttonColors(
@@ -267,8 +272,11 @@ class PathsActivity: MainActivity() {
                         Text(
                             text = pathUiState
                                 .pathList.throwable?.localizedMessage ?: "Error desconocido",
-                            color = Color.Red
+                            color = Color.Red,
+                            modifier = Modifier.padding(16.dp)
                         )
+                        Log.d("Firestore", pathUiState
+                            .pathList.throwable?.localizedMessage ?: "Error desconocido")
                     }
                 }
             }
@@ -304,12 +312,6 @@ fun PathItem(
     ) {
         // Column to arrange content within the card
         Column {
-            // Inside PathItem composable
-            Text(text = "PathItem: ${paths.nombre}")
-            // Inside PathItem composable
-            Text(text = "Nombre: ${paths.nombre}, Dificultad: ${paths.dificultad}")
-
-
             // Name of the path
             Text(
                 text = paths.nombre,
@@ -325,7 +327,7 @@ fun PathItem(
             )
             // Spacer for vertical separation
             Spacer(modifier = Modifier.size(4.dp))
-            // Content of the note with ellipsis for overflow
+
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = paths.informacion,
@@ -341,7 +343,7 @@ fun PathItem(
             }
             // Spacer for vertical separation
             Spacer(modifier = Modifier.padding(4.dp))
-            // Timestamp of the note with ellipsis for overflow
+
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                 Text(
                     text = paths.dificultad,
@@ -362,9 +364,7 @@ fun PathItem(
 
 
 private fun filterPaths(paths: List<Paths>, query: String): List<Paths> {
-    val filteredPaths = paths.filter {
+    return paths.filter {
         it.nombre.contains(query, ignoreCase = true) || it.dificultad.contains(query, ignoreCase = true)
     }
-    Log.d("PathScreen", "Filtered Paths: $filteredPaths")
-    return filteredPaths
 }

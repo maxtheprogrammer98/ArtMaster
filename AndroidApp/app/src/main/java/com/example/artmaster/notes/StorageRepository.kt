@@ -34,7 +34,7 @@ class StorageRepository {
 
         try {
             snapshotStateListener = notesRef
-                .orderBy("nombre", Query.Direction.ASCENDING)
+                .orderBy("timestamp", Query.Direction.ASCENDING)
                 .whereEqualTo("userId", userId)
                 .addSnapshotListener { snapshot, e ->
                     val response = if (snapshot != null) {
