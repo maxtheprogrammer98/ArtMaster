@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.adminPaths.PathsActivity
+import com.example.artmaster.adminTutorials.TutorialsActivity
 import com.example.artmaster.notes.DetailActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
@@ -55,7 +56,11 @@ class AdminPanelActivity: MainActivity() {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     AdminPanelScreen(
                         navigateToUsers = { /* Implement navigation to Users activity */ },
-                        navigateToTutoriales = { /* Implement navigation to Tutoriales activity */ },
+                        navigateToTutoriales = {
+                            Intent(applicationContext, TutorialsActivity::class.java).also {
+                                startActivity(it)
+                            }
+                        },
                         navigateToRutas = {
                             Intent(applicationContext, PathsActivity::class.java).also {
                                 startActivity(it)
