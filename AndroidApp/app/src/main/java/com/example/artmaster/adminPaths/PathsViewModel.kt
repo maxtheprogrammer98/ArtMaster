@@ -62,6 +62,32 @@ class PathsViewModel(
                 throwable = Throwable(message = "El usuario no ha iniciado sesion")
             ))
         }
+
+        // Load only the names
+        viewModelScope.launch {
+            try {
+                repository.getAllNombres().collect { resource ->
+                    when (resource) {
+                        is PathResources.Success -> {
+                            pathUiState = pathUiState.copy(pathNames = resource)
+                            Log.d("PathViewModel", "Names loaded successfully: ${resource.data}")
+                        }
+                        is PathResources.Error -> {
+                            pathUiState = pathUiState.copy(pathNames = resource)
+                            Log.e("PathViewModel", "Error loading names: ${resource.throwable}")
+                        }
+                        is PathResources.Loading -> {
+                            Log.d("PathViewModel", "Loading names...")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                // Handle exceptions
+                pathUiState = pathUiState.copy(pathNames = PathResources.Error(throwable = e))
+            }
+        }
+
+
     }
 
 
@@ -80,5 +106,6 @@ class PathsViewModel(
 // Data class representing the state of the UI in the note list screen
 data class PathUiState(
     val pathList: PathResources<List<Paths>> = PathResources.Loading(),
-    val pathDeletedStatus: Boolean = false
+    val pathDeletedStatus: Boolean = false,
+    val pathNames: PathResources<List<String>> = PathResources.Loading()
 )

@@ -55,6 +55,37 @@ class PathsRepository {
     }
 
 
+    fun getAllNombres(): Flow<PathResources<List<String>>> = callbackFlow {
+        var snapshotStateListener: ListenerRegistration? = null
+
+        try {
+            snapshotStateListener = pathsRef
+                .orderBy("nombre", Query.Direction.ASCENDING)
+                .addSnapshotListener { snapshot, e ->
+                    val response = if (snapshot != null) {
+                        val nombres = snapshot.documents.mapNotNull { document ->
+                            document.getString("nombre")
+                        }
+                        PathResources.Success(data = nombres)
+                    } else {
+                        PathResources.Error(throwable = e?.cause)
+                    }
+                    trySend(response)
+                }
+        } catch (e: Exception) {
+            // Handle exceptions and send an error resource
+            Log.e("PathsRepository", "Error in getAllNombres", e)
+            trySend(PathResources.Error(e.cause))
+        }
+
+        awaitClose {
+            // Remove the snapshot listener when the channel is closed
+            snapshotStateListener?.remove()
+        }
+    }
+
+
+
 
     // Add a new path to the collection
     fun addPath(
