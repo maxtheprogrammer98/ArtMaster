@@ -10,9 +10,10 @@ import kotlinx.coroutines.tasks.await
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestoreException
 
-class UsersViewModel : ViewModel(), GetUserID{
-    // variable that stores user's ID
-    val userID = ""
+class UsersViewModel : ViewModel(), GetUserInfoAuth{
+    // variable that stores user's ID and email
+    val userID = getCurrentUserID()
+    val userEmail = getCurrentUserEmail()
     // mutable variable that stores fetched data
     var userStateProfile = mutableStateOf(UserModels())
 
@@ -32,7 +33,7 @@ class UsersViewModel : ViewModel(), GetUserID{
         // get request (applying handling error structures)
         try {
             usersCollection
-                .whereEqualTo("id",userID)
+                .whereEqualTo("email", userEmail)
                 .get()
                 .await()
                 .map{
@@ -45,6 +46,7 @@ class UsersViewModel : ViewModel(), GetUserID{
             Log.e("error_vm_user", "error trying to fetch user model", e)
         }
         // returning statement
+        Log.i("userVM", userProfile.email)
         return userProfile
     }
 
