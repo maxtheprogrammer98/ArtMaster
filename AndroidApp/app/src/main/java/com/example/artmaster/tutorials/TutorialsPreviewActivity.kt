@@ -1,8 +1,6 @@
 package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
@@ -19,9 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
-import com.example.artmaster.R
 
-class TutorialsActivity : MainActivity(){
+class TutorialsPreviewActivity : MainActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -66,7 +63,9 @@ class TutorialsActivity : MainActivity(){
 
                 CreateSerachBar(pathName = pathName)
 
-                GenerateCardsTutorials(pathName = pathName)
+                GenerateCardsTutorials(
+                    pathName = pathName,
+                    context = applicationContext)
             }
         }
     }

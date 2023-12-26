@@ -13,7 +13,10 @@
         android:theme="@style/Theme.ArtMaster"
         tools:targetApi="31">
         <activity
-            android:name=".tutorials.TutorialsActivity"
+            android:name=".tutorials.TutorialsContentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tutorials.TutorialsPreviewActivity"
             android:exported="false" />
         <activity
             android:name=".paths.PathsActivity"

@@ -16,10 +16,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.R
-import com.example.artmaster.tutorials.TutorialsActivity
+import com.example.artmaster.tutorials.TutorialsPreviewActivity
 
 /**
  * generates cards dynamically from fetched data from Firestore
@@ -144,7 +140,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
  * based on the ID path selected
  */
 fun openTutorials(context: Context, namePath : String){
-    val intent = Intent(context, TutorialsActivity::class.java)
+    val intent = Intent(context, TutorialsPreviewActivity::class.java)
     intent.putExtra("NAME_PATH" , namePath)
     context.startActivity(intent)
 }

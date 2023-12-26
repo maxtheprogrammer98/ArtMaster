@@ -1,6 +1,8 @@
 package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.R
 import com.example.artmaster.user.UserModels
@@ -37,7 +40,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-//TODO: ADD path info as parameter? (possible solution)
 /**
  * renders dynamically the tutorials cards based on the path selected
  */
@@ -47,7 +49,8 @@ import com.google.firebase.ktx.Firebase
 fun GenerateCardsTutorials(
     dataViewModel: TutorialsViewModel = viewModel(),
     pathName:String ,
-    usersViewModel: UsersViewModel = viewModel()
+    usersViewModel: UsersViewModel = viewModel(),
+    context: Context
 ){
     // variable that stores fetched documents
     val tutorialsData = dataViewModel.stateTutorials.value
@@ -128,7 +131,12 @@ fun GenerateCardsTutorials(
             Column {
                 // ---------- BUTTON OPEN  ----------//
                 Button(
-                    onClick = { /*TODO: add function btn visit*/},
+                    onClick = {
+                              openTutorial(
+                                  tutorialModel = tutorial,
+                                  context = context
+                              )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(15.dp, 10.dp)
@@ -171,7 +179,7 @@ fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
     }
 }
 
-//TODO: Turn into asnynchronous function
+
 /**
  * determines whether the tutorial is already stored as "fav"
  * based on the given arguments, and displays the btn accordingly
@@ -263,3 +271,18 @@ fun removeFavTutorial(IDtutorial:String, userModel: UserModels){
             Log.e("tutorials", "error while removing tutorial", exception)
         }
 }
+
+/**
+ * creates intents that redirects user to a new activity where the content is displayed
+ */
+fun openTutorial(tutorialModel: TutorialsModels, context: Context){
+    // defining intent
+    val intentTutorial = Intent(context, TutorialsContentActivity::class.java)
+    // adding serializable object
+    intentTutorial.putExtra("TUTORIAL_DATA", tutorialModel)
+    // initializing intent
+    context.startActivity(intentTutorial)
+}
+
+
+
