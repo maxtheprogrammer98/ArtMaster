@@ -3,14 +3,18 @@ package com.example.artmaster.tutorials
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -19,12 +23,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,13 +44,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.ImageLoader
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.artmaster.R
 import com.example.artmaster.user.UserModels
 import com.example.artmaster.user.UsersViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.SubcomposeAsyncImage
 
+
+//remember variables
 /**
  * renders dynamically the tutorials cards based on the path selected
  */
@@ -86,21 +105,27 @@ fun GenerateCardsTutorials(
 
             }
 
-            // ---------- PREVIEW  ----------//
+            // ---------- PREVIEW IMAGE  ----------//
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
                     .wrapContentSize(Alignment.Center)
             ){
-                //TODO: implement Picasso or similar library to render the image
-                Image(
-                    painter = painterResource(id = R.mipmap.articon),
-                    contentDescription = "preview ${tutorial.nombre}",
+                // using coil library to render images
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(tutorial.imagen)
+                        .crossfade(true)
+                        .crossfade(1000)
+                        .build(),
+                    contentDescription = "imagen ${tutorial.nombre}",
                     modifier = Modifier
-                        .size(100.dp),
-                        //.clip(MaterialTheme.shapes.extraLarge)
-                    alignment = Alignment.Center)
+                        .fillMaxSize(),
+                    loading = {
+                        LinearProgressIndicator()
+                    },
+                    contentScale = ContentScale.Crop)
             }
 
             // ---------- DESCRIPTION  ----------//
@@ -188,7 +213,10 @@ fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
 fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
     Log.i("tutorials", "first test, user ID: ${userProfile.id}")
     // boolean flag
-    var favFlag = false
+    var favFlag by remember {
+        mutableStateOf(false)
+    }
+
     // checking if the tutorial is saved as fav
     for (elem in userProfile.favoritos){
         if (elem.equals(tutorialsModel.id)){
@@ -206,6 +234,11 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
                 .fillMaxWidth()
                 .padding(15.dp, 10.dp)
         ){
+            Icon(
+                painter = painterResource(id = R.drawable.ic_delete) ,
+                contentDescription = stringResource(id = R.string.favoritos),
+                Modifier.padding(5.dp,0.dp))
+
             Text(
                 text = stringResource(id = R.string.eliminar_fav))
         }
@@ -219,6 +252,11 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
                 .fillMaxWidth()
                 .padding(15.dp, 10.dp)
         ){
+            Icon(
+                painter = painterResource(id = R.drawable.ic_star_yellow) ,
+                contentDescription = stringResource(id = R.string.favoritos),
+                Modifier.padding(5.dp,0.dp))
+
             Text(
                 text = stringResource(id = R.string.favoritos))
         }
@@ -241,12 +279,14 @@ fun addFavTutorial(IDtutorial:String, userModel: UserModels){
         .update("favoritos", FieldValue.arrayUnion(IDtutorial))
         .addOnCompleteListener { documentTask ->
             if(documentTask.isSuccessful){
+                // displaying notification
                Log.i("tutorials", "tutorial added!")
             }
         }
         .addOnFailureListener { exception ->
             Log.e("tutorials", "error trying to update tutorial", exception)
         }
+    // updating icon / button text
 }
 
 
@@ -264,6 +304,7 @@ fun removeFavTutorial(IDtutorial:String, userModel: UserModels){
         .update("favoritos", FieldValue.arrayRemove(IDtutorial))
         .addOnCompleteListener { documentTask ->
             if (documentTask.isSuccessful){
+                //notifications
                 Log.i("tutorials", "tutorial removed!")
             }
         }
