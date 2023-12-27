@@ -32,9 +32,9 @@ fun ImageLayoutView(selectedImages: List<Uri?>) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(128.dp),
         contentPadding = PaddingValues(
-            start = 12.dp,
+            start = 24.dp,
             top = 16.dp,
-            end = 12.dp,
+            end = 24.dp,
             bottom = 70.dp
         ),
         content = {

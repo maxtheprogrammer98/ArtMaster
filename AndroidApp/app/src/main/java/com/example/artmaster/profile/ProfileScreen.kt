@@ -1,18 +1,13 @@
 package com.example.artmaster.profile
 
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,11 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,140 +44,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.example.artmaster.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
-@Composable
-fun ProfileScreen(
-    dataViewModel: UserViewModel = viewModel(),
-    navigateToLogin: () -> Unit
-) {
-    val context = LocalContext.current
-
-    val user = dataViewModel.state.value
-
-    val maxSelectionCount by remember {
-        mutableIntStateOf(1)
-    }
-
-    val buttonText = if (maxSelectionCount > 1) {
-        "Agrega tus dibujos"
-    } else {
-        "Selecciona un dibujo"
-    }
-
-    var selectedImage by remember { mutableStateOf<Uri?>(null) }
-
-    var selectedImages by remember {
-        mutableStateOf<List<Uri?>>(emptyList())
-    }
-
-    val profilePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            selectedImage = uri
-            // Update user's photo in ViewModel and Firebase
-            uri?.let { dataViewModel.updateUserPhoto(it) }
-            Toast.makeText(
-                context,
-                "Se actualizo tu foto de perfil.",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    )
-
-    val singleDrawingPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            selectedImages = listOf(uri)
-            uri?.let { dataViewModel.updateUserDrawing(it) }
-
-            Toast.makeText(
-                context,
-                "Se agregaro tu dibujo",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    )
-
-    val multipleDrawingPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = if (maxSelectionCount > 1) {
-            maxSelectionCount
-        } else { 2 }),
-        onResult = { uris ->
-            selectedImages = uris
-
-
-            Toast.makeText(
-                context,
-                "Se agregaron tus dibujos",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    )
-
-    fun launchDrawingPicker() {
-        if (maxSelectionCount > 1) {
-            multipleDrawingPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        } else {
-            singleDrawingPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        }
-    }
-
-
-    fun launchPhotoProfilePicker() {
-        profilePhotoPickerLauncher.launch(
-            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-        )
-    }
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        ProfileHeader(user, navigateToLogin)
-        Spacer(modifier = Modifier.height(16.dp))
-        ProfileInfoItem(Icons.Default.Person, "Nombre", user.name, true, onEditClick = {})
-        Spacer(modifier = Modifier.height(8.dp))
-        ProfileInfoItem(Icons.Default.Email, "Correo Electrónico", user.email, false)
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Button to pick a new profile photo
-            Button(onClick = {
-                launchPhotoProfilePicker()
-            }) {
-                Text("Subir foto de perfil")
-            }
-
-            // Button to pick several photos
-            Button(onClick = {
-                launchDrawingPicker()
-            }) {
-                Text(buttonText)
-            }
-        }
-
-        ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) })
-
-    }
-}
 
 
 @Composable
@@ -197,8 +59,7 @@ fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .padding(top = 40.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(8.dp))
@@ -295,7 +156,7 @@ fun ProfileInfoItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -437,3 +298,5 @@ fun updateUserField(userId: String, field: String, value: String) {
             Log.w("Firestore", "Error al actualizar el campo $field", e)
         }
 }
+
+
