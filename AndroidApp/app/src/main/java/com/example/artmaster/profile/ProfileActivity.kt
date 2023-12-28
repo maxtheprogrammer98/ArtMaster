@@ -16,7 +16,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -124,8 +127,14 @@ class ProfileActivity: MainActivity() {
             )
         }
 
+        val scrollState = rememberScrollState()
+
 
         Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .heightIn(max = 1000.dp),
             scaffoldState = scaffoldState,
             topBar = {
                 // Custom top bar from the MainActivity
@@ -141,7 +150,7 @@ class ProfileActivity: MainActivity() {
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .padding(padding)
                         .background(MaterialTheme.colorScheme.background),
                 ) {
@@ -156,7 +165,7 @@ class ProfileActivity: MainActivity() {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 16.dp),
+                            .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         // First Card
