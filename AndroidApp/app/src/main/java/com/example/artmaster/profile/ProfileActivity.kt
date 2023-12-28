@@ -4,10 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +25,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -42,10 +38,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
+import com.example.artmaster.R
 import com.example.artmaster.login.Login
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
@@ -78,64 +77,47 @@ class ProfileActivity: MainActivity() {
 
         val user = dataViewModel.state.value
 
-
-        var selectedImage by remember { mutableStateOf<Uri?>(null) }
-
-        var selectedImages by remember {
-            mutableStateOf<List<Uri?>>(emptyList())
-        }
-
-        val profilePhotoPickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                selectedImage = uri
-                // Update user's photo in ViewModel and Firebase
-                uri?.let { dataViewModel.updateUserPhoto(it) }
-                Toast.makeText(
-                    context,
-                    "Se actualizo tu foto de perfil.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        )
-
-        val singleDrawingPickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                selectedImages = listOf(uri)
-                uri?.let { dataViewModel.updateUserDrawing(it) }
-
-                Toast.makeText(
-                    context,
-                    "Se agregaro tu dibujo",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        )
-
-
-        fun launchDrawingPicker() {
-            singleDrawingPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        }
-
-
-        fun launchPhotoProfilePicker() {
-            profilePhotoPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        }
-
         val scrollState = rememberScrollState()
 
+        var multiFloatingState by remember {
+            mutableStateOf(MultiFloatingState.Collapse)
+        }
+
+        val items = listOf(
+            MinFabItem(
+                icon = ImageBitmap.imageResource(id = R.drawable.ic_profile_picture),
+                label = "Agregar foto de perfil",
+                identifier = Identifier.Photo.name
+            ),
+            MinFabItem(
+                icon = ImageBitmap.imageResource(id = R.drawable.ic_add_drawing),
+                label = "Agregar dibujo",
+                identifier = Identifier.Drawing.name
+            ),
+            MinFabItem(
+                icon = ImageBitmap.imageResource(id = R.drawable.ic_change_password),
+                label = "Cambiar contrasenia",
+                identifier = Identifier.Password.name
+            ),
+        )
 
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .heightIn(max = 1000.dp),
+                .heightIn(max = 800.dp),
             scaffoldState = scaffoldState,
+            floatingActionButton = {
+                MultiFloatingButton(
+                    multiFloatingState = multiFloatingState,
+                    onMultiFabStateChange = {
+                        multiFloatingState = it
+                    },
+                    items = items,
+                    context = context,
+                    dataViewModel = dataViewModel
+                )
+            },
             topBar = {
                 // Custom top bar from the MainActivity
                 super.TobBarMain()
@@ -210,27 +192,6 @@ class ProfileActivity: MainActivity() {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = "Favoritos")
                             }
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // Button to pick a new profile photo
-                        Button(onClick = {
-                            launchPhotoProfilePicker()
-                        }) {
-                            Text("Subir foto de perfil")
-                        }
-
-                        // Button to pick several photos
-                        Button(onClick = {
-                            launchDrawingPicker()
-                        }) {
-                            Text("Sube un dibujo")
                         }
                     }
 
