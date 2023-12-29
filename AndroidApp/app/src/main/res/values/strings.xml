@@ -86,5 +86,7 @@
     <string name="eliminar_fav">Eliminar de fav</string>
     <string name="descripcion">Descripcion</string>
     <string name="informacion">Informacion</string>
+    <string name="incompleto">Incompleto</string>
+    <string name="completado">Completado</string>
 
 </resources>

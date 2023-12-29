@@ -8,7 +8,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -17,13 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
+import com.example.artmaster.user.GetUserInfoAuth
+import com.example.artmaster.user.UsersViewModel
 import java.io.Serializable
 
 /**
  * this activity contains the tutorials content, from the main activity
  * the menu bar is inhereted
  */
-class TutorialsContentActivity : MainActivity() {
+class TutorialsContentActivity : MainActivity(), GetUserInfoAuth {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -62,6 +67,7 @@ class TutorialsContentActivity : MainActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun TutorialsLayoutContent(tutorialModels: TutorialsModels){
+        val scrollingState = rememberScrollState()
         /* ------------------ MAIN LAYOUT ----------------------- */
         Scaffold(
             topBar = {
@@ -72,13 +78,17 @@ class TutorialsContentActivity : MainActivity() {
             },
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollingState)
         ){
+            /* ------------------ PORTADA / FRONT IMAGE ----------------------- */
+            AddPortada(linkImg = tutorialModels.imagen)
             /* ------------------ CONTENT ----------------------- */
             AddTutorialContent(
+                id = tutorialModels.id,
                 nombre = tutorialModels.nombre,
-                descripcion = tutorialModels.descripcion,
                 informacion = tutorialModels.informacion,
-                calificacion = tutorialModels.calificacion)
+                calificacion = tutorialModels.calificacion,
+            )
         }
     }
 

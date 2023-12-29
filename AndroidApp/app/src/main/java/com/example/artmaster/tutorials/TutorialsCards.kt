@@ -99,10 +99,6 @@ fun GenerateCardsTutorials(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp)
 
-                AddDoneIcon(
-                    userDoneTutorials = userProfile.completados,
-                    tutorialName = tutorial.nombre)
-
             }
 
             // ---------- PREVIEW IMAGE  ----------//
@@ -114,7 +110,7 @@ fun GenerateCardsTutorials(
                 AsyncImage(
                     //TODO: Add real images in FS
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://loremflickr.com/400/400/art?lock=1")
+                        .data("https://loremflickr.com/600/600/art?lock=1")
                         .crossfade(true)
                         .build(),
                     contentDescription = stringResource(id = R.string.imagen),
@@ -131,10 +127,20 @@ fun GenerateCardsTutorials(
             ){
                 Text(
                     text = tutorial.descripcion,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(0.dp,10.dp))
+
+                val estado = addDoneIcon(
+                    userDoneTutorials = userProfile.completados,
+                    tutorialName = tutorial.id )
+
+                Text(
+                    text = "estado: $estado",
                     textAlign = TextAlign.Center)
+
             }
 
-            // ---------- DESCRIPTION  ----------//
+            // ---------- RATING  ----------//
             //TODO: Add rating bar
             Column(
                 modifier = Modifier
@@ -178,9 +184,11 @@ fun GenerateCardsTutorials(
  * determines whether the tutorial is completed or not based on the provided arguments
  */
 @Composable
-fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
+fun addDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String):String{
     // flag reference value
     var done = false
+    // base value
+    var status = ""
     // validating process
     for(elem in userDoneTutorials){
         if (elem.equals(tutorialName)){
@@ -189,14 +197,13 @@ fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
     }
     // creating icon based on flag state
     if(done){
-        Icon(
-            imageVector = Icons.Filled.Done,
-            contentDescription = stringResource(id = R.string.tutorial_completado))
+        status = stringResource(id = R.string.completado) + "\u2713"
     }else{
-        Icon(
-            imageVector = Icons.Filled.Clear,
-            contentDescription = stringResource(id = R.string.tutorial_no_completado))
+       status = stringResource(id = R.string.incompleto)
     }
+
+    //returning result
+    return status
 }
 
 
