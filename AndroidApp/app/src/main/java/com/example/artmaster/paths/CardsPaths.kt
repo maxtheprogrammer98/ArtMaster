@@ -6,10 +6,12 @@ import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import com.example.artmaster.R
 import com.example.artmaster.tutorials.TutorialsPreviewActivity
 
@@ -54,20 +62,23 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                     .shadow(5.dp, RectangleShape),
                 elevation = CardDefaults.cardElevation(),
     ){
-        //TODO: implement picasso to render images or painter
 
         // ----------- IMAGE ---------//
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
-                .wrapContentSize(Alignment.Center)
-                .padding(15.dp)
         ){
-            Image(
-                painter = painterResource(id = R.mipmap.articon),
-                contentDescription = "art icon",
-                alignment = Alignment.Center)
+           AsyncImage(
+               model = ImageRequest.Builder(LocalContext.current)
+                   //TODO: upload real images in FS
+                   .data("https://loremflickr.com/400/400/art?lock=1")
+                   .crossfade(true)
+                   .build(),
+               contentDescription = stringResource(id = R.string.imagen),
+               contentScale = ContentScale.Crop,
+               modifier = Modifier.fillMaxSize()
+           )
         }
 
         // ----------- TITLE ---------//

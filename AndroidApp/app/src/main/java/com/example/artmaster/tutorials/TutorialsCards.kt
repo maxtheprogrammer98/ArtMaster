@@ -110,22 +110,16 @@ fun GenerateCardsTutorials(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .wrapContentSize(Alignment.Center)
             ){
-                // using coil library to render images
-                SubcomposeAsyncImage(
+                AsyncImage(
+                    //TODO: Add real images in FS
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(tutorial.imagen)
+                        .data("https://loremflickr.com/400/400/art?lock=1")
                         .crossfade(true)
-                        .crossfade(1000)
                         .build(),
-                    contentDescription = "imagen ${tutorial.nombre}",
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    loading = {
-                        LinearProgressIndicator()
-                    },
-                    contentScale = ContentScale.Crop)
+                    contentDescription = stringResource(id = R.string.imagen),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize())
             }
 
             // ---------- DESCRIPTION  ----------//
@@ -173,7 +167,8 @@ fun GenerateCardsTutorials(
                 // ---------- BUTTON FAVS  ----------//
                 AddFavButton(
                     userProfile = userProfile,
-                    tutorialsModel = tutorial)
+                    tutorialsModel = tutorial,
+                    context = context)
             }
         }
     }
@@ -210,7 +205,7 @@ fun AddDoneIcon(userDoneTutorials:ArrayList<String>, tutorialName: String){
  * based on the given arguments, and displays the btn accordingly
  */
 @Composable
-fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
+fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels, context: Context){
     Log.i("tutorials", "first test, user ID: ${userProfile.id}")
     // boolean flag
     var favFlag by remember {
@@ -228,7 +223,7 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
         // if the tutorial is already stored as fav can be deleted
         Button(
             onClick = {
-                removeFavTutorial(tutorialsModel.id, userProfile)
+                removeFavTutorial(tutorialsModel.id, userProfile, context)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -246,7 +241,7 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
         // if not, the tutorial can be added to favs
         Button(
             onClick = {
-                addFavTutorial(tutorialsModel.id, userProfile)
+                addFavTutorial(tutorialsModel.id, userProfile, context)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -267,7 +262,7 @@ fun AddFavButton(userProfile:UserModels, tutorialsModel: TutorialsModels){
 /**
  * updates the user profile with the new fav tutorial
  */
-fun addFavTutorial(IDtutorial:String, userModel: UserModels){
+fun addFavTutorial(IDtutorial:String, userModel: UserModels, context: Context){
     // instantiating FB
     val db = Firebase.firestore
     val documentID = userModel.id
@@ -281,19 +276,24 @@ fun addFavTutorial(IDtutorial:String, userModel: UserModels){
             if(documentTask.isSuccessful){
                 // displaying notification
                Log.i("tutorials", "tutorial added!")
+                Toast.makeText(
+                    context,
+                    "tutorial añadido a favs",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         .addOnFailureListener { exception ->
             Log.e("tutorials", "error trying to update tutorial", exception)
         }
-    // updating icon / button text
+    // TODO: updating icon / button text
 }
 
 
 /**
  * removes the tutorial from the user's profile
  */
-fun removeFavTutorial(IDtutorial:String, userModel: UserModels){
+fun removeFavTutorial(IDtutorial:String, userModel: UserModels,context: Context){
     // instantiating FB
     val db = Firebase.firestore
     val documentID = userModel.id
@@ -306,11 +306,18 @@ fun removeFavTutorial(IDtutorial:String, userModel: UserModels){
             if (documentTask.isSuccessful){
                 //notifications
                 Log.i("tutorials", "tutorial removed!")
+                Toast.makeText(
+                    context,
+                    "el tutorial ha sido eliminado de favs, " +
+                            "refresca la seccion para volver a añadirlo",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         .addOnFailureListener { exception ->
             Log.e("tutorials", "error while removing tutorial", exception)
         }
+    // TODO: updating icon / button text
 }
 
 /**
