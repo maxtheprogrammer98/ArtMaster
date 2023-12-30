@@ -11,10 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -77,7 +82,10 @@ fun AddTutorialContent(
     nombre: String,
     informacion : String,
     calificacion: Float,
+    userViewModel: UsersViewModel = viewModel()
 ){
+    // initializing user VM
+    val userModel = userViewModel.userStateProfile.value
     // --------------------- CONTENEDOR GENERAL -----------------------//
     //TODO: improve styling
     Column(
@@ -123,12 +131,12 @@ fun AddTutorialContent(
         }
         // ------------ MARK AS COMPLETE BTN ---------------//
         Button(
-            onClick = { MarkAsCompelted(tutorialID = id) },
+            onClick = { MarkAsCompelted(id, userModel) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
         ){
-            Text(text = stringResource(id = R.string.completado))
+            Text(text = stringResource(id = R.string.agregar_completado))
         }
 
         // ------------ ADD TO FAVS BTN ---------------//
@@ -143,13 +151,10 @@ fun AddTutorialContent(
  * @param userEmail
  * which is extracted through an interface method
  */
-@Composable
 fun MarkAsCompelted(
     tutorialID: String,
-    userViewModel: UsersViewModel = viewModel()
+    userModel: UserModels
 ){
-    //userModel
-    val userModel = userViewModel.userStateProfile.value
     // flag variable
     var alreadyCompleted = false
     // instantiating firebase
@@ -164,15 +169,31 @@ fun MarkAsCompelted(
     }
     // update request
     if (!alreadyCompleted){
+        // ADDING TUTORIAL
        userDocRef
            .update("completados", FieldValue.arrayUnion(tutorialID))
            .addOnCompleteListener { task ->
                if (task.isSuccessful){
-                   Log.i("update completed", "update done!" )
+                   // notification
+                   Log.i("update completed", "tutorial added!" )
+
                } else {
-                   Log.i("update failed", "update failed")
+                   // notification
+                   Log.e("update failed", "the tutorial couldn't be added")
                }
            }
+    }else{
+        // REMOVING TUTORIAL
+        userDocRef
+            .update("completados", FieldValue.arrayRemove(tutorialID))
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    // notification
+                    Log.i("update completed", "tutorial removed")
+                } else {
+                    // notification
+                    Log.e("update failed", "the tutorial couldn't be removed!")
+                }
+            }
     }
 }
-
