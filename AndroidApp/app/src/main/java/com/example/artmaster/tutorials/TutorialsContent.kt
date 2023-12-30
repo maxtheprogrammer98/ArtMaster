@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -136,7 +137,24 @@ fun AddTutorialContent(
                 .fillMaxWidth()
                 .padding(20.dp)
         ){
-            Text(text = stringResource(id = R.string.agregar_completado))
+            // flag variable
+            var flagCompleted by remember {
+                mutableStateOf(false)
+            }
+            // updating flag state if there's a match
+            for (elem in userModel.completados){
+                if(elem == id){
+                    flagCompleted = true
+                }
+            }
+            // creating text based on validation
+            if(flagCompleted){
+                Text(text = "quitar de completados")
+            } else {
+                Text(text = "agregar a completados")
+            }
+
+
         }
 
         // ------------ ADD TO FAVS BTN ---------------//
