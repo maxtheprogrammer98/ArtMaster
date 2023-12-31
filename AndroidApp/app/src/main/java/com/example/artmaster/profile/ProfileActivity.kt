@@ -212,26 +212,31 @@ class ProfileActivity: MainActivity() {
                                 val passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*()])(?=\\S+\$).{8,}\$".toRegex()
                                 if (newPassword.matches(passwordRegex)) {
                                     // Reauthenticate the user with their current password
-                                    val userProfile = Firebase.auth.currentUser
-                                    val credential = EmailAuthProvider.getCredential(userProfile?.email!!, currentPassword)
-                                    userProfile.reauthenticate(credential)
-                                        .addOnSuccessListener {
-                                            // Change the user's password
-                                            userProfile.updatePassword(newPassword)
-                                                .addOnSuccessListener {
-                                                    // Password changed successfully
-                                                    showDialog.value = false
-                                                    Toast.makeText(context, "Contrasena actualizada", Toast.LENGTH_SHORT).show()
-                                                }
-                                                .addOnFailureListener { exception ->
-                                                    // Handle password change errors
-                                                    Toast.makeText(context, "Fallo al cambiar la contrasena: ${exception.message}", Toast.LENGTH_SHORT).show()
-                                                }
-                                        }
-                                        .addOnFailureListener { exception ->
-                                            // Handle reauthentication errors
-                                            Toast.makeText(context, "Fallo en reautenticar: ${exception.message}", Toast.LENGTH_LONG).show()
-                                        }
+                                    if (currentPassword.isNotBlank()){
+                                        val userProfile = Firebase.auth.currentUser
+                                        val credential = EmailAuthProvider.getCredential(userProfile?.email!!, currentPassword)
+
+                                        userProfile.reauthenticate(credential)
+                                            .addOnSuccessListener {
+                                                // Change the user's password
+                                                userProfile.updatePassword(newPassword)
+                                                    .addOnSuccessListener {
+                                                        // Password changed successfully
+                                                        showDialog.value = false
+                                                        Toast.makeText(context, "Contrasena actualizada", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                    .addOnFailureListener { exception ->
+                                                        // Handle password change errors
+                                                        Toast.makeText(context, "Fallo al cambiar la contrasena: ${exception.message}", Toast.LENGTH_SHORT).show()
+                                                    }
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                // Handle reauthentication errors
+                                                Toast.makeText(context, "Fallo en reautenticar: ${exception.message}", Toast.LENGTH_LONG).show()
+                                            }
+                                    } else {
+                                        Toast.makeText(context, "Su contrasena actual debe ser valida", Toast.LENGTH_LONG).show()
+                                    }
                                 } else {
                                     // Notify the user that the new password does not meet the criteria
                                     Toast.makeText(context, "La contrasena debe tener al menos 8 caracteres e incluir una letra mayuscula, un numero, y un caracter especial", Toast.LENGTH_LONG).show()
