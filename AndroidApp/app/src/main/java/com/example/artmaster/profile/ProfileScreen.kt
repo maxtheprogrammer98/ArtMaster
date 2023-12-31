@@ -23,11 +23,14 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,9 +44,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.example.artmaster.R
@@ -300,3 +305,55 @@ fun updateUserField(userId: String, field: String, value: String) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChangePasswordDialog(
+    onConfirmClicked: (String, String) -> Unit,
+    onDismissClicked: () -> Unit
+) {
+    var currentPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+
+    Dialog(
+        onDismissRequest = onDismissClicked
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Cambia tu password",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            TextField(
+                value = currentPassword,
+                onValueChange = { currentPassword = it },
+                label = { Text("Password actual") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = newPassword,
+                onValueChange = { newPassword = it },
+                label = { Text("Nueva password") },
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = onDismissClicked,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Text(text = "Cancelar")
+                }
+                TextButton(
+                    onClick = { onConfirmClicked(currentPassword, newPassword) }
+                ) {
+                    Text(text = "Confirmar")
+                }
+            }
+        }
+    }
+}

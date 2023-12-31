@@ -47,6 +47,9 @@ import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.login.Login
 import com.example.artmaster.ui.theme.ArtMasterTheme
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class ProfileActivity: MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +74,7 @@ class ProfileActivity: MainActivity() {
         dataViewModel: UserViewModel = viewModel(),
         navigateToLogin: () -> Unit
     ) {
+        val showDialog = remember { mutableStateOf(false) }
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState()
@@ -101,6 +105,11 @@ class ProfileActivity: MainActivity() {
             ),
         )
 
+        fun showCustomDialog() {
+            showDialog.value = true
+        }
+
+
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
@@ -115,7 +124,8 @@ class ProfileActivity: MainActivity() {
                     },
                     items = items,
                     context = context,
-                    dataViewModel = dataViewModel
+                    dataViewModel = dataViewModel,
+                    showCustomDialog = ::showCustomDialog
                 )
             },
             topBar = {
@@ -193,6 +203,45 @@ class ProfileActivity: MainActivity() {
                                 Text(text = "Favoritos")
                             }
                         }
+                    }
+
+                    if (showDialog.value) {
+                        ChangePasswordDialog(
+                            onConfirmClicked = { currentPassword, newPassword ->
+                                // Enforce specific password criteria
+                                val passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*()])(?=\\S+\$).{8,}\$".toRegex()
+                                if (newPassword.matches(passwordRegex)) {
+                                    // Reauthenticate the user with their current password
+                                    val userProfile = Firebase.auth.currentUser
+                                    val credential = EmailAuthProvider.getCredential(userProfile?.email!!, currentPassword)
+                                    userProfile.reauthenticate(credential)
+                                        .addOnSuccessListener {
+                                            // Change the user's password
+                                            userProfile.updatePassword(newPassword)
+                                                .addOnSuccessListener {
+                                                    // Password changed successfully
+                                                    showDialog.value = false
+                                                    Toast.makeText(context, "Contrasena actualizada", Toast.LENGTH_SHORT).show()
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    // Handle password change errors
+                                                    Toast.makeText(context, "Fallo al cambiar la contrasena: ${exception.message}", Toast.LENGTH_SHORT).show()
+                                                }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            // Handle reauthentication errors
+                                            Toast.makeText(context, "Fallo en reautenticar: ${exception.message}", Toast.LENGTH_LONG).show()
+                                        }
+                                } else {
+                                    // Notify the user that the new password does not meet the criteria
+                                    Toast.makeText(context, "La contrasena debe tener al menos 8 caracteres e incluir una letra mayuscula, un numero, y un caracter especial", Toast.LENGTH_LONG).show()
+                                }
+                            },
+                            onDismissClicked = {
+                                showDialog.value = false
+                            }
+                        )
+
                     }
 
                     ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) })

@@ -56,6 +56,7 @@ fun MultiFloatingButton(
     context: Context,
     items: List<MinFabItem>,
     dataViewModel: UserViewModel = viewModel(),
+    showCustomDialog: () -> Unit
     ){
 
     val transition = updateTransition(targetState = multiFloatingState, label = "transition")
@@ -172,7 +173,7 @@ fun MultiFloatingButton(
                                 launchDrawingPicker()
                             }
                             Identifier.Password.name -> {
-                                Toast.makeText(context, "Cambiar contrasenia", Toast.LENGTH_SHORT).show()
+                                showCustomDialog()
                             }
                         }
 
