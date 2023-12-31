@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +45,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
@@ -59,7 +62,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
     val auth = FirebaseAuth.getInstance()
-
+    val showDialog = remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -121,6 +124,17 @@ fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
                 contentDescription = null,
                 modifier = Modifier
                     .size(42.dp)
+                    .clickable {
+                        showDialog.value = true
+                    }
+            )
+        }
+
+        if (showDialog.value) {
+            CustomDialog(
+                onDismissClicked = {
+                    showDialog.value = false
+                }
             )
         }
 
@@ -319,6 +333,8 @@ fun ChangePasswordDialog(
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
         ) {
             Text(
                 text = "Cambia tu password",
@@ -336,10 +352,14 @@ fun ChangePasswordDialog(
                 value = newPassword,
                 onValueChange = { newPassword = it },
                 label = { Text("Nueva password") },
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
             )
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(
@@ -352,6 +372,42 @@ fun ChangePasswordDialog(
                     onClick = { onConfirmClicked(currentPassword, newPassword) }
                 ) {
                     Text(text = "Confirmar")
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun CustomDialog(
+    onDismissClicked: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissClicked
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.background).padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.odin_message),
+                fontWeight = FontWeight.Light,
+                fontFamily = FontFamily.Monospace,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = onDismissClicked
+                ) {
+                    Text(text = "Hail, Odin!")
                 }
             }
         }
