@@ -1,7 +1,7 @@
 package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -10,12 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,19 +29,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.example.artmaster.R
-import com.example.artmaster.user.UserModels
 import com.example.artmaster.user.UsersViewModel
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.lang.reflect.Field
+
+object btnDone{
+    // default value
+    var txtBtn = "Agregar a 'completados'"
+    var flagState = false
+}
 
 /**
  * Creates front page, using Picasso to render the image fetched from DB
@@ -83,10 +83,8 @@ fun AddTutorialContent(
     nombre: String,
     informacion : String,
     calificacion: Float,
-    userViewModel: UsersViewModel = viewModel()
+    context: Context
 ){
-    // initializing user VM
-    val userModel = userViewModel.userStateProfile.value
     // --------------------- CONTENEDOR GENERAL -----------------------//
     //TODO: improve styling
     Column(
@@ -131,31 +129,7 @@ fun AddTutorialContent(
             )
         }
         // ------------ MARK AS COMPLETE BTN ---------------//
-        Button(
-            onClick = { MarkAsCompelted(id, userModel) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ){
-            // flag variable
-            var flagCompleted by remember {
-                mutableStateOf(false)
-            }
-            // updating flag state if there's a match
-            for (elem in userModel.completados){
-                if(elem == id){
-                    flagCompleted = true
-                }
-            }
-            // creating text based on validation
-            if(flagCompleted){
-                Text(text = "quitar de completados")
-            } else {
-                Text(text = "agregar a completados")
-            }
-
-
-        }
+        AddDoneButton(tutorialID = id, context = context)
 
         // ------------ ADD TO FAVS BTN ---------------//
 
@@ -164,54 +138,117 @@ fun AddTutorialContent(
     }
 }
 
-/**
- * marks tutorial as completed
- * @param userEmail
- * which is extracted through an interface method
- */
-fun MarkAsCompelted(
+
+@Composable
+fun AddDoneButton(
+    userViewModel: UsersViewModel = viewModel(),
     tutorialID: String,
-    userModel: UserModels
-){
-    // flag variable
-    var alreadyCompleted = false
-    // instantiating firebase
-    val db = Firebase.firestore
-    // document reference
-    val userDocRef = db.collection("usuarios").document(userModel.id)
-    // validating whether the tutorial is already marked as completed
-    for (tutorial in userModel.completados){
-        if (tutorial == tutorialID){
-            alreadyCompleted = true
+    context: Context){
+    // user's ID
+    val userID = userViewModel.userStateProfile.value.id
+    // validating tutorial state
+    for (elem in userViewModel.userStateProfile.value.completados){
+        if (elem.equals(tutorialID)){
+            btnDone.flagState = true
         }
     }
-    // update request
-    if (!alreadyCompleted){
-        // ADDING TUTORIAL
-       userDocRef
-           .update("completados", FieldValue.arrayUnion(tutorialID))
-           .addOnCompleteListener { task ->
-               if (task.isSuccessful){
-                   // notification
-                   Log.i("update completed", "tutorial added!" )
-
-               } else {
-                   // notification
-                   Log.e("update failed", "the tutorial couldn't be added")
-               }
-           }
-    }else{
-        // REMOVING TUTORIAL
-        userDocRef
-            .update("completados", FieldValue.arrayRemove(tutorialID))
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful){
-                    // notification
-                    Log.i("update completed", "tutorial removed")
-                } else {
-                    // notification
-                    Log.e("update failed", "the tutorial couldn't be removed!")
-                }
-            }
+    // adding btn
+    Button(
+        onClick = { validateTutorialState(tutorialID,userID,context) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ){
+        // adding btn text
+        Text(text = btnDone.txtBtn)
     }
+
+}
+
+/**
+ * validates whether the tutorial is completed based on flag and executes the
+ * according request
+ */
+fun validateTutorialState(
+    tutorialID: String,
+    userID: String,
+    context: Context
+){
+    if(btnDone.flagState){
+        // updating flags
+        btnDone.flagState = false
+        btnDone.txtBtn = "agregar a 'completados'"
+        // executing update request
+        removeTutorialDone(tutorialID, userID, context)
+
+    } else {
+        // updating flags
+        btnDone.flagState = true
+        btnDone.txtBtn = "eliminar de 'completados'"
+        // executing update request
+        addTutorialDone(tutorialID,userID,context)
+    }
+}
+
+/**
+ * it updates the user's document adding the done tutorial
+ */
+fun addTutorialDone(
+    tutorialID: String,
+    userID: String,
+    context:Context){
+    // instantiating DB
+    val db = Firebase.firestore
+    // document reference
+    val userDocRef = db.collection("usuarios").document(userID)
+    // update request
+    userDocRef
+        .update("completados", FieldValue.arrayUnion(tutorialID))
+        .addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                // notification
+                Toast.makeText(
+                    context,
+                    "tutorial agregado a 'completados'",
+                    Toast.LENGTH_SHORT).show()
+            } else {
+                //notification
+                Toast.makeText(
+                    context,
+                    "error: ${task.exception}",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+}
+
+/**
+ * updates the user's document removing the tutorial from 'completed' array
+ */
+
+fun removeTutorialDone(
+    tutorialID: String,
+    userID: String,
+    context: Context
+){
+    // instantiating firebase DB
+    val db = Firebase.firestore
+    // document reference
+    val userDocRef = db.collection("usuarios").document(userID)
+    // update request
+    userDocRef
+        .update("completados", FieldValue.arrayRemove(tutorialID))
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                Toast.makeText(
+                    context,
+                    "el tutorial se ha eliminado de 'completados'",
+                    Toast.LENGTH_SHORT).show()
+            } else{
+                Toast.makeText(
+                    context,
+                    "error: ${task.exception}",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+
 }
