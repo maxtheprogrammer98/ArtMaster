@@ -40,8 +40,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 object btnDone{
-    // default value
-    var txtBtn = "Agregar a 'completados'"
+    // default values
     var flagState = false
 }
 
@@ -144,23 +143,32 @@ fun AddDoneButton(
     userViewModel: UsersViewModel = viewModel(),
     tutorialID: String,
     context: Context){
+    // text remember variable
+    var btnText by remember {
+        mutableStateOf("Agregar a 'completados'")
+    }
     // user's ID
     val userID = userViewModel.userStateProfile.value.id
     // validating tutorial state
     for (elem in userViewModel.userStateProfile.value.completados){
         if (elem.equals(tutorialID)){
             btnDone.flagState = true
+            btnText = "Eliminar de completados"
         }
     }
     // adding btn
     Button(
-        onClick = { validateTutorialState(tutorialID,userID,context) },
+        onClick = {
+            // executing update request
+            validateTutorialState(tutorialID,userID,context);
+            // updating text btn
+            btnText = setBtnDoneText(btnDone.flagState)},
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
     ){
         // adding btn text
-        Text(text = btnDone.txtBtn)
+        Text(text = btnText)
     }
 
 }
@@ -177,18 +185,31 @@ fun validateTutorialState(
     if(btnDone.flagState){
         // updating flags
         btnDone.flagState = false
-        btnDone.txtBtn = "agregar a 'completados'"
         // executing update request
         removeTutorialDone(tutorialID, userID, context)
 
     } else {
         // updating flags
         btnDone.flagState = true
-        btnDone.txtBtn = "eliminar de 'completados'"
         // executing update request
         addTutorialDone(tutorialID,userID,context)
     }
 }
+
+
+fun setBtnDoneText(flagState: Boolean) : String{
+    // base variable
+    var btnText = ""
+    // validation
+    if(flagState){
+        btnText = "Eliminar de 'completados'"
+    }else{
+        btnText = "Agregar a 'completados'"
+    }
+    // return statement
+    return btnText
+}
+
 
 /**
  * it updates the user's document adding the done tutorial
