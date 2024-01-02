@@ -14,7 +14,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,9 +38,10 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-object btnDone{
+object ButtonsFlags{
     // default values
-    var flagState = false
+    var btnDone = false
+    var btnFavs = false
 }
 
 /**
@@ -131,9 +131,10 @@ fun AddTutorialContent(
         AddDoneButton(tutorialID = id, context = context)
 
         // ------------ ADD TO FAVS BTN ---------------//
+        AddBtnFavs(tutorialID = id, context = context)
 
         // ------------ RATING BAR ---------------//
-
+        // TODO: Add rating bar!
     }
 }
 
@@ -145,15 +146,15 @@ fun AddDoneButton(
     context: Context){
     // text remember variable
     var btnText by remember {
-        mutableStateOf("Agregar a 'completados'")
+        mutableStateOf("Agregar a 'completados' ✅")
     }
     // user's ID
     val userID = userViewModel.userStateProfile.value.id
     // validating tutorial state
     for (elem in userViewModel.userStateProfile.value.completados){
         if (elem.equals(tutorialID)){
-            btnDone.flagState = true
-            btnText = "Eliminar de completados"
+            ButtonsFlags.btnDone = true
+            btnText = "Eliminar de completados ❎"
         }
     }
     // adding btn
@@ -162,7 +163,7 @@ fun AddDoneButton(
             // executing update request
             validateTutorialState(tutorialID,userID,context);
             // updating text btn
-            btnText = setBtnDoneText(btnDone.flagState)},
+            btnText = setBtnDoneText(ButtonsFlags.btnDone)},
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
@@ -182,15 +183,15 @@ fun validateTutorialState(
     userID: String,
     context: Context
 ){
-    if(btnDone.flagState){
+    if(ButtonsFlags.btnDone){
         // updating flags
-        btnDone.flagState = false
+        ButtonsFlags.btnDone = false
         // executing update request
         removeTutorialDone(tutorialID, userID, context)
 
     } else {
         // updating flags
-        btnDone.flagState = true
+        ButtonsFlags.btnDone = true
         // executing update request
         addTutorialDone(tutorialID,userID,context)
     }
@@ -202,9 +203,9 @@ fun setBtnDoneText(flagState: Boolean) : String{
     var btnText = ""
     // validation
     if(flagState){
-        btnText = "Eliminar de 'completados'"
+        btnText = "Eliminar de 'completados' ❎"
     }else{
-        btnText = "Agregar a 'completados'"
+        btnText = "Agregar a 'completados' ✅"
     }
     // return statement
     return btnText
@@ -272,4 +273,147 @@ fun removeTutorialDone(
             }
         }
 
+}
+
+/**
+ * enables the user to add and remove the tutorial from 'favs'
+ */
+@Composable
+fun AddBtnFavs(
+    tutorialID: String,
+    context: Context,
+    userViewModel: UsersViewModel = viewModel()
+){
+    // extracting user's id
+    val userID = userViewModel.userStateProfile.value.id
+    // remember text variable
+    var favBtnText by remember {
+        mutableStateOf("Agregar a 'favoritos'")
+    }
+    // checking whether is already stored as 'fav'
+    for (fav in userViewModel.userStateProfile.value.favoritos){
+        if(fav.equals(tutorialID)){
+            ButtonsFlags.btnFavs = true
+            favBtnText = "Eliminar de 'favoritos'"
+        }
+    }
+    // adding button
+    Button(
+        onClick = {
+            // executes update request
+            validateFavState(tutorialID,userID,context);
+            // updates text
+            favBtnText = setFavBtnText(ButtonsFlags.btnFavs)},
+        modifier = Modifier.fillMaxWidth()
+    ){
+        // adding text
+        Text(text = favBtnText)
+    }
+}
+
+/**
+ * sets the text of the btn depending on the flag state
+ */
+fun setFavBtnText(flagState: Boolean):String{
+    //base value
+    var btnText = ""
+    // validation
+    if (flagState){
+        btnText = "Eliminar de 'favoritos'"
+    } else {
+        btnText = "Agregar a 'favoritos'"
+    }
+    // return statement
+    return btnText
+}
+
+
+/**
+ * checks whether the tutorial is stored as fav in order
+ * to execute the update request accordingly
+ */
+fun validateFavState(
+    tutorialID: String,
+    userID: String,
+    context: Context
+){
+    if(ButtonsFlags.btnFavs){
+        // updating flag
+        ButtonsFlags.btnFavs = false
+        // executing request
+        removeFavTutorial(tutorialID,userID,context)
+    }else{
+        // updating flag
+        ButtonsFlags.btnFavs = true
+        // executing request
+        addFavTutorial(userID,tutorialID,context)
+    }
+}
+
+/**
+ * adds the tutorial to favs (which is an array property in the user document)
+ */
+fun addFavTutorial(
+    userID: String,
+    tutorialID: String,
+    context: Context
+){
+    //instantiating firebase
+    val db = Firebase.firestore
+    // document reference
+    val userDocRef = db.collection("usuarios").document(userID)
+    // update request
+    userDocRef
+        // executing request
+        .update("favoritos", FieldValue.arrayUnion(tutorialID))
+        // handling results
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                //notification success
+                Toast.makeText(
+                    context,
+                    "el tutorial se ha agregado a 'favoritos'",
+                    Toast.LENGTH_SHORT).show()
+            } else {
+                //notification error
+                Toast.makeText(
+                    context,
+                    "error ${task.exception}",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+}
+
+/**
+ * removes the tutorial to favs (which is an array property in the user document)
+ */
+fun removeFavTutorial(
+    tutorialID: String,
+    userID: String,
+    context: Context
+){
+    // instantiating firestore
+    val db = Firebase.firestore
+    // document reference
+    val userDocRef = db.collection("usuarios").document(userID)
+    // update request
+    userDocRef
+        // executing request
+        .update("favoritos", FieldValue.arrayRemove(tutorialID))
+        // handling results
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                // notification success
+                Toast.makeText(
+                    context,
+                    "El tutorial ha sido eliminado de 'favoritos'",
+                    Toast.LENGTH_SHORT).show()
+            } else {
+                // notification error
+                Toast.makeText(
+                    context,
+                    "error ${task.exception}",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
 }
