@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -332,7 +333,8 @@ fun ChangePasswordDialog(
         onDismissRequest = onDismissClicked
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
@@ -386,30 +388,44 @@ fun CustomDialog(
     Dialog(
         onDismissRequest = onDismissClicked
     ) {
-        Column(
+        Box(
             modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
-                .background(MaterialTheme.colorScheme.background).padding(16.dp)
         ) {
-            Text(
-                text = stringResource(R.string.odin_message),
-                fontWeight = FontWeight.Light,
-                fontFamily = FontFamily.Monospace,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.End
+                    .padding(16.dp)
             ) {
-                TextButton(
-                    onClick = onDismissClicked
+                Image(
+                    painterResource(id = R.drawable.ic_odin),
+                    contentDescription = "Odin Icon",
+                    modifier = Modifier
+                        .size(48.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+                Text(
+                    text = stringResource(R.string.odin_message),
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 11.sp,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "Hail, Odin!")
+                    TextButton(
+                        onClick = onDismissClicked
+                    ) {
+                        Text(text = "Hail, Odin!")
+                    }
                 }
             }
         }
     }
 }
+

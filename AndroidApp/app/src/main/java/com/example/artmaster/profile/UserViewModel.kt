@@ -10,7 +10,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -105,6 +107,37 @@ class UserViewModel : ViewModel() {
             }
         }
     }
+
+    fun deleteUserDrawing(drawingUrl: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val auth = FirebaseAuth.getInstance()
+            val userId = auth.currentUser?.uid
+
+            userId?.let {
+                try {
+                    // Remove the drawing URL from the user's drawing array in Firestore
+                    updateUserField(it, "drawingArray", FieldValue.arrayRemove(drawingUrl))
+
+                    // Delete the drawing from Firebase Storage
+                    val storageRef = Firebase.storage.reference
+                    val drawingUri = Uri.parse(drawingUrl)
+                    val drawingRef = storageRef.child(drawingUri.lastPathSegment!!)
+                    drawingRef.delete()
+                        .addOnSuccessListener {
+                            Log.d("ProfileScreen", "Drawing deleted successfully")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.d("ProfileScreen", "ERROR: $e")
+                        }
+
+                } catch (e: Exception) {
+                    Log.d("ProfileScreen", "ERROR: $e")
+                }
+            }
+        }
+    }
+
+
 
     fun updateUserField(userId: String, field: String, value: Any) {
         val db = FirebaseFirestore.getInstance()

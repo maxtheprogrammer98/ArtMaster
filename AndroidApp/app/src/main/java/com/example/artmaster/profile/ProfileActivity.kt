@@ -249,7 +249,9 @@ class ProfileActivity: MainActivity() {
 
                     }
 
-                    ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) })
+                    ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) },onDeleteDrawing = { uriToDelete ->
+                        dataViewModel.deleteUserDrawing(uriToDelete.toString())
+                    })
                 }
 
         }
