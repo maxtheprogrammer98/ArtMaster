@@ -90,5 +90,6 @@
     <string name="completado">Completado</string>
     <string name="agregar_completado">Agregar a completados </string>
     <string name="quitar_completado">Eliminar de completados</string>
+    <string name="estrella_icono">Icono estrella</string>
 
 </resources>

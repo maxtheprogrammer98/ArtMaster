@@ -4,14 +4,22 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -134,7 +142,13 @@ fun AddTutorialContent(
         AddBtnFavs(tutorialID = id, context = context)
 
         // ------------ RATING BAR ---------------//
-        // TODO: Add rating bar!
+        RatingBar(onRatingChange = {task ->
+            //testing rating system
+            Toast.makeText(
+                context,
+                "opcion elegida: ${task}",
+                Toast.LENGTH_SHORT).show()
+        })
     }
 }
 
@@ -304,7 +318,9 @@ fun AddBtnFavs(
             validateFavState(tutorialID,userID,context);
             // updates text
             favBtnText = setFavBtnText(ButtonsFlags.btnFavs)},
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp, 0.dp)
     ){
         // adding text
         Text(text = favBtnText)
@@ -416,4 +432,61 @@ fun removeFavTutorial(
                     Toast.LENGTH_SHORT).show()
             }
         }
+}
+
+/**
+ * creates a rating bar based on the specified scale assigned in the parameters
+ */
+@Composable
+fun RatingBar(
+    maxRatingBar: Int = 5,
+    initialRatingBar: Int = 1,
+    onRatingChange: (Int) -> Unit
+){
+    // remember variable
+    var rating by remember {
+        mutableStateOf(initialRatingBar)
+    }
+
+    // adding container and its parameters
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ){
+        // generating items dynamically
+        for(i in 1..maxRatingBar){
+            RatingBarItem(
+                rating = i ,
+                isSelected = i <= rating,
+                onRatingSelected = {
+                    rating = i
+                    onRatingChange(i)
+                })
+        }
+    }
+}
+
+/**
+ * generates the rating bar items
+ */
+@Composable
+fun RatingBarItem(
+    rating: Int,
+    isSelected: Boolean,
+    onRatingSelected: () -> Unit
+){
+    // changing styles based on boolean flag
+    val icon = if(isSelected) Icons.Default.Star else Icons.TwoTone.Star
+    val color = if(isSelected) Color.Yellow else Color.Gray
+
+    // generating icon
+    Icon(
+        imageVector = icon,
+        contentDescription = stringResource(id = R.string.estrella_icono),
+        tint = color,
+        modifier = Modifier
+            .size(40.dp)
+            .clickable { onRatingSelected() })
 }
