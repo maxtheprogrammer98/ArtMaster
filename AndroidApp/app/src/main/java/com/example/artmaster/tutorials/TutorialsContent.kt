@@ -2,6 +2,7 @@ package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,6 +51,7 @@ object ButtonsFlags{
     // default values
     var btnDone = false
     var btnFavs = false
+    var btnRate = false
 }
 
 /**
@@ -89,8 +91,8 @@ fun AddTutorialContent(
     id: String,
     nombre: String,
     informacion : String,
-    calificacion: Float,
-    context: Context
+    context: Context,
+    userEmail: String
 ){
     // --------------------- CONTENEDOR GENERAL -----------------------//
     //TODO: improve styling
@@ -143,11 +145,17 @@ fun AddTutorialContent(
 
         // ------------ RATING BAR ---------------//
         RatingBar(onRatingChange = {task ->
-            //testing rating system
+            // notification
             Toast.makeText(
                 context,
-                "opcion elegida: ${task}",
+                "puntuacion seleccionada: ${task}",
                 Toast.LENGTH_SHORT).show()
+            // uploading result to DB
+            getScore(
+                userEmail = userEmail,
+                tutorialID = id,
+                puntuacion = task
+            )
         })
     }
 }
@@ -452,7 +460,7 @@ fun RatingBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(20.dp,10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         // generating items dynamically
@@ -489,4 +497,97 @@ fun RatingBarItem(
         modifier = Modifier
             .size(40.dp)
             .clickable { onRatingSelected() })
+}
+
+/**
+ * it adds a new document into the "votos" collection which stores
+ * all votes based on the following properties (tutorialID, userEmail, puntuacion)
+ */
+fun getScore(
+    userEmail: String,
+    tutorialID: String,
+    puntuacion: Int
+){
+    // instantiating firebase DB:
+    val db = Firebase.firestore
+    // collection reference
+    val collectionRef = db.collection("votos")
+    // updating document (if user already voted)
+    collectionRef
+        // filtering results
+        .whereEqualTo("tutorialID", tutorialID)
+        .whereEqualTo("userEmail", userEmail)
+        .get()
+        // handling results
+        .addOnSuccessListener { querySnapshot ->
+            if (querySnapshot.isEmpty){
+                // a new document is created
+            } else{
+                // otherwise the ID is extracted in order to update the document
+                for (document in querySnapshot){
+                    val data = document.data
+                    val id = data.get("id")
+                }
+            }
+        }
+}
+
+/**
+ * updates the document according to the arguments passed
+ */
+fun updateScore(
+    documentID : String,
+    puntuacion: Int
+){
+    // instantiating firestore
+    val db = Firebase.firestore
+    // document reference
+    val docRef = db.collection("votos").document(documentID)
+    // update request
+    docRef
+        // executing request
+        .update("puntuacion", puntuacion)
+        // handling results
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                // notification
+                Log.i("score", "score has been updated")
+            } else {
+                // notification
+                Log.e("score", "error: ${task.exception}")
+            }
+        }
+}
+
+/**
+ * if the user hasn't voted already a new document is created with the chosen score
+ */
+fun createScore(
+    tutorialID: String,
+    userEmail: String,
+    puntuacion: Int
+){
+    // creating hash from passed arguments
+    val newScore = hashMapOf(
+        "tutorialID" to tutorialID,
+        "userEmail" to userEmail,
+        "puntuacion" to puntuacion
+    )
+    // instantiating database
+    val db = Firebase.firestore
+    // collection reference
+    val collectionRef = db.collection("votos")
+    // create request
+    collectionRef
+        // executing request
+        .add(puntuacion)
+        // handling results
+        .addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                // notification
+                Log.i("score", "a new score has been created")
+            } else{
+                Log.e("score", "error has ocurred ${task.exception}")
+            }
+        }
 }

@@ -87,8 +87,8 @@ class TutorialsContentActivity : MainActivity(), GetUserInfoAuth {
                 id = tutorialModels.id,
                 nombre = tutorialModels.nombre,
                 informacion = tutorialModels.informacion,
-                calificacion = tutorialModels.calificacion,
-                context = applicationContext
+                context = applicationContext,
+                userEmail = getCurrentUserEmail()
             )
         }
     }

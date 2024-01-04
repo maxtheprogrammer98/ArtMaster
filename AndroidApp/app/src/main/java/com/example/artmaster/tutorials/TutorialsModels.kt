@@ -13,7 +13,6 @@ data class TutorialsModels(
     val video:String = "",
     val informacion:String = "",
     val descripcion:String = "",
-    val calificacion:Float = 0.0f,
     @DocumentId
     val id:String = ""
 ) : Serializable
