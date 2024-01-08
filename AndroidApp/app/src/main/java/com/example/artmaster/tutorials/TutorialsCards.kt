@@ -148,7 +148,7 @@ fun GenerateCardsTutorials(
                     .wrapContentSize(Alignment.Center)
             ){
                 Text(
-                    text = "calificacion: ${tutorial.calificacion}",
+                    text = "calificacion: ?",
                     textAlign = TextAlign.Center)
             }
 

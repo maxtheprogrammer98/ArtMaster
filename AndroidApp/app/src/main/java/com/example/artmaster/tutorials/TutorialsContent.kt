@@ -521,12 +521,22 @@ fun getScore(
         // handling results
         .addOnSuccessListener { querySnapshot ->
             if (querySnapshot.isEmpty){
-                // a new document is created
+                // a new document is created with the chosen score
+                createScore(
+                    tutorialID = tutorialID,
+                    userEmail = userEmail,
+                    puntuacion = puntuacion
+                )
             } else{
                 // otherwise the ID is extracted in order to update the document
                 for (document in querySnapshot){
-                    val data = document.data
-                    val id = data.get("id")
+                    // extracting document ID
+                    val voteID = document.id
+                    // executing updating function
+                    updateScore(
+                        documentID = voteID,
+                        puntuacion = puntuacion
+                    )
                 }
             }
         }
@@ -539,6 +549,8 @@ fun updateScore(
     documentID : String,
     puntuacion: Int
 ){
+    // testing arguments
+    Log.i("score ID", "id: $documentID" )
     // instantiating firestore
     val db = Firebase.firestore
     // document reference
@@ -567,10 +579,11 @@ fun createScore(
     userEmail: String,
     puntuacion: Int
 ){
-    // creating hash from passed arguments
-    val newScore = hashMapOf(
-        "tutorialID" to tutorialID,
+    // creating map from passed arguments
+    // enterely based on string values
+    val newScore = mapOf<String,Any>(
         "userEmail" to userEmail,
+        "tutorialID" to tutorialID,
         "puntuacion" to puntuacion
     )
     // instantiating database
@@ -580,7 +593,7 @@ fun createScore(
     // create request
     collectionRef
         // executing request
-        .add(puntuacion)
+        .add(newScore)
         // handling results
         .addOnCompleteListener { task ->
             if(task.isSuccessful){
