@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -338,6 +339,5 @@ fun openTutorial(tutorialModel: TutorialsModels, context: Context){
     // initializing intent
     context.startActivity(intentTutorial)
 }
-
 
 

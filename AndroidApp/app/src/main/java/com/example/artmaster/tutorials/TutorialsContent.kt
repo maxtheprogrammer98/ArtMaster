@@ -144,6 +144,13 @@ fun AddTutorialContent(
         AddBtnFavs(tutorialID = id, context = context)
 
         // ------------ RATING BAR ---------------//
+        // description
+        Text(
+            text = stringResource(id = R.string.calificacion),
+            modifier = Modifier
+                .padding(10.dp),
+            textAlign = TextAlign.Center)
+        // rating bar
         RatingBar(onRatingChange = {task ->
             // notification
             Toast.makeText(
@@ -460,7 +467,7 @@ fun RatingBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp,10.dp),
+            .padding(20.dp, 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         // generating items dynamically

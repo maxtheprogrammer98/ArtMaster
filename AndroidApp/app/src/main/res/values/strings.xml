@@ -91,5 +91,6 @@
     <string name="agregar_completado">Agregar a completados </string>
     <string name="quitar_completado">Eliminar de completados</string>
     <string name="estrella_icono">Icono estrella</string>
+    <string name="calificacion">Califica el tutorial!</string>
 
 </resources>
