@@ -9,6 +9,7 @@ import android.widget.RatingBar
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -142,16 +143,7 @@ fun GenerateCardsTutorials(
             }
 
             // ---------- RATING  ----------//
-            //TODO: Add rating bar
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.Center)
-            ){
-                Text(
-                    text = "calificacion: ?",
-                    textAlign = TextAlign.Center)
-            }
+            AddRatingBar(tutorialID = tutorial.id)
 
             // ---------- BUTTONS ------------ //
             Column {
@@ -340,4 +332,29 @@ fun openTutorial(tutorialModel: TutorialsModels, context: Context){
     context.startActivity(intentTutorial)
 }
 
+@Composable
+fun AddRatingBar(
+    votosViewModel: VotosViewModel = viewModel(),
+    tutorialID: String
+){
+    // seting filter value in VM
+    val VM = votosViewModel.setTutorialID(tutorialID)
+    // getting average score
+    val averageScore = votosViewModel.calculateAverage()
+
+    // creating wrapper element
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .padding(10.dp)
+    ){
+        // adding starts (based on the function result)
+        for(elem in 1 until averageScore){
+            Icon(
+                painter = painterResource(id = R.drawable.ic_star_yellow),
+                contentDescription = stringResource(id = R.string.estrella_icono) )
+        }
+    }
+}
 

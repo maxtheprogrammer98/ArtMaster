@@ -15,22 +15,27 @@ import kotlinx.coroutines.tasks.await
 /**
  * retrieves the votes related to the selected tutorial
  */
-class VotosViewModel(tutorialID: String) : ViewModel(){
+class VotosViewModel : ViewModel(){
     // base variable that stores fetched documents
     @SuppressLint("MutableCollectionMutableState")
     val stateVotes = mutableStateOf(
         arrayListOf<VotosModels>()
     )
 
-    // initializes the class
-    init {
-        getDataVotes(tutorialID = tutorialID)
+    // base variable that stores the filter parameter
+    private var tutorialID : String = ""
+    // setter
+    fun setTutorialID(ID : String){
+        tutorialID = ID
+        getDataVotes(tutorialID)
     }
 
-    // function that fetches data asynchronously
+    /**
+     * function that fetches data asynchronously
+     */
     suspend fun fetchVotes(tutorialID: String) : ArrayList<VotosModels>{
         // val that stores fetch data temporaly
-        var fetchDocuments = ArrayList<VotosModels>()
+        val fetchDocuments = ArrayList<VotosModels>()
         // instantiating firebase
         val db = Firebase.firestore
         // collection reference
@@ -54,11 +59,37 @@ class VotosViewModel(tutorialID: String) : ViewModel(){
         return fetchDocuments
     }
 
-    //triggering function
+    /**
+     * Triggering fetching function
+     */
     fun getDataVotes(tutorialID: String){
         viewModelScope.launch {
             stateVotes.value = fetchVotes(tutorialID)
         }
+    }
+
+
+    /**
+     * Calculates the average score of the tutorial displayed
+     */
+    fun calculateAverage() : Int{
+        // counter variable
+        var counter = 0
+        // total scores
+        var totalScore = 0
+        // result variable
+        val finalResult:Int
+        // calculating
+        stateVotes.value.forEach { elem ->
+            // increasing counter
+            counter++
+            // adding score to total
+            totalScore += elem.puntuacion
+        }
+        // final result
+        finalResult = totalScore / counter
+        // returning result
+        return finalResult
     }
 
 }
