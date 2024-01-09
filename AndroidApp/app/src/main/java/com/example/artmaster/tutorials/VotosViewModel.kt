@@ -87,7 +87,11 @@ class VotosViewModel : ViewModel(){
             totalScore += elem.puntuacion
         }
         // final result
-        finalResult = totalScore / counter
+        if (counter != 0){
+            finalResult = totalScore / counter
+        } else {
+            finalResult = 0
+        }
         // returning result
         return finalResult
     }

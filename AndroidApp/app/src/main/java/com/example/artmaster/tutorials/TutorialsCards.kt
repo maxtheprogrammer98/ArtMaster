@@ -143,6 +143,10 @@ fun GenerateCardsTutorials(
             }
 
             // ---------- RATING  ----------//
+            Text(
+                text = stringResource(id = R.string.calificacion_titulo),
+                textAlign = TextAlign.Center)
+
             AddRatingBar(tutorialID = tutorial.id)
 
             // ---------- BUTTONS ------------ //
@@ -347,10 +351,11 @@ fun AddRatingBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .padding(10.dp)
+            .padding(5.dp)
+            .wrapContentSize(Alignment.Center)
     ){
         // adding starts (based on the function result)
-        for(elem in 1 until averageScore){
+        for(elem in 0 until averageScore){
             Icon(
                 painter = painterResource(id = R.drawable.ic_star_yellow),
                 contentDescription = stringResource(id = R.string.estrella_icono) )
