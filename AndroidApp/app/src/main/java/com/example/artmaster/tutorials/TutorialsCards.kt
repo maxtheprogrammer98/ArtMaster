@@ -143,9 +143,15 @@ fun GenerateCardsTutorials(
             }
 
             // ---------- RATING  ----------//
-            Text(
-                text = stringResource(id = R.string.calificacion_titulo),
-                textAlign = TextAlign.Center)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center)
+            ){
+                Text(
+                    text = stringResource(id = R.string.calificacion_titulo),
+                    textAlign = TextAlign.Center)
+            }
 
             AddRatingBar(tutorialID = tutorial.id)
 
