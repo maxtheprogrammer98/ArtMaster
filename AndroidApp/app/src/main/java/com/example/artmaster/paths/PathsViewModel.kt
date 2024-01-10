@@ -54,4 +54,18 @@ class PathsViewModel : ViewModel(){
             state.value = fetchDataFS()
         }
     }
+
+    /**
+     * it returns the tutorials that a specific path contains
+     */
+    fun getSpecificData(pathID: String) : ArrayList<String>{
+        // base variable
+        var filterResult = ArrayList<String>()
+        // filter process
+        state.value.filter {it.id.equals(pathID)}.forEach { elem ->
+            filterResult = elem.tutoriales
+        }
+        // statement
+        return filterResult
+    }
 }

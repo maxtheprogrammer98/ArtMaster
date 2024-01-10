@@ -12,7 +12,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 
 class UsersViewModel : ViewModel(), GetUserInfoAuth{
     // variable that stores user's ID and email
-    val userID = getCurrentUserID()
     val userEmail = getCurrentUserEmail()
     // mutable variable that stores fetched data
     var userStateProfile = mutableStateOf(UserModels())
@@ -23,7 +22,7 @@ class UsersViewModel : ViewModel(), GetUserInfoAuth{
     }
 
     //asynchronous request
-    suspend fun fetchUserProfile(userID:String) : UserModels {
+    suspend fun fetchUserProfile() : UserModels {
         // variable that stores fetched data
         var userProfile = UserModels()
         //instantiating firebase
@@ -53,7 +52,7 @@ class UsersViewModel : ViewModel(), GetUserInfoAuth{
     // processing previous request
     fun getUserData(){
         viewModelScope.launch {
-            userStateProfile.value = fetchUserProfile(userID)
+            userStateProfile.value = fetchUserProfile()
         }
     }
 
