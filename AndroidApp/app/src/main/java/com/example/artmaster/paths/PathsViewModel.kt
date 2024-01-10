@@ -59,11 +59,16 @@ class PathsViewModel : ViewModel(){
      * it returns the tutorials that a specific path contains
      */
     fun getSpecificData(pathID: String) : ArrayList<String>{
+        //testing
+        Log.i("VMPaths", pathID )
+        Log.i("VMPaths", "size 1: ${state.value.size}")
         // base variable
         var filterResult = ArrayList<String>()
         // filter process
-        state.value.filter {it.id.equals(pathID)}.forEach { elem ->
-            filterResult = elem.tutoriales
+        state.value.forEach { elem ->
+            if(elem.id.equals(pathID)){
+                filterResult = elem.tutorialesID
+            }
         }
         // statement
         return filterResult

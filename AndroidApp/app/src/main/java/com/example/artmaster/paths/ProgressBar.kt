@@ -28,6 +28,7 @@ fun CustomLinearProgressBar(
     pathsViewModel: PathsViewModel = viewModel(),
 ){
     // base variables
+    //TODO: fix this problem! pathTutorials is empty!
     val pathTutorials = pathsViewModel.getSpecificData(pathID)
     val userDoneTutorials = usersViewModel.userStateProfile.value.completados
     val percentageDone = calculatePercentageDone(userDoneTutorials, pathTutorials) / 100
