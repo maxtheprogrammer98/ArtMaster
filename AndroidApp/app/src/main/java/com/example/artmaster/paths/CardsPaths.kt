@@ -125,6 +125,16 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                 fontWeight = FontWeight.Bold)
         }
         // ------ PROGRESS BAR -----------//
+        // indicative text
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center)
+                .padding(3.dp)
+        ){
+            Text(text = "progreso")
+        }
+        // progress bar
         CustomLinearProgressBar(pathID = path.id)
 
         // ----------- BUTTON ---------//
