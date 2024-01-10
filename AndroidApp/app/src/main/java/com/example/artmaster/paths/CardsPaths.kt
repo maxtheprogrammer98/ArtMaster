@@ -125,9 +125,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                 fontWeight = FontWeight.Bold)
         }
         // ------ PROGRESS BAR -----------//
-
-        //TODO: FIX PROBLEM WITH PROGRESS BAR
-        //CreateProgressBar(tutorialsPath = path.tutoriales)
+        CustomLinearProgressBar(pathID = path.id)
 
         // ----------- BUTTON ---------//
         Button(
