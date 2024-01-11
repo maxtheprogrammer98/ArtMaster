@@ -17,25 +17,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
+import com.example.artmaster.paths.CustomCiricularProgressBar
+import com.example.artmaster.paths.CustomLinearProgressBar
 
 class TutorialsPreviewActivity : MainActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val intentInfo = intent.getStringExtra("NAME_PATH")
-        Log.i("pathNombre", "is equal to: $intentInfo")
+        // receiving data from intent
+        val namePath = intent.getStringExtra("NAME_PATH")
+        val idPath = intent.getStringExtra("ID_PATH")
 
         setContent {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                TutorialsLayout(intentInfo.toString())
+                TutorialsLayout(namePath.toString(), idPath.toString())
             }
         }
     }
 
+    /**
+     * creates the entire layout for this section
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    fun TutorialsLayout(pathName:String){
+    fun TutorialsLayout(pathName:String, pathID:String){
         // ------------------------ VARIABLES ----------------------//
         val scrollingState = rememberScrollState()
 
@@ -59,10 +65,13 @@ class TutorialsPreviewActivity : MainActivity(){
                     .verticalScroll(scrollingState)
                     .padding(0.dp, 70.dp)
             ){
-                //TODO: INSERT COMPOSABLE FILE (PRESENTATION)
+                // widget that shows progress
+                CustomCiricularProgressBar(IDpath = pathID)
 
+                // creates search bar that interacts with the view model
                 CreateSerachBar(pathName = pathName)
 
+                // generates cards dynamically
                 GenerateCardsTutorials(
                     pathName = pathName,
                     context = applicationContext)

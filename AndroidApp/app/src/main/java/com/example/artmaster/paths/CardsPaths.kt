@@ -125,22 +125,13 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                 fontWeight = FontWeight.Bold)
         }
         // ------ PROGRESS BAR -----------//
-        // indicative text
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center)
-                .padding(3.dp)
-        ){
-            Text(text = "progreso")
-        }
-        // progress bar
+
         CustomLinearProgressBar(pathID = path.id)
 
         // ----------- BUTTON ---------//
         Button(
             onClick = {
-                openTutorials(context, path.nombre)
+                openTutorials(context, path.nombre, path.id)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -158,8 +149,9 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
  * Starts a new activity where the tutorials will be displayed
  * based on the ID path selected
  */
-fun openTutorials(context: Context, namePath : String){
+fun openTutorials(context: Context, namePath : String, IDpath : String){
     val intent = Intent(context, TutorialsPreviewActivity::class.java)
     intent.putExtra("NAME_PATH" , namePath)
+    intent.putExtra("ID_PATH", IDpath)
     context.startActivity(intent)
 }
