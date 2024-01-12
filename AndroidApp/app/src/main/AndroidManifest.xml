@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ArtMaster"
         tools:targetApi="31">
         <activity
+            android:name=".favorites.FavActivity"
+            android:exported="false" />
+        <activity
             android:name=".tutorials.TutorialsContentActivity"
             android:exported="false" />
         <activity
