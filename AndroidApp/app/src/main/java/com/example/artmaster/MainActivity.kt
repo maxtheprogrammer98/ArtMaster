@@ -46,6 +46,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.artmaster.favorites.FavActivity
 import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.home.HomeActivity
 import com.example.artmaster.login.Login
@@ -322,6 +323,11 @@ open class MainActivity : ComponentActivity() {
             }
             "Rutas" ->{
                 Intent(applicationContext, PathsActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Favoritos" ->{
+                Intent(applicationContext, FavActivity::class.java).also {
                     startActivity(it)
                 }
             }
