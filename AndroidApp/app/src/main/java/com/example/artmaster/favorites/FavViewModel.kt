@@ -8,8 +8,10 @@ import com.example.artmaster.tutorials.TutorialsModels
 import com.example.artmaster.user.GetUserInfoAuth
 import com.example.artmaster.user.UserModels
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -18,14 +20,13 @@ import kotlinx.coroutines.tasks.await
  */
 class FavViewModel : ViewModel(),GetUserInfoAuth {
     // base variables
-    val tutorialsModels = mutableStateOf(ArrayList<TutorialsModels>())
-    private val userFavs = mutableStateOf(ArrayList<String>())
-
+    var tutorialsModels = mutableStateOf(ArrayList<TutorialsModels>())
+    var userFavs = mutableStateOf(ArrayList<String>())
+    val userEmail = getCurrentUserEmail()
 
     //initializing
     init {
         getFavsUser()
-        getFavsTutorials()
     }
     
     /**
@@ -47,61 +48,74 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
                 .await()
                 .map {
                     // deserializing document
-                    val result = it.toObject(UserModels::class.java)
+                    val documentID = it.id
+                    val result = it.toObject(UserModels::class.java).copy(id = documentID)
                     favs = result.completados
                 }
         } catch (e : FirebaseFirestoreException){
             // handling errors
             Log.e("favs" , "error while fetching user data", e)
         }
+        //testing
+        Log.i("favs VM", "favs array's size: ${favs.size}")
         // return statement
         return favs
     }
 
     /**
-     * launches asynchronous function
-     */
-    fun getFavsUser(userEmail: String = getCurrentUserEmail()){
-        viewModelScope.launch {
-            userFavs.value = fetchUserFavs(userEmail)
-        }
-    }
-
-    /**
      * retrieves the fav tutorials from firestore
      */
-    private suspend fun fetchTutorialsFav() : ArrayList<TutorialsModels>{
+    private fun fetchTutorialsFav() : ArrayList<TutorialsModels>{
         // base variable
         var tutorials = ArrayList<TutorialsModels>()
         // instantiating firestore
         val db = Firebase.firestore
         // referencing collection
         val collectionRef = db.collection("tutoriales")
-        // executing get request
         try {
-            collectionRef
-                .whereArrayContains("id", userFavs)
-                .get()
-                .await()
-                .map {
-                    // deserializing documents
-                    val result = it.toObject(TutorialsModels::class.java)
-                    tutorials.add(result)
-                }
+            // executing get request over each element
+            userFavs.value.forEach { elem ->
+                // document reference
+                collectionRef.document(elem)
+                // get request
+                    .get()
+                    .addOnCompleteListener { documentSnapshot ->
+                        // handling results
+                        if (documentSnapshot.isSuccessful){
+                            // extracting and deserializing data
+                            val data = documentSnapshot.result.toObject(TutorialsModels::class.java) as TutorialsModels
+                            // adding it to reference array
+                            tutorials.add(data)
+                        } else{
+                            // displaying error
+                            Log.e("favs VM", "error: ${documentSnapshot.exception}")
+                        }
+                    }
+            }
         } catch (e : FirebaseFirestoreException){
             Log.e("favs", "error fetching tutorials data", e)
         }
+        // testing
+        Log.i("favs VM", "tutorials array's size: ${tutorials.size}")
         // return statement
         return tutorials
+
     }
 
-
     /**
-     * launches ansynchronous request
+     * launches asynchronous function
      */
-    fun getFavsTutorials(){
+    fun getFavsUser(){
         viewModelScope.launch {
-            tutorialsModels.value = fetchTutorialsFav()
+            // first, it's necessary to get the user's favs
+            userFavs.value = fetchUserFavs(userEmail)
+        }.also {
+            if (it.isCompleted){
+                // testing
+                Log.i("favs VM", "userFavs request done!")
+                // then the tutorials are fetched
+                fetchTutorialsFav()
+            }
         }
     }
 
