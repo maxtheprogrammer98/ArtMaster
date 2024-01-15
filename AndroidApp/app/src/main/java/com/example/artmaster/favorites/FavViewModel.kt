@@ -1,6 +1,7 @@
 package com.example.artmaster.favorites
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,7 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     //initializing
     init {
         getFavsUser()
+        getFavsTutorials()
     }
     
     /**
@@ -65,35 +67,32 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     /**
      * retrieves the fav tutorials from firestore
      */
-    private fun fetchTutorialsFav() : ArrayList<TutorialsModels>{
+    private suspend fun fetchTutorialsFav(userFavs :ArrayList<String>) : ArrayList<TutorialsModels>{
         // base variable
         var tutorials = ArrayList<TutorialsModels>()
         // instantiating firestore
         val db = Firebase.firestore
         // referencing collection
         val collectionRef = db.collection("tutoriales")
+        // handling errors
         try {
-            // executing get request over each element
-            userFavs.value.forEach { elem ->
-                // document reference
-                collectionRef.document(elem)
-                // get request
-                    .get()
-                    .addOnCompleteListener { documentSnapshot ->
-                        // handling results
-                        if (documentSnapshot.isSuccessful){
-                            // extracting and deserializing data
-                            val data = documentSnapshot.result.toObject(TutorialsModels::class.java) as TutorialsModels
-                            // adding it to reference array
-                            tutorials.add(data)
-                        } else{
-                            // displaying error
-                            Log.e("favs VM", "error: ${documentSnapshot.exception}")
-                        }
-                    }
-            }
+            // executing request
+            collectionRef
+                // filtering documents
+                .whereIn(FieldPath.documentId(),userFavs)
+                // GET request
+                .get()
+                // waiting for server's response
+                .await()
+                // extracting and deserializing result
+                .map {
+                    val result = it.toObject(TutorialsModels::class.java)
+                    // adding it to reference array
+                    tutorials.add(result)
+                }
         } catch (e : FirebaseFirestoreException){
-            Log.e("favs", "error fetching tutorials data", e)
+            // displaying error
+            Log.e("error", "failed server connection", e)
         }
         // testing
         Log.i("favs VM", "tutorials array's size: ${tutorials.size}")
@@ -103,20 +102,21 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     }
 
     /**
-     * launches asynchronous function
+     * launches asynchronous function to fetch the fav tutorials (id's)
+     * from the user document
      */
     fun getFavsUser(){
         viewModelScope.launch {
-            // first, it's necessary to get the user's favs
             userFavs.value = fetchUserFavs(userEmail)
-        }.also {
-            if (it.isCompleted){
-                // testing
-                Log.i("favs VM", "userFavs request done!")
-                // then the tutorials are fetched
-                fetchTutorialsFav()
-            }
         }
     }
 
+    /**
+     * launches asynchronou function to fetch the tutorials from their own collection
+     */
+    fun getFavsTutorials(){
+        viewModelScope.launch {
+            tutorialsModels.value = fetchTutorialsFav(userFavs.value)
+        }
+    }
 }
