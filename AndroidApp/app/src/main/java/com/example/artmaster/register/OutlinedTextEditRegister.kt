@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,13 +22,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.artmaster.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +68,8 @@ fun ValidatedOutlinedTextField(
         } else {
             visualTransformation
         },
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .padding(top = 20.dp),
         shape = RoundedCornerShape(50),
@@ -100,13 +103,13 @@ fun ValidatedOutlinedTextField(
                 IconButton(onClick = onPasswordVisibilityToggle) {
                     if (!isPasswordOpen) {
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = "Mostrar Password"
+                            painterResource(id = R.drawable.ic_close_eye),
+                            contentDescription = stringResource(R.string.hidden_password)
                         )
                     } else {
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowUp,
-                            contentDescription = "Ocultar Password"
+                            painterResource(id = R.drawable.ic_open_eye),
+                            contentDescription = stringResource(R.string.show_password)
                         )
                     }
                 }
@@ -121,7 +124,8 @@ fun ValidatedOutlinedTextField(
                 color = Color.Red,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 14.dp)
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 14.dp, start = 40.dp)
             )
         }
     }

@@ -63,4 +63,6 @@
     <string name="btn_aceptar">Aceptar</string>
     <string name="cambiar_visibilidad">mostrar password</string>
     <string name="odin_message">Greetings, mortal. As the Allfather and ruler of Asgard, I have deemed you worthy to wield the mighty power of an admin. With this authority, you shall command the realms, ensuring order and prosperity. Use your newfound abilities wisely, for great responsibility accompanies great power. May your decisions be just, and your reign be benevolent. By the authority vested in me, Odin Allfather, I hereby grant you the title of Administrator. Rise, and let your influence shape the digital realms.</string>
+    <string name="hidden_password">Ocultar contraseña</string>
+    <string name="show_password">Mostrar contraseña</string>
 </resources>
