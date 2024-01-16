@@ -28,7 +28,6 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     //initializing
     init {
         getFavsUser()
-        getFavsTutorials()
     }
     
     /**
@@ -67,33 +66,47 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     /**
      * retrieves the fav tutorials from firestore
      */
-    private suspend fun fetchTutorialsFav(userFavs :ArrayList<String>) : ArrayList<TutorialsModels>{
+    private fun fetchTutorialsFav(userFavs :ArrayList<String>) : ArrayList<TutorialsModels>{
+        //testing
+        Log.i("test VM", "size argument: ${userFavs.size}")
         // base variable
         var tutorials = ArrayList<TutorialsModels>()
         // instantiating firestore
         val db = Firebase.firestore
         // referencing collection
         val collectionRef = db.collection("tutoriales")
-        // handling errors
-        try {
+        // GET REQUEST
+        collectionRef
+            // filtering documents
+            .whereIn(FieldPath.documentId(),userFavs)
             // executing request
-            collectionRef
-                // filtering documents
-                .whereIn(FieldPath.documentId(),userFavs)
-                // GET request
-                .get()
-                // waiting for server's response
-                .await()
-                // extracting and deserializing result
-                .map {
-                    val result = it.toObject(TutorialsModels::class.java)
-                    // adding it to reference array
-                    tutorials.add(result)
+            .get()
+            // handling results
+            .addOnSuccessListener { documents ->
+                // iterating results
+                for (doc in documents){
+                    // extracting data
+                    val data = doc.data
+                    val id = doc.id
+                    // deserializing data
+                    val tutorialModel = TutorialsModels(
+                        id = id,
+                        nombre = data.get("nombre") as String,
+                        rutaNombre = data.get("rutaNombre") as String,
+                        imagen = data.get("imagen") as String,
+                        video = data.get("video") as String,
+                        informacion = data.get("informacion") as String,
+                        descripcion = data.get("descripcion") as String
+                    )
+                    // testing
+                    Log.i("fav tut model", "id model: ${tutorialModel.id}")
+                    // adding model into reference array
+                    tutorials.add(tutorialModel)
                 }
-        } catch (e : FirebaseFirestoreException){
-            // displaying error
-            Log.e("error", "failed server connection", e)
-        }
+            }.addOnFailureListener { e ->
+                // displaying error
+                Log.e("FAV_VM", "failed server connection", e)
+            }
         // testing
         Log.i("favs VM", "tutorials array's size: ${tutorials.size}")
         // return statement
@@ -102,21 +115,14 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     }
 
     /**
-     * launches asynchronous function to fetch the fav tutorials (id's)
-     * from the user document
+     * launches asynchronous function to fetch the fav tutorials
      */
     fun getFavsUser(){
         viewModelScope.launch {
             userFavs.value = fetchUserFavs(userEmail)
-        }
-    }
-
-    /**
-     * launches asynchronou function to fetch the tutorials from their own collection
-     */
-    fun getFavsTutorials(){
-        viewModelScope.launch {
             tutorialsModels.value = fetchTutorialsFav(userFavs.value)
         }
     }
+
+
 }
