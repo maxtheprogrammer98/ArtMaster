@@ -36,7 +36,6 @@ class FavActivity : MainActivity() {
      * contains the general layout of the section
      */
     @Composable
-    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter",
         "UnusedMaterialScaffoldPaddingParameter"
     )
@@ -66,8 +65,8 @@ class FavActivity : MainActivity() {
                     .padding(20.dp)
                     .verticalScroll(scrollSate)
             ){
-                //inserting cards
-                CardsFavs(context = applicationContext)
+                //adying cards dynamically
+                GenerateCardsFavs(context = applicationContext)
             }
         }
     }

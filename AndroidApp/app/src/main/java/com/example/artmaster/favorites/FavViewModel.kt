@@ -1,6 +1,7 @@
 package com.example.artmaster.favorites
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +12,7 @@ import com.example.artmaster.user.GetUserInfoAuth
 import com.example.artmaster.user.UserModels
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
@@ -115,6 +117,51 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
             userFavs.value = fetchUserFavs(userEmail)
             tutorialsModels.value = fetchTutorialsFav(userFavs.value)
         }
+    }
+
+    /**
+     * removes the tutorial from the VM and the firestore DB
+     */
+    fun removeFromFavsVM(
+        favID: String,
+        userID : String,
+        context : Context
+    ){
+        // 1 - removing tutorial from VM
+        tutorialsModels.value.forEach {
+            elem -> if(elem.id == favID){
+                tutorialsModels.value.remove(elem)
+            }
+        }
+        // 2 - removing tutorial from Firestore DB
+        // instantiating db
+        val db = Firebase.firestore
+        // document reference
+        val docRef = db.collection("usuarios").document(userID)
+        // updating document
+        docRef
+            // executing request
+            .update("favoritos", FieldValue.arrayRemove(favID))
+            // handling results
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    // success message
+                    Toast.makeText(
+                        context,
+                        "tutorial eliminado de favs",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    // error message
+                    Toast.makeText(
+                        context,
+                        "no se pudo completar la operacion",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // displaying technical message
+                    Log.e("favVM", "failed server connection: ${task.exception}")
+                }
+            }
     }
 
 
