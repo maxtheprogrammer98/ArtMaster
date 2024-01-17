@@ -2,6 +2,7 @@ package com.example.artmaster.favorites
 
 import android.content.Context
 import android.graphics.drawable.shapes.Shape
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,13 +15,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -39,54 +44,18 @@ fun CardsFavs(
     // cards models (extracted from view model)
     val favsModel = favsViewModel.tutorialsModels.value
 
-    // generating cards dynamically from models
+    //TODO: ADD funtion to generate cards dynamically
     favsModel.forEach {
-        // main layout
-        tutorialModel -> Card(
+        fav -> Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(100.dp, 200.dp)
-                .padding(10.dp),
-            elevation = CardDefaults.cardElevation(4.dp),
-            shape = CardDefaults.outlinedShape,
+                .padding(20.dp)
+                .clip(CircleShape)
+                .background(Color.LightGray)
+                .wrapContentSize(Alignment.Center),
         ){
-            // contains tutorial image
-            Row(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .widthIn(30.dp, 100.dp)
-            ){
-                // processing image with Coil library
-                AsyncImage(
-                    //TODO: Add real images in FS
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://loremflickr.com/600/600/art?lock=1")
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = stringResource(id = R.string.imagen),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize())
-            }
-
-            // contains information
-            Row(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .heightIn(100.dp, 200.dp)
-            ){
-                // title
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(30.dp)
-                        .wrapContentSize(Alignment.Center)
-                ){
-                    Text(
-                        text = tutorialModel.nombre,
-                        fontWeight = FontWeight.Bold)
-                }
-            }
+            Text(text = fav.nombre)
         }
-
     }
+
 }

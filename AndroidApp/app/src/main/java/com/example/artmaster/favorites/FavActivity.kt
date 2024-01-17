@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
@@ -16,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 
@@ -34,7 +37,9 @@ class FavActivity : MainActivity() {
      */
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter",
+        "UnusedMaterialScaffoldPaddingParameter"
+    )
     private fun FavsLayout(){
 
         // enables vertical scrolling
@@ -44,7 +49,7 @@ class FavActivity : MainActivity() {
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollSate),
+            ,
 
             bottomBar = {
                 super.BottomBar()
@@ -54,8 +59,16 @@ class FavActivity : MainActivity() {
                 super.TobBarMain()
             }
         ){
-            // inserting cards
-            CardsFavs(context = applicationContext)
+            // general wrapper
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .verticalScroll(scrollSate)
+            ){
+                //inserting cards
+                CardsFavs(context = applicationContext)
+            }
         }
     }
 }

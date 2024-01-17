@@ -1,5 +1,6 @@
 package com.example.artmaster.favorites
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +22,9 @@ import kotlinx.coroutines.tasks.await
  */
 class FavViewModel : ViewModel(),GetUserInfoAuth {
     // base variables
+    @SuppressLint("MutableCollectionMutableState")
     var tutorialsModels = mutableStateOf(ArrayList<TutorialsModels>())
+    @SuppressLint("MutableCollectionMutableState")
     var userFavs = mutableStateOf(ArrayList<String>())
     val userEmail = getCurrentUserEmail()
 
@@ -66,7 +69,7 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     /**
      * retrieves the fav tutorials from firestore
      */
-    private fun fetchTutorialsFav(userFavs :ArrayList<String>) : ArrayList<TutorialsModels>{
+    private suspend fun fetchTutorialsFav(userFavs :ArrayList<String>) : ArrayList<TutorialsModels>{
         //testing
         Log.i("test VM", "size argument: ${userFavs.size}")
         // base variable
@@ -76,37 +79,27 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
         // referencing collection
         val collectionRef = db.collection("tutoriales")
         // GET REQUEST
-        collectionRef
-            // filtering documents
-            .whereIn(FieldPath.documentId(),userFavs)
-            // executing request
-            .get()
-            // handling results
-            .addOnSuccessListener { documents ->
-                // iterating results
-                for (doc in documents){
-                    // extracting data
-                    val data = doc.data
-                    val id = doc.id
-                    // deserializing data
-                    val tutorialModel = TutorialsModels(
-                        id = id,
-                        nombre = data.get("nombre") as String,
-                        rutaNombre = data.get("rutaNombre") as String,
-                        imagen = data.get("imagen") as String,
-                        video = data.get("video") as String,
-                        informacion = data.get("informacion") as String,
-                        descripcion = data.get("descripcion") as String
-                    )
-                    // testing
-                    Log.i("fav tut model", "id model: ${tutorialModel.id}")
-                    // adding model into reference array
-                    tutorials.add(tutorialModel)
+        // handling results
+        try {
+            collectionRef
+                // filtering documents
+                .whereIn(FieldPath.documentId(),userFavs)
+                // executing request
+                .get()
+                // waiting for server's response
+                .await()
+                // retrieving documents
+                .documents
+                // deserializing docs
+                .map {
+                    val result = it.toObject(TutorialsModels::class.java) as TutorialsModels
+                    // adding to reference array
+                    tutorials.add(result)
                 }
-            }.addOnFailureListener { e ->
-                // displaying error
-                Log.e("FAV_VM", "failed server connection", e)
-            }
+        }catch (e : FirebaseFirestoreException){
+            // displaying error
+            Log.e("favVM", "failed server connection", e)
+        }
         // testing
         Log.i("favs VM", "tutorials array's size: ${tutorials.size}")
         // return statement
