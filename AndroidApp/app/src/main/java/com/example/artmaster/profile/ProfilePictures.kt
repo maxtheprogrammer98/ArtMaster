@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -129,20 +130,14 @@ fun DeleteDrawing(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
                 .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp)
         ) {
-            Text(
-                text = "Borrar dibujo?",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
             Box(
                 modifier = Modifier
-                    .size(92.dp)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .size(400.dp)
+                    .padding(8.dp)
+                    .padding(top = 16.dp)
+                    .background(MaterialTheme.colorScheme.background)
                     .align(alignment = Alignment.CenterHorizontally)
             ) {
                 SubcomposeAsyncImage(
@@ -157,26 +152,25 @@ fun DeleteDrawing(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(4.dp)),
-                    contentScale = ContentScale.Crop
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Fit
                 )
             }
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.End
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 TextButton(
                     onClick = onDismissClicked,
-                    modifier = Modifier.padding(end = 8.dp)
                 ) {
-                    Text(text = "Cancelar")
+                    Text(text = "Salir")
                 }
                 TextButton(
                     onClick = { onConfirmClicked() }
                 ) {
-                    Text(text = "Confirmar")
+                    Text(text = "Borrar", color = Color.Red, fontWeight = FontWeight.Medium)
                 }
             }
         }

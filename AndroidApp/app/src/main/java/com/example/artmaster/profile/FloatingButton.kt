@@ -93,25 +93,9 @@ fun MultiFloatingButton(
     val singleDrawingPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
-            selectedDrawing = listOf(uri)
             uri?.let { dataViewModel.updateUserDrawing(it) }
-            // Show a Toast with countdown
-            val toast = Toast.makeText(context, "Se agregara tu dibujo 5 segundos", Toast.LENGTH_LONG)
-            val countdownTimer = object : CountDownTimer(5000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    // Update the Toast text with the countdown
-                    toast.setText("Su dibujo se subira en ${millisUntilFinished / 1000} segundos")
-                    toast.show()
-                }
-
-                override fun onFinish() {
-                    // Launch the activity when the countdown is finished
-                    context.startActivity(Intent(context, ProfileActivity::class.java))
-                }
-            }
-
-            // Start the countdown timer
-            countdownTimer.start()
+            selectedDrawing = listOf(uri)
+            Toast.makeText(context, "Tu dibujo fue agregado", Toast.LENGTH_LONG).show()
         }
     )
 
@@ -130,23 +114,8 @@ fun MultiFloatingButton(
             selectedImage = uri
             // Update user's photo in ViewModel and Firebase
             uri?.let { dataViewModel.updateUserPhoto(it) }
-            // Show a Toast with countdown
-            val toast = Toast.makeText(context, "Se actualizo tu foto de perfil. Launching in 5 seconds", Toast.LENGTH_LONG)
-            val countdownTimer = object : CountDownTimer(5000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    // Update the Toast text with the countdown
-                    toast.setText("Su foto de perfil se actualizara en ${millisUntilFinished / 1000} segundos")
-                    toast.show()
-                }
-
-                override fun onFinish() {
-                    // Launch the activity when the countdown is finished
-                    context.startActivity(Intent(context, ProfileActivity::class.java))
-                }
-            }
-
-            // Start the countdown timer
-            countdownTimer.start()
+            Toast.makeText(context, "Se actualizo tu foto de perfil", Toast.LENGTH_LONG).show()
+            //context.startActivity(Intent(context, ProfileActivity::class.java))
         }
     )
 
