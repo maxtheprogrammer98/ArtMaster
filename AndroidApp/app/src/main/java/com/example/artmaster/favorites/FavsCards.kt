@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,21 +79,22 @@ fun GenerateCardsFavs(
     usersViewModel: UsersViewModel = viewModel(),
     context: Context
 ){
-    // variable that stores fetched documents
-    val tutorialsData = dataViewModel.tutorialsModels.value
     // variable that stores user's profile
     val userProfile = usersViewModel.userStateProfile.value
+    // variable that stores the tutotrials model
+    var tutorials = dataViewModel.tutorialsModels.value
     //-------------- GENERATING CARDS ----------------//
-    tutorialsData.forEach {
+
+    tutorials.forEach {
             fav -> Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(15.dp)
-            .heightIn(400.dp, 800.dp)
-            .clip(MaterialTheme.shapes.medium),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 5.dp
-        )
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
+                    .heightIn(400.dp, 800.dp)
+                    .clip(MaterialTheme.shapes.medium),
+                elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp
+            )
     ){
         // ---------- TITLE ----------//
         Column(
@@ -176,14 +179,28 @@ fun GenerateCardsFavs(
                 Text(
                     text = stringResource(id = R.string.abrir_tutorial))
             }
-
+            //TODO: fix not updating ViewModel here!
             // ---------- BUTTON FAVS  ----------//
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .wrapContentSize(Alignment.Center)
+            ){
                 Button(
-                    onClick = {dataViewModel.removeFromFavsVM(
-                    favID = fav.id,
-                    userID = usersViewModel.userStateProfile.value.id,
-                    context = context)}
+                    // styling
+                    modifier = Modifier.fillMaxWidth(),
+                    // functions
+                    onClick = {
+                        // removes tutorial from DB
+                        dataViewModel.removeFromFavsDB(
+                            favID = fav.id,
+                            userID = usersViewModel.userStateProfile.value.id,
+                            context = context);
+                        // removes tutorial from VM
+                        dataViewModel.removeFromFavVM(tutorialID = fav.id)
+                        }
+
                 ){
                     Text(text = stringResource(id = R.string.eliminar_fav))
                 }

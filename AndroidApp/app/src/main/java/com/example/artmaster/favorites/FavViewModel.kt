@@ -120,19 +120,13 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     }
 
     /**
-     * removes the tutorial from the VM and the firestore DB
+     * removes the tutorial from the DB
      */
-    fun removeFromFavsVM(
+    fun removeFromFavsDB(
         favID: String,
         userID : String,
         context : Context
     ){
-        // 1 - removing tutorial from VM
-        tutorialsModels.value.forEach {
-            elem -> if(elem.id == favID){
-                tutorialsModels.value.remove(elem)
-            }
-        }
         // 2 - removing tutorial from Firestore DB
         // instantiating db
         val db = Firebase.firestore
@@ -164,5 +158,19 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
             }
     }
 
+    /**
+     * removes the tutorial from the VM
+     * so the change is reflected on the IU as well
+     */
+    fun removeFromFavVM(
+        tutorialID: String
+    ){
+        // Creating a new list that excludes the item with the matching ID
+        val updatedList = tutorialsModels.value.filterNot { tutorial ->
+            tutorial.id == tutorialID
+        }
 
+        // Updating the state with the new list
+        tutorialsModels.value = updatedList as ArrayList<TutorialsModels>
+    }
 }
