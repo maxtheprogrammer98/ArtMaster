@@ -3,7 +3,6 @@ package com.example.artmaster.paths
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,9 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import com.example.artmaster.R
 import com.example.artmaster.tutorials.TutorialsPreviewActivity
 
@@ -51,7 +46,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
 //        mutableStateOf("")
 //    }
     //--------------- BASE ARRAY ------------------------//
-    val learningPaths = dataViewModel.state.value
+    val learningPaths = dataViewModel.pathsModelsState.value
     // ----------- PATH CARDS---------//
     learningPaths.forEach {
             path -> Card(

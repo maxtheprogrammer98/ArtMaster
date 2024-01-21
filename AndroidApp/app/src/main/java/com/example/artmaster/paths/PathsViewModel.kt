@@ -16,9 +16,12 @@ import kotlinx.coroutines.tasks.await
  */
 class PathsViewModel : ViewModel(){
     // variable that stores the retrieved data
-    val state = mutableStateOf(
+    val pathsModelsState = mutableStateOf(
         arrayListOf<PathsModels>()
     )
+
+    // loading screen flag variable
+    val isLoading = mutableStateOf(true)
 
     // initializes the fetching method whenever the class is refered to
     init {
@@ -50,8 +53,12 @@ class PathsViewModel : ViewModel(){
 
     // getting fetched data
     private fun getData(){
+        // launches asynchronous request
         viewModelScope.launch {
-            state.value = fetchDataFS()
+            // executing request
+            pathsModelsState.value = fetchDataFS()
+            // turning off loading variable
+            isLoading.value = false
         }
     }
 
@@ -61,11 +68,11 @@ class PathsViewModel : ViewModel(){
     fun getSpecificData(pathID: String) : ArrayList<String>{
         //testing
         Log.i("VMPaths", pathID )
-        Log.i("VMPaths", "size 1: ${state.value.size}")
+        Log.i("VMPaths", "size 1: ${pathsModelsState.value.size}")
         // base variable
         var filterResult = ArrayList<String>()
         // filter process
-        state.value.forEach { elem ->
+        pathsModelsState.value.forEach { elem ->
             if(elem.id.equals(pathID)){
                 filterResult = elem.tutorialesID
             }

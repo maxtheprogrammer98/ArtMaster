@@ -30,6 +30,7 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     var userFavs = mutableStateOf(ArrayList<String>())
     val userEmail = getCurrentUserEmail()
 
+
     //initializing
     init {
         getFavsUser()

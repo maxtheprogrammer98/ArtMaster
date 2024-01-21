@@ -21,10 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
 import com.example.artmaster.graphicElements.HeaderMain
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.example.artmaster.R
+import com.example.artmaster.graphicElements.LoadingScreen
 
 
 class PathsActivity : MainActivity() {
@@ -43,59 +45,66 @@ class PathsActivity : MainActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    fun CreateRutas(){
+    fun CreateRutas(pathsViewModel: PathsViewModel = viewModel()){
         // scrolling variable
         val scrollingState = rememberScrollState()
+        // checking whether the data has been fetched
+        if (pathsViewModel.isLoading.value){
+            // inserting loading screen
+            LoadingScreen()
+        } else {
+            // regular content is displayed
 
-        // ----------------------- MAIN LAYOUT / SCAFFOLD --------------------------//
-        Scaffold(
-            topBar = {
-                super.TobBarMain()
-            },
+            // ----------------------- MAIN LAYOUT / SCAFFOLD --------------------------//
+            Scaffold(
+                topBar = {
+                    super.TobBarMain()
+                },
 
-            bottomBar = {
-                super.BottomBar()
-            },
-            modifier = Modifier
-                .fillMaxSize()
-        ){
-            // ----------------------- MAIN WRAPPER --------------------------//
-            Column(
+                bottomBar = {
+                    super.BottomBar()
+                },
                 modifier = Modifier
-                    .padding(0.dp, 60.dp, 0.dp, 80.dp)
-                    .verticalScroll(scrollingState)
-
+                    .fillMaxSize()
             ){
-                // ------------ INSERTING HEADER ---------//
-                HeaderMain()
-
-                // ------------ DESCRIPCION  WRAPPER ---------//
+                // ----------------------- MAIN WRAPPER --------------------------//
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp, 20.dp)
+                        .padding(0.dp, 60.dp, 0.dp, 80.dp)
+                        .verticalScroll(scrollingState)
+
                 ){
-                    // ---------- TITULO ---------//
-                    Text(
-                        text = stringResource(id = R.string.rutas),
+                    // ------------ INSERTING HEADER ---------//
+                    HeaderMain()
+
+                    // ------------ DESCRIPCION  WRAPPER ---------//
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp, 20.dp),
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold)
+                            .padding(20.dp, 20.dp)
+                    ){
+                        // ---------- TITULO ---------//
+                        Text(
+                            text = stringResource(id = R.string.rutas),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 20.dp),
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold)
 
-                    // -------- DESCRIPCION ---------//
-                    Text(
-                        text = stringResource(id = R.string.rutas_descripcion),
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        fontSize = 16.sp)
+                        // -------- DESCRIPCION ---------//
+                        Text(
+                            text = stringResource(id = R.string.rutas_descripcion),
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            fontSize = 16.sp)
+                    }
+
+                    // ----------------- CARDS -----------------//
+                    CreateCards(context = applicationContext)
                 }
-
-                // ----------------- CARDS -----------------//
-                CreateCards(context = applicationContext)
             }
         }
     }
