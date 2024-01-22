@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
@@ -65,8 +66,7 @@ class FavActivity : MainActivity() {
         // main layout
         Scaffold(
             modifier = Modifier
-                .fillMaxSize()
-            ,
+                .fillMaxSize(),
 
             bottomBar = {
                 super.BottomBar()
@@ -80,15 +80,14 @@ class FavActivity : MainActivity() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
                     .verticalScroll(scrollSate)
+                    .padding(0.dp,0.dp,0.dp,80.dp)
             ){
                 
                 // adding header
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(0.dp, 30.dp ,0.dp ,0.dp)
                 ){
                     Image(
                         painter = painterResource(id = R.mipmap.header),

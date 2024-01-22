@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.toUpperCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.artmaster.tutorials.TutorialsModels
@@ -181,6 +182,8 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
      * any tutorial which name contains the specified input will be displayed
      */
     private suspend fun filterTutorialsDB(input : String) : ArrayList<TutorialsModels>{
+        //TODO: filter by matching the containing letters rather than the whole word
+
         // array reference
         val filterTutorials = ArrayList<TutorialsModels>()
         // instantiating firebase
@@ -191,7 +194,7 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
         try {
             collectionRef
                 // filter
-                .whereArrayContains("nombre", input)
+                .whereEqualTo("nombre", input)
                 // fetching data
                 .get()
                 // waiting for server's response
@@ -207,6 +210,9 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
             // catching errors
             Log.e("favs_VM", "FAILED SERVER CONNECTION", e)
         }
+
+        // testing
+        Log.i("test FAV_VM", "tutorials fetched: ${filterTutorials.size}")
 
         // return statement
         return filterTutorials

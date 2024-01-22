@@ -43,7 +43,7 @@ fun FavsSearchBar(
         onValueChange = {searchBarInput = it},
         modifier = Modifier
             .fillMaxWidth()
-            .padding(15.dp),
+            .padding(10.dp,25.dp),
         placeholder = {
             Text(text = stringResource(id = R.string.barra_busqueda_fav))
         },
