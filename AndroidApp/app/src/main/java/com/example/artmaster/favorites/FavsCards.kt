@@ -179,7 +179,7 @@ fun GenerateCardsFavs(
                 Text(
                     text = stringResource(id = R.string.abrir_tutorial))
             }
-            //TODO: fix not updating ViewModel here!
+
             // ---------- BUTTON FAVS  ----------//
             Column(
                 modifier = Modifier

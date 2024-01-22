@@ -174,4 +174,50 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
         // Updating the state with the new list
         tutorialsModels.value = updatedList as ArrayList<TutorialsModels>
     }
+
+
+    /**
+     * filters the models based on the passed argument from the search bar
+     * any tutorial which name contains the specified input will be displayed
+     */
+    private suspend fun filterTutorialsDB(input : String) : ArrayList<TutorialsModels>{
+        // array reference
+        val filterTutorials = ArrayList<TutorialsModels>()
+        // instantiating firebase
+        val db = Firebase.firestore
+        // collection reference
+        val collectionRef = db.collection("tutoriales")
+        // executing GET REQUEST
+        try {
+            collectionRef
+                // filter
+                .whereArrayContains("nombre", input)
+                // fetching data
+                .get()
+                // waiting for server's response
+                .await()
+                // deserializing content
+                .map {
+                    val result = it.toObject(TutorialsModels::class.java)
+                    // adding model to reference array
+                    filterTutorials.add(result)
+                }
+
+        } catch (e : FirebaseFirestoreException){
+            // catching errors
+            Log.e("favs_VM", "FAILED SERVER CONNECTION", e)
+        }
+
+        // return statement
+        return filterTutorials
+    }
+
+    /**
+     * triggers the async function that filters the tutorials
+     */
+    fun filterSearchBar(input: String){
+        viewModelScope.launch {
+            tutorialsModels.value = filterTutorialsDB(input)
+        }
+    }
 }

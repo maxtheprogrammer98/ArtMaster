@@ -93,4 +93,5 @@
     <string name="estrella_icono">Icono estrella</string>
     <string name="calificacion">Califica el tutorial!</string>
     <string name="calificacion_titulo">rating</string>
+    <string name="barra_busqueda_fav">filtra el tutorial por su nombre</string>
 </resources>
