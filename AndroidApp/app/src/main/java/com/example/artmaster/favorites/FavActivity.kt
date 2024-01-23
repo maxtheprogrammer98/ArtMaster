@@ -81,7 +81,7 @@ class FavActivity : MainActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(scrollSate)
-                    .padding(0.dp,0.dp,0.dp,80.dp)
+                    .padding(0.dp, 0.dp, 0.dp, 80.dp)
             ){
                 
                 // adding header
@@ -96,6 +96,9 @@ class FavActivity : MainActivity() {
 
                 // adding search bar file
                 FavsSearchBar()
+
+                // adding filtering option (based on paths)
+                FilterOptions()
 
                 // adding cards dynamically
                 GenerateCardsFavs(context = applicationContext)

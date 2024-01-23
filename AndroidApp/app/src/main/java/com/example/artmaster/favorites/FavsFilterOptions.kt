@@ -52,7 +52,7 @@ fun FilterOptions(
                 .padding(5.dp)
                 .wrapContentSize(Alignment.Center)
         ) {
-            Text(text = stringResource(id = R.string.filtrar_path))
+            Text(text = path.nombre)
         }
     }
 }
