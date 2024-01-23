@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.toUpperCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.artmaster.tutorials.TutorialsModels
@@ -16,7 +15,6 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -224,6 +222,44 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
     fun filterSearchBar(input: String){
         viewModelScope.launch {
             tutorialsModels.value = filterTutorialsDB(input)
+        }
+    }
+
+    private suspend fun filterPathFavs(pathName: String) : ArrayList<TutorialsModels>{
+        // filtering favs
+        // reference array
+        var tutorialsMatching = ArrayList<TutorialsModels>()
+        // instantiating firestore DB
+        val db = Firebase.firestore
+        // collection reference
+        val collectionRef = db.collection("tutoriales")
+        // executing GET REQUEST
+        try {
+            collectionRef
+                // filter specification
+                .whereEqualTo("rutaNombre", pathName)
+                .whereIn(FieldPath.documentId(), userFavs.value)
+                // fetching data
+                .get()
+                // waiting for server's response
+                .await()
+                // deserializing results
+                .map {
+                    val result = it.toObject(TutorialsModels::class.java)
+                    // adding result to reference array
+                    tutorialsMatching.add(result)
+                }
+        } catch (e : FirebaseFirestoreException){
+            // displaying error
+            Log.e("FAV_VM", "FAILED SERVER CONNECTION", e)
+        }
+        // return statement
+        return tutorialsMatching
+    }
+
+    fun filterPathOption(pathName: String){
+        viewModelScope.launch {
+            tutorialsModels.value = filterPathFavs(pathName)
         }
     }
 }

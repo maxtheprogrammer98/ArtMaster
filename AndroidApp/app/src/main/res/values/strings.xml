@@ -94,4 +94,5 @@
     <string name="calificacion">Califica el tutorial!</string>
     <string name="calificacion_titulo">rating</string>
     <string name="barra_busqueda_fav">filtra el tutorial por su nombre</string>
+    <string name="filtrar_path">Filtrar por rutas</string>
 </resources>
