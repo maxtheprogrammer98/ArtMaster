@@ -44,7 +44,7 @@ import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.adminPaths.PathsActivity
 import com.example.artmaster.adminTutorials.TutorialsActivity
-import com.example.artmaster.notes.DetailActivity
+import com.example.artmaster.adminUsers.UsersActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
 
@@ -55,7 +55,11 @@ class AdminPanelActivity: MainActivity() {
             ArtMasterTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     AdminPanelScreen(
-                        navigateToUsers = { /* Implement navigation to Users activity */ },
+                        navigateToUsers = {
+                            Intent(applicationContext, UsersActivity::class.java).also {
+                                startActivity(it)
+                            }
+                        },
                         navigateToTutoriales = {
                             Intent(applicationContext, TutorialsActivity::class.java).also {
                                 startActivity(it)

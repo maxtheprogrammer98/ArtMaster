@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.adminPaths.DetailPathActivity
 import com.example.artmaster.adminTutorials.DetailTutorialActivity
+import com.example.artmaster.adminUsers.DetailUserActivity
 import com.example.artmaster.notes.NoteActivity
 
 
@@ -86,7 +87,7 @@ fun MultiFloatingButton(
 
                             Identifier.Users.name -> {
                                 Toast.makeText(context, "Agregar usuarios", Toast.LENGTH_SHORT).show()
-                                //context.startActivity(Intent(context, DetailUserActivity::class.java))
+                                context.startActivity(Intent(context, DetailUserActivity::class.java))
                             }
                             Identifier.Tutorials.name -> {
                                 Toast.makeText(context, "Agregar tutoriales", Toast.LENGTH_SHORT).show()

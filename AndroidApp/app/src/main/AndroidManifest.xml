@@ -70,6 +70,11 @@
             android:name=".adminTutorials.DetailTutorialActivity"
             android:parentActivityName=".adminTutorials.TutorialsActivity" />
 
+        <activity android:name=".adminUsers.UsersActivity"/>
+        <activity
+            android:name=".adminUsers.DetailUserActivity"
+            android:parentActivityName=".adminUsers.UsersActivity" />
+
         <receiver android:name=".alarm.AlarmReceiver"/>
     </application>
 
