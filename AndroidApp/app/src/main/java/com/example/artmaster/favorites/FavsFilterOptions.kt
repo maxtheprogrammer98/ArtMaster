@@ -1,7 +1,9 @@
 package com.example.artmaster.favorites
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,17 +44,6 @@ fun FilterOptions(
     var flagFilterBtns by remember { mutableStateOf(false)}
     var iconType by remember { mutableStateOf(Icons.Filled.KeyboardArrowDown) }
 
-    // ------------ reference text -------------//
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.Center)
-            .padding(10.dp)
-    ){
-        Text(
-            text = stringResource(id = R.string.filtrar_path),
-            fontWeight = FontWeight.Bold)
-    }
 
     // -------------------- PATH FILTER ICON ------------------//
     IconButton(
@@ -63,15 +54,29 @@ fun FilterOptions(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
-            .wrapContentSize(Alignment.Center)
     ){
-        Icon(
-            imageVector = iconType,
-            contentDescription = stringResource(id = R.string.filtrar_path),
-            modifier = Modifier.size(55.dp))
+        // ------------ wrapper -------------//
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            // ------------ reference text -------------//
+            Text(
+                text = stringResource(id = R.string.filtrar_path),
+                fontWeight = FontWeight.Bold)
 
-        //testing
-        Log.i("TEST_FILTER", "flag state: $flagFilterBtns")
+            // ------------ ICON -------------//
+            Icon(
+                imageVector = iconType,
+                contentDescription = stringResource(id = R.string.filtrar_path),
+                modifier = Modifier
+                    .size(55.dp))
+        }
+
+
     }
 
     // -------------------- PATHS OPTIONS BTNS ------------------//
