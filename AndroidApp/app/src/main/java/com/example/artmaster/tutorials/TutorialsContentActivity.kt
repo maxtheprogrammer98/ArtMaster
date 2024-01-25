@@ -9,7 +9,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
@@ -18,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.user.GetUserInfoAuth
@@ -78,18 +82,26 @@ class TutorialsContentActivity : MainActivity(), GetUserInfoAuth {
             },
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollingState)
         ){
-            /* ------------------ PORTADA / FRONT IMAGE ----------------------- */
-            AddPortada(linkImg = tutorialModels.imagen)
-            /* ------------------ CONTENT ----------------------- */
-            AddTutorialContent(
-                id = tutorialModels.id,
-                nombre = tutorialModels.nombre,
-                informacion = tutorialModels.informacion,
-                context = applicationContext,
-                userEmail = getCurrentUserEmail()
-            )
+            // -------------------- MAIN CONTAINER -------------------------//
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(scrollingState)
+                    .padding(0.dp,10.dp,0.dp,60.dp)
+            ){
+                /* ------------------ PORTADA / FRONT IMAGE ----------------------- */
+                AddPortada(linkImg = tutorialModels.imagen)
+                /* ------------------ CONTENT ----------------------- */
+                AddTutorialContent(
+                    id = tutorialModels.id,
+                    nombre = tutorialModels.nombre,
+                    informacion = tutorialModels.informacion,
+                    context = applicationContext,
+                    userEmail = getCurrentUserEmail()
+                )
+            }
+
         }
     }
 

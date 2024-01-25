@@ -99,7 +99,7 @@ fun AddTutorialContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp, 250.dp, 10.dp, 0.dp)
+            .padding(10.dp, 0.dp, 10.dp, 0.dp)
     ){
         // ------------ TITULO ---------------//
         Column(

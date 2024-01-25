@@ -108,19 +108,18 @@ class HomeActivity : MainActivity(){
                     .verticalScroll(scrollableSateVertical)
                     .padding(0.dp, 60.dp, 0.dp, 0.dp)
             ){
-                //adding header
-                HeaderMain()
 
-                //inserting slideshow
-                InsertSlideshow(
-                    imagesList = imagesList,
-                    context = applicationContext)
+                // adding header
+                Header()
+
+                // adding front page
+                FrontPage()
 
                 // wrapper
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(0.dp,0.dp,0.dp,70.dp)
+                        .padding(0.dp, 0.dp, 0.dp, 70.dp)
                 ){
                     //insterting descriptions dinamically
                     listaSections.forEach {

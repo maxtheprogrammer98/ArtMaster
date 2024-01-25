@@ -117,9 +117,8 @@ fun GenerateCardsFavs(
                 .height(250.dp)
         ){
             AsyncImage(
-                //TODO: Add real images in FS
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://loremflickr.com/600/600/art?lock=1")
+                    .data(fav.imagen)
                     .crossfade(true)
                     .build(),
                 contentDescription = stringResource(id = R.string.imagen),
