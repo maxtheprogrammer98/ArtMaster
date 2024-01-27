@@ -1,6 +1,7 @@
 package com.example.artmaster.adminUsers
 
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ListenerRegistration
@@ -113,16 +114,36 @@ class UsersRepository {
 
     // Delete a user by ID
     fun deleteUser(
-        pathID: String,
+        userID: String,
         onComplete: (Boolean) -> Unit
     ) {
-        userRef.document(pathID)
-            .delete()
-            .addOnCompleteListener {
-                // Invoke the onComplete callback with the success status
-                onComplete.invoke(it.isSuccessful)
-            }
+        // Get the current user
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        // Check if there is a current user
+        if (currentUser != null) {
+            // Delete the user from Firebase Authentication
+            currentUser.delete()
+                .addOnCompleteListener { authResult ->
+                    if (authResult.isSuccessful) {
+                        // If deletion is successful, also delete the user from Firestore
+                        userRef.document(userID)
+                            .delete()
+                            .addOnCompleteListener { firestoreResult ->
+                                // Invoke the onComplete callback with the success status
+                                onComplete.invoke(firestoreResult.isSuccessful)
+                            }
+                    } else {
+                        // Invoke the onComplete callback with the failure status
+                        onComplete.invoke(false)
+                    }
+                }
+        } else {
+            // Invoke the onComplete callback with the failure status if there is no current user
+            onComplete.invoke(false)
+        }
     }
+
 
     // Update a user by ID
     fun updateUser(

@@ -4,13 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -24,6 +29,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,13 +37,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
+import com.example.artmaster.R
+import com.example.artmaster.register.createUserFirebase
 import com.example.artmaster.ui.theme.ArtMasterTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import java.util.Objects
 
 
 class DetailUserActivity: MainActivity() {
@@ -116,7 +131,26 @@ class DetailUserActivity: MainActivity() {
                             if (isUserIDNotBlank) {
                                 detailUserViewModel?.updateUser(userID)
                             }else {
-                                detailUserViewModel?.addUser()
+                                if (isUsernameInvalid) {
+                                    Toast.makeText(context,"Error: $detailUserUiState.name", Toast.LENGTH_SHORT).show()
+                                }else if (isEmailInvalid) {
+                                    Toast.makeText(context,"messageIsEmailInvalid", Toast.LENGTH_SHORT).show()
+                                }else if (isPasswordInvalid) {
+                                    Toast.makeText(context,"messageIsPasswordInvalid", Toast.LENGTH_SHORT).show()
+                                }else if (detailUserUiState.name.isEmpty() || detailUserUiState.email.isEmpty() || password.isEmpty()) {
+                                    Toast.makeText(context,"messageCompleteAll", Toast.LENGTH_SHORT).show()
+                                }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
+                                    FirebaseAuth
+                                        .getInstance()
+                                        .createUserWithEmailAndPassword(detailUserUiState.email, password)
+                                        .addOnFailureListener {
+                                            Toast.makeText(context,"Error: ${it.localizedMessage}", Toast.LENGTH_LONG).show()
+                                        }
+                                    detailUserViewModel?.addUser()
+                                }else{
+                                    Toast.makeText(context,"messageError", Toast.LENGTH_SHORT).show()
+                                }
+
                             }
                         },
                         backgroundColor = MaterialTheme.colorScheme.primary
@@ -151,10 +185,14 @@ class DetailUserActivity: MainActivity() {
                     }
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 // Input field for the user name
                 CustomOutlinedTextField(
                     value = detailUserUiState.name,
-                    onValueChange = { detailUserViewModel?.onNameChange(it) },
+                    onValueChange = {
+                        detailUserViewModel?.onNameChange(it)
+                        isUsernameInvalid = it.length < 3 || it.isEmpty() || it.length > 24 },
                     label = { Text(
                         text = "Nombre",
                         fontFamily = FontFamily.Monospace,
@@ -167,7 +205,9 @@ class DetailUserActivity: MainActivity() {
                 // Input field for the user email
                 CustomOutlinedTextField(
                     value = detailUserUiState.email,
-                    onValueChange = { detailUserViewModel?.onEmailChange(it) },
+                    onValueChange = {
+                        detailUserViewModel?.onEmailChange(it)
+                        isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches() },
                     label = { Text(
                         text = "Email",
                         fontFamily = FontFamily.Monospace,
@@ -178,10 +218,12 @@ class DetailUserActivity: MainActivity() {
                 )
 
 
-                // Input field for the path difficulty
+                // Input field for the password
                 CustomOutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = {
+                        password = it
+                        isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password) },
                     label = { Text(
                         text = "Contrasena",
                         fontFamily = FontFamily.Monospace,
@@ -191,7 +233,7 @@ class DetailUserActivity: MainActivity() {
                         .padding(16.dp)
                 )
 
-                // Input field for the path URL image
+                // Input field for the photo url
                 CustomOutlinedTextField(
                     value = detailUserUiState.photoUrl,
                     onValueChange = { detailUserViewModel?.onPhotoUrlChange(it) },
@@ -199,6 +241,18 @@ class DetailUserActivity: MainActivity() {
                         text = "Foto de perfil (URL)",
                         fontFamily = FontFamily.Monospace,
                     ) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+
+
+                // Admin switch
+                AdminSwitch(
+                    isAdmin = detailUserUiState.isAdmin,
+                    onAdminChange = { newAdminStatus ->
+                        detailUserViewModel?.onIsAdminChange(newAdminStatus)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -240,4 +294,32 @@ fun CustomOutlinedTextField(
         ),
         shape = RoundedCornerShape(25.dp)
     )
+}
+
+@Composable
+fun AdminSwitch(
+    isAdmin: Boolean,
+    onAdminChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+    ) {
+        Text(
+            text = "Administrador?",
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .padding(start = 8.dp)
+                .align(Alignment.CenterVertically)
+        )
+        Switch(
+            checked = isAdmin,
+            onCheckedChange = { newAdminStatus ->
+                onAdminChange(newAdminStatus)
+            },
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+    }
 }

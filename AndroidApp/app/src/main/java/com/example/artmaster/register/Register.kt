@@ -53,6 +53,7 @@ fun createUserFirebase(
                 val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
                 val id = Objects.requireNonNull<FirebaseUser>(auth.currentUser).uid
                 val map: MutableMap<String, Any> = HashMap()
+                map["userID"] = id
                 map["name"] = username
                 map["email"] = email
                 map["favoritos"] = favoritos

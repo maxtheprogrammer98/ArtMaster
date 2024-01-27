@@ -298,7 +298,7 @@ fun UserItem(
     onClick: () -> Unit,
 ) {
     Log.d("UserItem", "user: $users")
-    // Card to represent a path item
+    // Card to represent a user item
     androidx.compose.material.Card(
         modifier = Modifier
             .combinedClickable(
@@ -312,7 +312,7 @@ fun UserItem(
     ) {
         // Column to arrange content within the card
         Column {
-            // Name of the path
+            // Name of the user
             Text(
                 text = users.name,
                 fontFamily = FontFamily.Monospace,
