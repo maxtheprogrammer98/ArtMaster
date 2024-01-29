@@ -140,7 +140,7 @@ class AdminPanelActivity: MainActivity() {
                 contentPadding = PaddingValues(16.dp)
             ) {
                 item {
-                    AdminCard("Users", Icons.Default.Person, navigateToUsers)
+                    AdminCard("Usuarios", Icons.Default.Person, navigateToUsers)
                     Spacer(modifier = Modifier.height(16.dp))
                     AdminCard("Tutoriales", Icons.Default.Edit, navigateToTutoriales)
                     Spacer(modifier = Modifier.height(16.dp))

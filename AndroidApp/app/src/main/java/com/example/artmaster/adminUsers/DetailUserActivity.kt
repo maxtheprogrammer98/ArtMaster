@@ -3,7 +3,6 @@ package com.example.artmaster.adminUsers
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -43,16 +41,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
-import com.example.artmaster.R
-import com.example.artmaster.register.createUserFirebase
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import java.util.Objects
 
 
 class DetailUserActivity: MainActivity() {
@@ -86,8 +78,6 @@ class DetailUserActivity: MainActivity() {
         val detailUserUiState = detailUserViewModel?.detailUserUiState ?: DetailUserUiState()
 
         var password by remember { mutableStateOf("") }
-        var isPasswordOpen by remember { mutableStateOf(false) }
-        var isPasswordVisible by remember { mutableStateOf(false) }
         var isUsernameInvalid by remember { mutableStateOf(false) }
         var isEmailInvalid by remember { mutableStateOf(false) }
         var isPasswordInvalid by remember { mutableStateOf(false) }
@@ -129,17 +119,23 @@ class DetailUserActivity: MainActivity() {
                         onClick = {
                             // If the user ID is not blank, update the user; otherwise, add a new user
                             if (isUserIDNotBlank) {
-                                detailUserViewModel?.updateUser(userID)
+
+                                if (isUsernameInvalid) {
+                                    Toast.makeText(context,"Error: Nombre debe tener mas de 3 caracteres.", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    detailUserViewModel?.updateUser(userID)
+                                }
+
                             }else {
                                 if (isUsernameInvalid) {
-                                    Toast.makeText(context,"Error: $detailUserUiState.name", Toast.LENGTH_SHORT).show()
-                                }else if (isEmailInvalid) {
-                                    Toast.makeText(context,"messageIsEmailInvalid", Toast.LENGTH_SHORT).show()
-                                }else if (isPasswordInvalid) {
-                                    Toast.makeText(context,"messageIsPasswordInvalid", Toast.LENGTH_SHORT).show()
-                                }else if (detailUserUiState.name.isEmpty() || detailUserUiState.email.isEmpty() || password.isEmpty()) {
-                                    Toast.makeText(context,"messageCompleteAll", Toast.LENGTH_SHORT).show()
-                                }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
+                                    Toast.makeText(context,"Error: Nombre debe tener mas de 3 caracteres.", Toast.LENGTH_SHORT).show()
+                                } else if (isEmailInvalid) {
+                                    Toast.makeText(context,"Error: Email invalido", Toast.LENGTH_SHORT).show()
+                                } else if (isPasswordInvalid) {
+                                    Toast.makeText(context,"Error: La contrasena debe cumplir los requisitos de segurirdad", Toast.LENGTH_LONG).show()
+                                } else if (detailUserUiState.name.isEmpty() || detailUserUiState.email.isEmpty() || password.isEmpty()) {
+                                    Toast.makeText(context,"Completa todos los campos", Toast.LENGTH_SHORT).show()
+                                } else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
                                     FirebaseAuth
                                         .getInstance()
                                         .createUserWithEmailAndPassword(detailUserUiState.email, password)
@@ -147,7 +143,7 @@ class DetailUserActivity: MainActivity() {
                                             Toast.makeText(context,"Error: ${it.localizedMessage}", Toast.LENGTH_LONG).show()
                                         }
                                     detailUserViewModel?.addUser()
-                                }else{
+                                } else{
                                     Toast.makeText(context,"messageError", Toast.LENGTH_SHORT).show()
                                 }
 
@@ -202,36 +198,40 @@ class DetailUserActivity: MainActivity() {
                         .padding(16.dp)
                 )
 
-                // Input field for the user email
-                CustomOutlinedTextField(
-                    value = detailUserUiState.email,
-                    onValueChange = {
-                        detailUserViewModel?.onEmailChange(it)
-                        isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches() },
-                    label = { Text(
-                        text = "Email",
-                        fontFamily = FontFamily.Monospace,
-                    ) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
+                if (!isUserIDNotBlank) {
+                    // Input field for the user email
+                    CustomOutlinedTextField(
+                        value = detailUserUiState.email,
+                        onValueChange = {
+                            detailUserViewModel?.onEmailChange(it)
+                            isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches() },
+                        label = { Text(
+                            text = "Email",
+                            fontFamily = FontFamily.Monospace,
+                        ) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+
+                    // Input field for the password
+                    CustomOutlinedTextField(
+                        value = password,
+                        onValueChange = {
+                            password = it
+                            isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password) },
+                        label = { Text(
+                            text = "Contrasena",
+                            fontFamily = FontFamily.Monospace,
+                        ) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+
+                }
 
 
-                // Input field for the password
-                CustomOutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                        isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password) },
-                    label = { Text(
-                        text = "Contrasena",
-                        fontFamily = FontFamily.Monospace,
-                    ) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
 
                 // Input field for the photo url
                 CustomOutlinedTextField(
