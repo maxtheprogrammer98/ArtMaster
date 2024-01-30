@@ -96,4 +96,5 @@
     <string name="barra_busqueda_fav">filtra el tutorial por su nombre</string>
     <string name="filtrar_path">Filtrar por rutas</string>
     <string name="filtrar_fav_nombre">Filtrar por nombre</string>
+    <string name="agregar_reminder">Agregar recordatorio</string>
 </resources>

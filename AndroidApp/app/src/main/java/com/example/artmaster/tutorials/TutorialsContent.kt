@@ -611,3 +611,22 @@ fun createScore(
             }
         }
 }
+
+
+/**
+ * triggers a request to set a reminder on a calendar
+ */
+@Composable
+fun BtnSetReminder(){
+    Button(
+        onClick = { /*TODO*/ },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ){
+        Text(
+            text = stringResource(id = R.string.agregar_reminder),
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center)
+    }
+}

@@ -2,8 +2,10 @@ package com.example.artmaster.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,12 +25,12 @@ fun FrontPage(){
     val scrolling = rememberScrollState()
 
     // ----------- WRAPPER -------------//
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
             .horizontalScroll(scrolling),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalArrangement = Arrangement.Center
     ){
         // ----------- FRONT PAGE IMAGE -------------//
         Image(
