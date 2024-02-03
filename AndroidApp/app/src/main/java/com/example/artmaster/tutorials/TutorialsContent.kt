@@ -164,6 +164,9 @@ fun AddTutorialContent(
                 puntuacion = task
             )
         })
+        // ------------ REMINDER ---------------//
+        ReminderSetting()
+
     }
 }
 
