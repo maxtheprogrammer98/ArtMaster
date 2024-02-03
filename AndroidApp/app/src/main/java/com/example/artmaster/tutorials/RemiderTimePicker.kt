@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Clear
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
@@ -35,9 +33,10 @@ import com.example.artmaster.R
 @Composable
 fun ReminderSetting(){
     // main button (which triggers the function to show the settings)
-    var showSettings by remember { mutableStateOf(false)}
+    var flagShowSettings by remember { mutableStateOf(false)}
     var iconMenuSettings by remember { mutableStateOf(Icons.TwoTone.KeyboardArrowDown)}
-    var textSettings by remember { mutableStateOf("Click para agendar recordatorio!") }
+    var textSettings by remember { mutableStateOf("Click para agendar recordatorio!")}
+
     // stores the selected time / date
     var selectedTime by remember { mutableStateOf("")}
     var selectedDate by remember { mutableStateOf("")}
@@ -45,42 +44,40 @@ fun ReminderSetting(){
     var flagDataTime by remember { mutableStateOf(false) }
 
     // show settings
-    TextButton(
+    Button(
         onClick = {
-            // changes flag's state
-            showSettings = switchFlagState(showSettings)
-            // changing text / icon
-            if (showSettings) {
-                textSettings = "click para cerrar ajustes"
+            // switching flag state
+            flagShowSettings = !flagShowSettings
+            // validation
+            if (flagShowSettings){
+                // settings displayed
                 iconMenuSettings = Icons.TwoTone.KeyboardArrowUp
+                textSettings = "Cerrar ajustes recordatorio"
             } else {
-                textSettings = "Click para agendar recordatorio!"
+                // settings undisplayed
                 iconMenuSettings = Icons.TwoTone.KeyboardArrowDown
+                textSettings = "Click para agendar recordatorio"
             }
         },
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
-            .wrapContentSize(Alignment.Center)
     ){
+        // wrapper
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ){
-            Text(
-                text = textSettings,
-                textAlign = TextAlign.Center)
-
-            Icon(
-                imageVector = iconMenuSettings,
-                contentDescription = "icon menu")
+            // adding text / icon
+            Text(text = textSettings)
+            Icon(imageVector = iconMenuSettings, contentDescription = "reminder icon")
         }
     }
 
     // time fields
-    if (showSettings){
+    if (flagShowSettings){
         // adding graphic elements
         Column(
             modifier = Modifier.padding(16.dp)
@@ -168,13 +165,4 @@ private fun validateFields (fieldDate : String, fieldTime : String) : Boolean{
     Log.i("reminder", "validation result: $isCompleted")
     // return statement
     return isCompleted
-}
-
-private fun switchFlagState(flag: Boolean) : Boolean{
-    // reference variable
-    var flagState = flag
-    // changing value
-    flagState != flag
-    // return statement
-    return flagState
 }
