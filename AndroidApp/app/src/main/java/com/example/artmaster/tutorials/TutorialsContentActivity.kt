@@ -32,7 +32,7 @@ import java.io.Serializable
  * this activity contains the tutorials content, from the main activity
  * the menu bar is inhereted
  */
-class TutorialsContentActivity : MainActivity(), GetUserInfoAuth {
+open class TutorialsContentActivity : MainActivity(), GetUserInfoAuth {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
