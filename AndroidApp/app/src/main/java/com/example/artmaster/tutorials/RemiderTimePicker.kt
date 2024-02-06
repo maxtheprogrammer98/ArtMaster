@@ -50,7 +50,7 @@ fun setReminder(context : Context, nombreTutorial : String){
 
     // schudale object
     val scheudale = AndroidAlarmScheudaler(context)
-    var alarmItem : AlarmItem? = null
+
 
     // show settings
     Button(
@@ -148,17 +148,21 @@ fun setReminder(context : Context, nombreTutorial : String){
                 onClick = {
                     // validating if input is correct
                     flagDataTime = validateFields(selectedDate,selectedTime)
+                    // creating object to trigger scheudaling function
+
                     // parsing input
                     val formatDate = SimpleDateFormat("dd-MM-yyyy")
                     val date : Date = formatDate.parse(selectedDate) as Date
                     val formatTime = DateTimeFormatter.ofPattern("HH:mm:ss")
                     val time : LocalTime = LocalTime.parse(selectedTime,formatTime)
                     // creating alertItem based on input
-                    alarmItem = AlarmItem(
+                    val alarmItem = AlarmItem(
                         date = date,
                         time = time,
                         message = "Recuerda practicar '$nombreTutorial'"
                     )
+                    // trigerring scheudale function
+                    scheudale.scheudale(alarmItem)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
