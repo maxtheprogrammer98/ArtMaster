@@ -102,4 +102,5 @@
     <string name="aceptar">Aceptar</string>
     <string name="ingresa_date">Ingresa la fecha (DD/MM/AAAA)</string>
     <string name="ingresa_hora">Ingresa la hora, formato 24hs: (HH:MM)</string>
+    <string name="notification_channel">ArtMaster Notificaciones</string>
 </resources>

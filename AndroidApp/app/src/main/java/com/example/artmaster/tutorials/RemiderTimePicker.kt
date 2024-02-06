@@ -1,5 +1,6 @@
 package com.example.artmaster.tutorials
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,10 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.R
+import java.text.SimpleDateFormat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 
 @Composable
-fun ReminderSetting(){
+fun setReminder(context : Context, nombreTutorial : String){
     // main button (which triggers the function to show the settings)
     var flagShowSettings by remember { mutableStateOf(false)}
     var iconMenuSettings by remember { mutableStateOf(Icons.TwoTone.KeyboardArrowDown)}
@@ -42,6 +47,10 @@ fun ReminderSetting(){
     var selectedDate by remember { mutableStateOf("")}
     // flag (it's true when the date and time field are both filled up)
     var flagDataTime by remember { mutableStateOf(false) }
+
+    // schudale object
+    val scheudale = AndroidAlarmScheudaler(context)
+    var alarmItem : AlarmItem? = null
 
     // show settings
     Button(
@@ -137,14 +146,41 @@ fun ReminderSetting(){
             // ---------------------- DONE BTN -----------------------//
             Button(
                 onClick = {
+                    // validating if input is correct
                     flagDataTime = validateFields(selectedDate,selectedTime)
+                    // parsing input
+                    val formatDate = SimpleDateFormat("dd-MM-yyyy")
+                    val date : Date = formatDate.parse(selectedDate) as Date
+                    val formatTime = DateTimeFormatter.ofPattern("HH:mm:ss")
+                    val time : LocalTime = LocalTime.parse(selectedTime,formatTime)
+                    // creating alertItem based on input
+                    alarmItem = AlarmItem(
+                        date = date,
+                        time = time,
+                        message = "Recuerda practicar '$nombreTutorial'"
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp)
             ){
                 Text(
-                    text = "agregar recordatorio",
+                    text = "Agregar recordatorio",
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            // ---------------------- DELETE REMINDER  -----------------------//
+            Button(
+                onClick = {
+                    //TODO: Add cancelling function
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ){
+                Text(
+                    text = "eliminar recordatorio",
                     textAlign = TextAlign.Center
                 )
             }

@@ -165,7 +165,7 @@ fun AddTutorialContent(
             )
         })
         // ------------ REMINDER ---------------//
-        ReminderSetting()
+        setReminder(context, nombre)
 
     }
 }
