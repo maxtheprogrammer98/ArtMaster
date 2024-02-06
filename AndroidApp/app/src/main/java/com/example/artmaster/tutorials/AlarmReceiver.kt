@@ -39,8 +39,10 @@ class AlarmReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
-        notification.notify()
-
+        // synchronizing notification to avoid errors
+        synchronized(notification){
+            notification.notify()
+        }
 
     }
 }
