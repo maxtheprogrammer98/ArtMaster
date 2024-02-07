@@ -4,9 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -61,25 +64,40 @@ object ButtonsFlags{
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun AddPortada(linkImg : String){
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(250.dp)
-            .wrapContentSize(Alignment.Center)
-            .background(Color.LightGray)
-            .padding(0.dp, 60.dp, 0.dp, 0.dp)
+            .height(240.dp)
+            .padding(0.dp, 55.dp, 0.dp, 0.dp),
     ){
-        AsyncImage(
-            //TODO: Add real image in FS!
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("https://loremflickr.com/800/800/art?lock=1")
-                .crossfade(1000)
-                .transformations(CircleCropTransformation())
-                .build(),
-            contentDescription = "imagen",
+
+        // adding background
+        Box(modifier = Modifier.fillMaxSize()){
+                Image(
+                    painter = painterResource(id = R.mipmap.header2),
+                    contentDescription = stringResource(id = R.string.fondo),
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.matchParentSize())
+        }
+
+        // adding tutorial image
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(0.dp, 20.dp))
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ){
+            AsyncImage(
+                //TODO: Add real image in FS!
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("https://loremflickr.com/800/800/art?lock=1")
+                    .crossfade(1000)
+                    .transformations(CircleCropTransformation())
+                    .build(),
+                contentDescription = "imagen",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp, 20.dp))
+        }
     }
 }
 

@@ -2,8 +2,9 @@ package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,10 +16,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
+import com.example.artmaster.R
 import com.example.artmaster.paths.CustomCiricularProgressBar
-import com.example.artmaster.paths.CustomLinearProgressBar
 
 class TutorialsPreviewActivity : MainActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,22 +63,35 @@ class TutorialsPreviewActivity : MainActivity(){
             }
         ){
             //--------------------- MAIN CONTAINER -------------------//
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollingState)
-                    .padding(0.dp, 70.dp)
+                    .padding(0.dp, 60.dp)
             ){
-                // widget that shows progress
-                CustomCiricularProgressBar(IDpath = pathID)
+                // adding wooden background
+                Image(
+                    painter = painterResource(id = R.mipmap.madera2),
+                    contentDescription = stringResource(id = R.string.fondo),
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.matchParentSize())
 
-                // creates search bar that interacts with the view model
-                CreateSerachBar(pathName = pathName)
+                // general wrapper
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    // widget that shows progress
+                    CustomCiricularProgressBar(IDpath = pathID)
 
-                // generates cards dynamically
-                GenerateCardsTutorials(
-                    pathName = pathName,
-                    context = applicationContext)
+                    // creates search bar that interacts with the view model
+                    CreateSerachBar(pathName = pathName)
+
+                    // generates cards dynamically
+                    GenerateCardsTutorials(
+                        pathName = pathName,
+                        context = applicationContext)
+                }
+
             }
         }
     }

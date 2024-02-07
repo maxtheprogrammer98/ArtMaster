@@ -153,7 +153,7 @@ fun setReminder(context : Context, nombreTutorial : String){
                     // parsing input
                     val formatDate = SimpleDateFormat("dd-MM-yyyy")
                     val date : Date = formatDate.parse(selectedDate) as Date
-                    val formatTime = DateTimeFormatter.ofPattern("HH:mm:ss")
+                    val formatTime = DateTimeFormatter.ofPattern("HH:mm")
                     val time : LocalTime = LocalTime.parse(selectedTime,formatTime)
                     // creating alertItem based on input
                     val alarmItem = AlarmItem(
