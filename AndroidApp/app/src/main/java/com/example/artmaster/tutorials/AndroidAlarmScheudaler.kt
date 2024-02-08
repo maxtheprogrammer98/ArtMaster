@@ -28,7 +28,6 @@ class AndroidAlarmScheudaler(
         Log.i("alarmTest", "date: $date")
         Log.i("alarmTest", "time : $time")
 
-        // TODO: fix conversion problems
         // converting values
         val localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())
             .withHour(time.hour)
