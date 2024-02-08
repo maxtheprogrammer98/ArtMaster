@@ -71,7 +71,7 @@ class TutorialsPreviewActivity : MainActivity(){
             ){
                 // adding wooden background
                 Image(
-                    painter = painterResource(id = R.mipmap.fondoA),
+                    painter = painterResource(id = R.mipmap.fondo1),
                     contentDescription = stringResource(id = R.string.fondo),
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier.matchParentSize())
