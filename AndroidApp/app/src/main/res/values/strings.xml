@@ -104,4 +104,7 @@
     <string name="ingresa_hora">Ingresa la hora, formato 24hs: (HH:MM)</string>
     <string name="notification_channel">ArtMaster Notificaciones</string>
     <string name="fondo">fondo</string>
+    <!-- AI ASSISTANT-->
+    <string name="AI_assistant"> Asistente IA</string>
+    <string name="ai_help">Soy una IA, en que te puedo ayudar?</string>
 </resources>
