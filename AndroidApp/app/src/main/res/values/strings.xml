@@ -115,5 +115,6 @@
     <string name="ia_image_option"> Sube una imagen de tu dibujo y la IA te dara su opinion</string>
     <string name="ia_title_preview"> Selecciona la opción que prefieras</string>
     <string name="ai_btn_img">Click en el siguiente boton para subir imagen</string>
-    <string name="btn_subir">SUBIR</string>
+    <string name="btn_subir">Subir Imagen</string>
+    <string name="btn_ask_ai">Consultar IA</string>
 </resources>

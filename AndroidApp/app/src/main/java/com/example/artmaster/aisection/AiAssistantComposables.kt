@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -43,11 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.artmaster.R
 import com.google.ai.client.generativeai.GenerativeModel
 
@@ -261,14 +262,32 @@ fun BtnUploadImg(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = {uri -> selectedImage = uri })
 
-    // adding button
+    // ---------------------- PREVIEW IMAGE ------------------------------//
+
+    AsyncImage(
+        model = selectedImage,
+        contentDescription = stringResource(id = R.string.imagen),
+        modifier = Modifier.fillMaxWidth(),
+        contentScale = ContentScale.Crop)
+
+    // ---------------------- UPLOADING BUTTON ------------------------------//
     Button(
         onClick = {
             // 1 -  executing launcher which will open the galery to select the image
             singlePickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    ){
+        Text(text = stringResource(id = R.string.btn_subir))
+    }
 
+    // ---------------------- ASK IA BUTTON ------------------------------//
+    Button(
+        onClick = {
             // 2- transforming uri image into bitmap
             if (selectedImage != null){
                 val inputStream = contentResolver.openInputStream(selectedImage as Uri)
@@ -282,16 +301,20 @@ fun BtnUploadImg(
                 )
             } else {
                 // displaying error
-                Log.i("AI", "null uri variable!")
+                Toast.makeText(
+                    context,
+                    "debes subir una imagen primero!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-
         },
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp)
     ){
-        Text(text = stringResource(id = R.string.btn_subir))
+        Text(text = stringResource(id = R.string.btn_ask_ai))
     }
+
 }
 
 
@@ -310,9 +333,6 @@ fun DisplayFeedback(viewModel: AiAssistantViewModel = viewModel()){
             .shadow(4.dp, shape = RoundedCornerShape(15.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
-
-
-
         // --------------------  title --------------------//
         Text(
             text = stringResource(id = R.string.ai_titulo),
