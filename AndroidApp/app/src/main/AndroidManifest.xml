@@ -18,8 +18,11 @@
         android:theme="@style/Theme.ArtMaster"
         tools:targetApi="31">
         <activity
+            android:name=".aisection.AiAssistantActivityImg"
+            android:exported="false" />
+        <activity
             android:name=".aisection.AiAssistantActivityPreview"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".aisection.AiAssistantActivityText"
             android:exported="false" />

@@ -14,25 +14,28 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.ai.client.generativeai.GenerativeModel
 
-class AiAssistantActivityText : MainActivity() {
+class AiAssistantActivityImg : MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
 
         // adding model information
-        val generativeModelText = GenerativeModel(
-            modelName = "gemini-pro",
+        val generativeModelImg = GenerativeModel(
+            modelName = "gemini-pro-vision",
             //TODO: FIX BuildConfig problem to not expose the api key!
             apiKey = "AIzaSyACRZhR_TnmticRhpOolXD00TVILiXhh_8"
         )
@@ -41,22 +44,20 @@ class AiAssistantActivityText : MainActivity() {
             ArtMasterTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                    GeneralLayout(generativeModelText)
+                    GeneralLayout(model = generativeModelImg)
                 }
             }
         }
-
-
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    private fun GeneralLayout(model: GenerativeModel){
-        // scroll variable
-        val scrollVarable = rememberScrollState()
+    fun GeneralLayout(model: GenerativeModel){
+        // scrolling state variable
+        val scrollingState = rememberScrollState()
 
-        // setting main layout
+        // main container
         Scaffold(
             topBar = {
                 super.TobBarMain()
@@ -67,36 +68,43 @@ class AiAssistantActivityText : MainActivity() {
             modifier = Modifier
                 .fillMaxSize()
         ){
+            // wrapper
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(0.dp, 50.dp)
-                    .verticalScroll(scrollVarable),
+                    .verticalScroll(scrollingState)
+                    .padding(0.dp, 60.dp)
             ){
-
-                // background image
+                // background
                 Image(
                     painter = painterResource(id = R.mipmap.fondo1),
                     contentDescription = stringResource(id = R.string.fondo),
-                    modifier = Modifier.matchParentSize(),
-                    contentScale = ContentScale.FillBounds)
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.matchParentSize())
 
-                //wrapper
+                // sub wrapper
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 ){
-                    // inserting image icon
-                    AddRobotIcon(painterResource(id = R.mipmap.robot))
 
-                    // inserting input field
-                    InputFieldAIhelp(model = model)
+                    // adding robot icon
+                    AddRobotIcon(painterIcon = painterResource(id = R.mipmap.robot))
 
-                    // response text
-                    DisplayAIresponseText()
+                    // title
+                    Text(
+                        text = stringResource(id = R.string.ai_btn_img),
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White)
+
+                    // inserting btn to pick image
+                    BtnUploadImg(model = model, context = applicationContext)
+
+                    // inserting AI response
+                    DisplayFeedback()
                 }
-
             }
         }
     }
-
 }

@@ -113,4 +113,7 @@
     <string name="title_activity_ai_assistant_image">AiAssistantActivityImage</string>
     <string name="ia_text_option"> Realiza consultas y la IA te respondera en forma de texto</string>
     <string name="ia_image_option"> Sube una imagen de tu dibujo y la IA te dara su opinion</string>
+    <string name="ia_title_preview"> Selecciona la opción que prefieras</string>
+    <string name="ai_btn_img">Click en el siguiente boton para subir imagen</string>
+    <string name="btn_subir">SUBIR</string>
 </resources>

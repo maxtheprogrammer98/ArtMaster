@@ -2,7 +2,13 @@ package com.example.artmaster.aisection
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,16 +17,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Clear
 import androidx.compose.material.icons.twotone.Done
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,7 +51,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.R
 import com.google.ai.client.generativeai.GenerativeModel
 
-
+/**
+ * sets a text field that will input a request to AI model
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputFieldAIhelp(
@@ -119,9 +128,9 @@ fun InputFieldAIhelp(
 
 
 @Composable
-fun DisplayAIresponse(viewModelAIsection: AiAssistantViewModel = viewModel()){
+fun DisplayAIresponseText(viewModelAIsection: AiAssistantViewModel = viewModel()){
     // reference variable
-    val aiResponse = viewModelAIsection.stateContentResponse.value
+    val aiResponse = viewModelAIsection.stateContentResponseText.value
 
     // --------------------  WRAPPER --------------------//
     Column(
@@ -160,7 +169,7 @@ fun AddRobotIcon(painterIcon: Painter){
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(150.dp)
             .padding(30.dp),
         contentAlignment = Alignment.Center
     ){
@@ -168,10 +177,15 @@ fun AddRobotIcon(painterIcon: Painter){
         Image(
             painter = painterIcon,
             contentDescription = stringResource(id = R.string.robot_icon),
-            modifier = Modifier.fillMaxHeight())
+            modifier = Modifier
+                .height(125.dp)
+                .width(125.dp))
     }
 }
 
+/**
+ * enables you to add options in the IA section
+ */
 @Composable
 fun AddOptionAI(
     painterIcon: Painter,
@@ -183,7 +197,7 @@ fun AddOptionAI(
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp)
-            .clickable { createIntent(context,intentTo)}
+            .clickable { createIntent(context, intentTo) }
             .background(Color.White, shape = RoundedCornerShape(12.dp)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
@@ -214,7 +228,7 @@ fun createIntent(context: Context, intentTo: String){
 
     } else if (intentTo.equals("imageActivity")){
         // image option
-        val intent = Intent(context, AiAssistantActivityText::class.java)
+        val intent = Intent(context, AiAssistantActivityImg::class.java)
         context.startActivity(intent)
 
     } else {
@@ -226,3 +240,93 @@ fun createIntent(context: Context, intentTo: String){
     }
 }
 
+/**
+ * enables the user to upload a drawing which
+ * will be analyzed by the AI
+ */
+@Composable
+fun BtnUploadImg(
+    viewModel: AiAssistantViewModel = viewModel(),
+    model: GenerativeModel,
+    context: Context){
+
+    // selected image
+    var selectedImage by remember { mutableStateOf<Uri?>(null)}
+
+    // object needed for conversion (uri to bitmap)
+    val contentResolver = context.contentResolver
+
+    // launcher
+    val singlePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {uri -> selectedImage = uri })
+
+    // adding button
+    Button(
+        onClick = {
+            // 1 -  executing launcher which will open the galery to select the image
+            singlePickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+
+            // 2- transforming uri image into bitmap
+            if (selectedImage != null){
+                val inputStream = contentResolver.openInputStream(selectedImage as Uri)
+                val selecImageBitMap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close() // close after use
+
+                // 3 - updating viewModel
+                viewModel.getFeedbackDrawing(
+                    model = model,
+                    image = selecImageBitMap
+                )
+            } else {
+                // displaying error
+                Log.i("AI", "null uri variable!")
+            }
+
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    ){
+        Text(text = stringResource(id = R.string.btn_subir))
+    }
+}
+
+
+@Composable
+fun DisplayFeedback(viewModel: AiAssistantViewModel = viewModel()){
+
+    // reference variable
+    val aiResponse = viewModel.stateContentResponseImg.value
+
+    // --------------------  WRAPPER --------------------//
+    Column(
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(15.dp))
+            .shadow(4.dp, shape = RoundedCornerShape(15.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ){
+
+
+
+        // --------------------  title --------------------//
+        Text(
+            text = stringResource(id = R.string.ai_titulo),
+            textDecoration = TextDecoration.Underline,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(20.dp))
+
+
+        // --------------------  text response --------------------//
+        Text(
+            text = aiResponse,
+            modifier = Modifier.padding(12.dp))
+
+        // --------------------  separation --------------------//
+        Spacer(modifier = Modifier.height(20.dp))
+    }
+}
