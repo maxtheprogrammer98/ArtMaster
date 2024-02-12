@@ -105,6 +105,12 @@
     <string name="notification_channel">ArtMaster Notificaciones</string>
     <string name="fondo">fondo</string>
     <!-- AI ASSISTANT-->
+    <string name="ai_title_input">Ingresa tu pregunta</string>
     <string name="AI_assistant"> Asistente IA</string>
     <string name="ai_help">Soy una IA, en que te puedo ayudar?</string>
+    <string name="ai_titulo"> Respuesta de la AI...</string>
+    <string name="robot_icon">robot icon</string>
+    <string name="title_activity_ai_assistant_image">AiAssistantActivityImage</string>
+    <string name="ia_text_option"> Realiza consultas y la IA te respondera en forma de texto</string>
+    <string name="ia_image_option"> Sube una imagen de tu dibujo y la IA te dara su opinion</string>
 </resources>

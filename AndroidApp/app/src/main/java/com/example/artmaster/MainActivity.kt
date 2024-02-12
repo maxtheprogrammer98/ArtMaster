@@ -47,7 +47,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.artmaster.aisection.AiAssistantActivity
+import com.example.artmaster.aisection.AiAssistantActivityPreview
 import com.example.artmaster.favorites.FavActivity
 import com.example.artmaster.graphicElements.ItemsGenerator
 import com.example.artmaster.home.HomeActivity
@@ -341,7 +341,7 @@ open class MainActivity : ComponentActivity() {
                 }
             }
             "Asistente IA" ->{
-                Intent(applicationContext, AiAssistantActivity::class.java).also {
+                Intent(applicationContext, AiAssistantActivityPreview::class.java).also {
                     startActivity(it)
                 }
             }

@@ -21,7 +21,6 @@ class AiAssistantViewModel() : ViewModel() {
            val response = model.generateContent(
                content {
                    text(input)
-
                }
            )
            // storing result
