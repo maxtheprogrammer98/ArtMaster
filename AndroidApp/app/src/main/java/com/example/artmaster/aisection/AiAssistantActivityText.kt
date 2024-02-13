@@ -89,10 +89,10 @@ class AiAssistantActivityText : MainActivity() {
                     AddRobotIcon(painterResource(id = R.mipmap.robot))
 
                     // inserting input field
-                    InputFieldAIhelp(model = model)
+                    InputFieldAIhelp(model = model, context = applicationContext)
 
                     // response text
-                    DisplayAIresponseText()
+                    DisplayResponseAI()
                 }
 
             }

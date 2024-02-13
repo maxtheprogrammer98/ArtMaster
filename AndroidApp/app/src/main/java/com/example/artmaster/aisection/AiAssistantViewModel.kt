@@ -12,12 +12,16 @@ import kotlinx.coroutines.launch
  * manages all the flow of the sections content
  */
 class AiAssistantViewModel() : ViewModel() {
-    // state variables
-    var stateContentResponseText = mutableStateOf("Respuesta de la IA...") // text request response
-    var stateImageUploaded = mutableStateOf("") // image uploaded
-    var stateContentResponseImg = mutableStateOf("") // drawing feedback
 
-    // request from text input
+    // state variables
+    // TODO: group all these state variables into a single object!
+    var stateGenericAnswer = mutableStateOf("Respuesta de la IA...") // text request response
+    var stateFeedbackDrawing = mutableStateOf("") // drawing feedback
+    var stateIdeasSuggested = mutableStateOf("") // feedback ideas
+
+    /**
+     * request based on input text (general question)
+     */
     fun getHelpClick(model : GenerativeModel, input : String){
         // asynchronous request
        viewModelScope.launch {
@@ -29,12 +33,14 @@ class AiAssistantViewModel() : ViewModel() {
                }
            )
            // storing result
-           stateContentResponseText.value = response.text.toString()
+           stateGenericAnswer.value = response.text.toString()
        }
 
     }
 
-    // request based on image
+    /**
+     * request based on bitmap image (drawing feedback)
+     */
     fun getFeedbackDrawing(model: GenerativeModel, image : Bitmap){
         // asynchronous request
         viewModelScope.launch {
@@ -42,17 +48,31 @@ class AiAssistantViewModel() : ViewModel() {
             val feedback = model.generateContent(
                 // setting arguments
                 content {
-                    text("que opinas de este dibujo?")
+                    text("que opinas de este dibujo, tienes alguna sugerencia?")
                     image(image)
                 }
             )
             // storing result
-            stateContentResponseImg.value = feedback.text.toString()
+            stateFeedbackDrawing.value = feedback.text.toString()
         }
 
     }
 
-
-
+    /**
+     * request based on input text (drawing ideas)
+     */
+    fun getIdeasDrawing(model: GenerativeModel, input: String){
+        // asynchronous request
+        viewModelScope.launch {
+            // passing request
+            val ideas = model.generateContent(
+                content {
+                    text("me puedes dar ideas para algun dibujo de estilo: $input ?")
+                }
+            )
+            // storing result
+            stateIdeasSuggested.value = ideas.text.toString()
+        }
+    }
 
 }

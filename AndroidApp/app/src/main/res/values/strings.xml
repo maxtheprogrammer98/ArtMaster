@@ -117,4 +117,7 @@
     <string name="ai_btn_img">Click en el siguiente boton para subir imagen</string>
     <string name="btn_subir">Subir Imagen</string>
     <string name="btn_ask_ai">Consultar IA</string>
+    <string name="ai_drawing_ideas">La IA te brindara ideas para dibujos!</string>
+    <string name="ai_image_uploaded">Tu imagen aparecera aqui</string>
+    <string name="ai_remove_image">Eliminar Imagen</string>
 </resources>

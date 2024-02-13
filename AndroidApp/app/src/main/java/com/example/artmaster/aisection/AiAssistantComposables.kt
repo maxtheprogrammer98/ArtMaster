@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -59,11 +60,23 @@ import com.google.ai.client.generativeai.GenerativeModel
 @Composable
 fun InputFieldAIhelp(
     viewModelAIsection: AiAssistantViewModel = viewModel(),
-    model : GenerativeModel){
+    model : GenerativeModel,
+    context: Context){
+
     // variable that stores the input
-    var inputUser by remember {
-        mutableStateOf("")
-    }
+    var inputUser by remember { mutableStateOf("") }
+
+    // --------------- Toast Messages -----------------//
+    val successMessage = Toast.makeText(
+        context,
+        "La solicitud puede demorar unos segundos en procesarse",
+        Toast.LENGTH_SHORT
+    )
+    val failureMessage = Toast.makeText(
+        context,
+        "El campo no puede estar vacio!",
+        Toast.LENGTH_SHORT
+    )
 
     // --------------------  WRAPPER --------------------//
     Column(
@@ -108,11 +121,19 @@ fun InputFieldAIhelp(
             },
             leadingIcon = {
                 IconButton(onClick = {
-                    // calling the function that updates the viewModel
-                    viewModelAIsection.getHelpClick(
-                        model = model,
-                        input = inputUser
-                    )
+                    if (inputUser.isNotEmpty()){
+                        // calling the function that updates the viewModel
+                        viewModelAIsection.getHelpClick(
+                            model = model,
+                            input = inputUser
+                        )
+                        // displaying sucess message
+                        successMessage.show()
+                    } else {
+                        // displaying error message
+                        failureMessage.show()
+                    }
+
                 }){
                     Icon(
                         imageVector = Icons.TwoTone.Done,
@@ -127,11 +148,13 @@ fun InputFieldAIhelp(
 
 }
 
-
+/**
+ * displays the response of the first option (general questions)
+ */
 @Composable
-fun DisplayAIresponseText(viewModelAIsection: AiAssistantViewModel = viewModel()){
+fun DisplayResponseAI(viewModelAIsection: AiAssistantViewModel = viewModel()){
     // reference variable
-    val aiResponse = viewModelAIsection.stateContentResponseText.value
+    val aiResponse = viewModelAIsection.stateGenericAnswer.value
 
     // --------------------  WRAPPER --------------------//
     Column(
@@ -142,8 +165,6 @@ fun DisplayAIresponseText(viewModelAIsection: AiAssistantViewModel = viewModel()
             .shadow(4.dp, shape = RoundedCornerShape(15.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
-
-
 
         // --------------------  title --------------------//
         Text(
@@ -197,7 +218,8 @@ fun AddOptionAI(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(15.dp)
+            .heightIn(90.dp, 125.dp)
             .clickable { createIntent(context, intentTo) }
             .background(Color.White, shape = RoundedCornerShape(12.dp)),
         verticalAlignment = Alignment.CenterVertically,
@@ -207,7 +229,9 @@ fun AddOptionAI(
         Image(
             painter = painterIcon,
             contentDescription = "icon",
-            modifier = Modifier.size(80.dp))
+            modifier = Modifier
+                .size(65.dp)
+                .padding(10.dp))
 
         // --------------------  description --------------------//
         Text(
@@ -221,6 +245,13 @@ fun AddOptionAI(
  * identifies which option was selected and opens the corresponding activity
  */
 fun createIntent(context: Context, intentTo: String){
+    //error message
+    val errorMessage = Toast.makeText(
+        context,
+        "ha ocurrido un error, intenta de nuevo",
+        Toast.LENGTH_SHORT
+    )
+
     // validation
     if (intentTo.equals("textActivity")){
         // text option
@@ -232,12 +263,14 @@ fun createIntent(context: Context, intentTo: String){
         val intent = Intent(context, AiAssistantActivityImg::class.java)
         context.startActivity(intent)
 
+    } else if (intentTo.equals("ideasActivity")) {
+        // ideas option
+        val intent = Intent(context, AiAssistantActivityIdeas::class.java)
+        context.startActivity(intent)
+
     } else {
-        // error message
-        Toast.makeText(
-            context,
-            "invalid option",
-            Toast.LENGTH_SHORT).show()
+        // displaying error message
+        errorMessage.show()
     }
 }
 
@@ -264,6 +297,17 @@ fun BtnUploadImg(
 
     // ---------------------- PREVIEW IMAGE ------------------------------//
 
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = stringResource(id = R.string.ai_image_uploaded),
+            fontWeight = FontWeight.Bold,
+            color = Color.White)
+    }
+
     AsyncImage(
         model = selectedImage,
         contentDescription = stringResource(id = R.string.imagen),
@@ -280,7 +324,7 @@ fun BtnUploadImg(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(10.dp, 20.dp, 10.dp, 0.dp)
     ){
         Text(text = stringResource(id = R.string.btn_subir))
     }
@@ -310,19 +354,34 @@ fun BtnUploadImg(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(10.dp, 20.dp, 10.dp, 0.dp)
     ){
         Text(text = stringResource(id = R.string.btn_ask_ai))
     }
 
+    // ---------------------- DELETE BUTTON ------------------------------//
+    Button(
+        onClick = {
+            // removes uploaded image
+            selectedImage = null
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp, 20.dp, 10.dp, 0.dp)
+    ){
+        Text(text = stringResource(id = R.string.ai_remove_image))
+    }
+
+
 }
 
-
+/**
+ * displays a text giving you feedback of your drawing (drawing feedback)
+ */
 @Composable
-fun DisplayFeedback(viewModel: AiAssistantViewModel = viewModel()){
-
+fun DisplayFeedbackDrawing(viewModel: AiAssistantViewModel = viewModel()){
     // reference variable
-    val aiResponse = viewModel.stateContentResponseImg.value
+    val aiResponse = viewModel.stateFeedbackDrawing.value
 
     // --------------------  WRAPPER --------------------//
     Column(
@@ -348,5 +407,139 @@ fun DisplayFeedback(viewModel: AiAssistantViewModel = viewModel()){
 
         // --------------------  separation --------------------//
         Spacer(modifier = Modifier.height(20.dp))
+    }
+}
+
+
+/**
+ * gives you a text with different ideas for drawings (ideas suggestions)
+ */
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun GetDrawingIdeas(
+    viewModel: AiAssistantViewModel = viewModel(),
+    model: GenerativeModel,
+    context: Context
+){
+    // --------------- variables -----------------//
+    var inputText by remember { mutableStateOf("")}
+
+    // --------------- Toast Messages -----------------//
+    val successMessage = Toast.makeText(
+        context,
+        "La solicitud puede demorar unos segundos en procesarse",
+        Toast.LENGTH_SHORT
+    )
+    val failureMessage = Toast.makeText(
+        context,
+        "El campo no puede estar vacio!",
+        Toast.LENGTH_SHORT
+    )
+
+    // --------------- wrapper -----------------//
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(15.dp)
+            )
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(15.dp)
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        // --------------- title -----------------//
+        Text(
+            text = stringResource(id = R.string.ai_title_input),
+            fontWeight = FontWeight.Bold,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.padding(10.dp))
+
+        // --------------- text field -----------------//
+        OutlinedTextField(
+            value = inputText,
+            onValueChange = {inputText = it},
+            leadingIcon = {
+                IconButton(
+                    onClick = {
+                        if(inputText.isNotEmpty()){
+                            // executing request
+                            viewModel.getIdeasDrawing(
+                                model = model,
+                                input = inputText
+                            )
+                            // sucess message
+                            successMessage.show()
+                        } else {
+                            // displaying message
+                            failureMessage.show()
+                    }
+                }){
+                    Icon(
+                        imageVector = Icons.TwoTone.Done,
+                        contentDescription = "icon OK")
+                }
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        inputText = ""
+                    }
+                ){
+                    Icon(
+                        imageVector = Icons.TwoTone.Clear,
+                        contentDescription = stringResource(id = R.string.borrar))    
+                }
+            },
+            placeholder = {
+                Text(text = "Dime que estilo de dibujo te gusta y te dare algunas ideas!")
+            })
+
+        // --------------- spacer -----------------//
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+}
+
+
+/**
+ * displays the ideas after the request was sent
+ */
+@Composable
+fun DisplayDrawingIdeas(
+    viewModel: AiAssistantViewModel = viewModel(),
+    model: GenerativeModel
+){
+    // --------------- variables -----------------//
+    val ideasSuggested = viewModel.stateIdeasSuggested.value
+
+    // -------------- wrapper -----------------//
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(15.dp)
+            )
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(15.dp)
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        // ----------------- title --------------------//
+        Text(
+            text = stringResource(id = R.string.ai_titulo),
+            fontWeight = FontWeight.Bold,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.padding(10.dp))
+
+        // ----------------- AI response --------------------//
+        Text(
+            text = ideasSuggested,
+            modifier = Modifier.padding(20.dp))
     }
 }

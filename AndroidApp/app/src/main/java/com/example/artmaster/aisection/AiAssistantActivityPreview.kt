@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -81,11 +83,23 @@ class AiAssistantActivityPreview : MainActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(12.dp, 60.dp)
+                        .padding(12.dp, 70.dp)
                 ){
                     
                     // ai icon
-                    AddRobotIcon(painterIcon = painterResource(id = R.mipmap.robot2))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp,20.dp,0.dp,5.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        Image(
+                            painter = painterResource(id = R.mipmap.iconia),
+                            contentDescription = "AI logo",
+                            modifier = Modifier
+                                .height(130.dp)
+                                .width(130.dp))
+                    }
 
                     // wrapper
                     Column(
@@ -105,20 +119,26 @@ class AiAssistantActivityPreview : MainActivity() {
                     
                     // option text input
                     AddOptionAI(
-                        painterIcon = painterResource(id = R.mipmap.notesicon) ,
+                        painterIcon = painterResource(id = R.mipmap.notesiconia) ,
                         description = stringResource(id = R.string.ia_text_option),
                         context = applicationContext,
                         intentTo = "textActivity")
 
                     // option image feedback
                     AddOptionAI(
-                        painterIcon = painterResource(id = R.mipmap.articon),
+                        painterIcon = painterResource(id = R.mipmap.artiaicon),
                         description = stringResource(id = R.string.ia_image_option),
                         context = applicationContext,
                         intentTo = "imageActivity")
+
+                    // option drawing ideas
+                    AddOptionAI(
+                        painterIcon = painterResource(id = R.mipmap.eureka),
+                        description = stringResource(id = R.string.ai_drawing_ideas),
+                        context = applicationContext,
+                        intentTo = "ideasActivity")
                 }
             }
         }
-
     }
 }
