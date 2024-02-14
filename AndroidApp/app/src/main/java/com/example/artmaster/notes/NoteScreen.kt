@@ -1,13 +1,20 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.example.artmaster.notes
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -26,17 +33,24 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +65,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +75,7 @@ import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -152,7 +168,10 @@ class NoteActivity: MainActivity() {
 
         ) {padding ->
             // Column to hold the main content
-            Column(modifier = Modifier.fillMaxSize().padding(padding).background(color = MaterialTheme.colorScheme.background)) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(color = MaterialTheme.colorScheme.background)) {
 
                 // Add a search bar
                 TextField(
@@ -214,14 +233,19 @@ class NoteActivity: MainActivity() {
                                 filterNotes(notesList.data ?: emptyList(), searchQuery)
                             ) {note ->
                                 // Compose item for each note
-                                NoteItem(notes = note, onLongClick = {
-                                    openDialog = true
-                                    selectedNote = note
-                                },
-                                ) {
-                                    onNoteClick.invoke(note.documentId)
-                                }
-
+                                SwipeToDeleteNote(
+                                    item = note,
+                                    onDelete = { noteViewModel?.deleteNote(it) },
+                                    content = {
+                                        NoteItem(notes = note, onLongClick = {
+                                            openDialog = true
+                                            selectedNote = note
+                                        },
+                                        ) {
+                                            onNoteClick.invoke(note.documentId)
+                                        }
+                                    }
+                                )
                             }
                         }
                         // Animated visibility for the delete dialog
@@ -284,6 +308,80 @@ class NoteActivity: MainActivity() {
 
     }
 
+}
+
+@Composable
+fun <T> SwipeToDeleteNote(
+    item: T,
+    onDelete: suspend (String) -> Unit,
+    animationDuration: Int = 500,
+    content: @Composable (T) -> Unit
+) {
+
+    val context = LocalContext.current
+    var isRemoved by remember {
+        mutableStateOf(false)
+    }
+    val state = rememberDismissState(
+        confirmStateChange = { value ->
+            if (value == DismissValue.DismissedToStart) {
+                isRemoved = true
+                true
+            } else {
+                false
+            }
+        }
+    )
+
+    LaunchedEffect(key1 = isRemoved) {
+        if (isRemoved) {
+            delay(animationDuration.toLong())
+            onDelete((item as Notes).documentId)
+            Toast.makeText(context, "Nota Eliminada...", Toast.LENGTH_SHORT).show()
+
+        }
+    }
+    
+    AnimatedVisibility(
+        visible = !isRemoved,
+        exit = shrinkVertically(
+            animationSpec = tween(durationMillis = animationDuration),
+            shrinkTowards = Alignment.Top
+        ) + fadeOut()
+    ) {
+        SwipeToDismiss(
+            state = state,
+            background = {
+                DeleteBackground(swipeDismissState = state)
+            },
+            dismissContent = { content(item) },
+            directions = setOf(DismissDirection.EndToStart)
+        )
+    }
+
+}
+
+@Composable
+fun DeleteBackground(
+    swipeDismissState: DismissState
+) {
+    val color = if (swipeDismissState.dismissDirection == DismissDirection.EndToStart) {
+        Color.Red
+    } else Color.Transparent
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = null,
+            tint = Color.White
+        )
+    }
 }
 
 // Composable function for rendering a single note item
