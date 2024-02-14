@@ -14,6 +14,7 @@
     <string name="login">Login / Logout</string>
     <string name="perfil">Perfil</string>
     <string name="panel_admin">Panel Admin</string>
+    <string name="asistente_ia">Asistente IA</string>
     <!-- login !-->
     <string name="bienvenido">Bienvenido!</string>
     <string name="ic_user">icono user</string>
@@ -120,4 +121,8 @@
     <string name="ai_drawing_ideas">La IA te brindara ideas para dibujos!</string>
     <string name="ai_image_uploaded">Tu imagen aparecera aqui</string>
     <string name="ai_remove_image">Eliminar Imagen</string>
+    <!-- HOME CARDS descriptions-->
+    <string name="card_ai"> Esta seccion utiliza una IA para brindarte ayuda de forma personalizada </string>
+    <string name="card_paths"> Aqui encontraras diversos tipos de tutoriales y podras controlar tu progreso </string>
+    <string name="card_notes"> Permite crear notas y recordatorios de lo que necesites</string>
 </resources>
