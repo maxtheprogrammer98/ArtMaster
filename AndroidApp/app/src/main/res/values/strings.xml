@@ -125,4 +125,5 @@
     <string name="card_ai"> Esta seccion utiliza una IA para brindarte ayuda de forma personalizada </string>
     <string name="card_paths"> Aqui encontraras diversos tipos de tutoriales y podras controlar tu progreso </string>
     <string name="card_notes"> Permite crear notas y recordatorios de lo que necesites</string>
+    <string name="developed_by">App desarrollada por</string>
 </resources>

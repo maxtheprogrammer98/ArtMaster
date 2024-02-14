@@ -78,6 +78,9 @@ class HomeActivity : MainActivity(){
                     // adding front page
                     FrontPage()
 
+                    // adding welcome message
+                    WelcomeMessage(message = "Bienvenido a ArtMaster")
+
                     // adding IA section card
                     CardsSections(
                         title = stringResource(id = R.string.asistente_ia) ,
@@ -101,6 +104,9 @@ class HomeActivity : MainActivity(){
                         description = stringResource(id = R.string.card_notes),
                         intentTo = "NotesActivity",
                         context = applicationContext)
+                    
+                    // adding developers contact
+                    CardDevelopers(context = applicationContext)
                 }
             }
         }

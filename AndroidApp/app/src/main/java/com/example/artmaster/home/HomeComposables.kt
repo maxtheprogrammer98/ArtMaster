@@ -2,9 +2,11 @@ package com.example.artmaster.home
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +32,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.artmaster.R
 import com.example.artmaster.aisection.AiAssistantActivityPreview
 import com.example.artmaster.paths.PathsActivity
@@ -60,9 +65,7 @@ fun FrontPage(){
 @Composable
 fun Header(){
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp, 0.dp, 0.dp, 20.dp)
+        modifier = Modifier.fillMaxWidth()
     ){
         Image(
             painter = painterResource(id = R.mipmap.header),
@@ -128,12 +131,18 @@ fun CardsSections(
             Spacer(modifier = Modifier.height(12.dp))
 
             // -------- description ---------- //
-            Text(
-                text = description,
-                modifier = Modifier.padding(10.dp,0.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(
+                    text = description,
+                    modifier = Modifier.padding(10.dp,0.dp),
+                    textAlign = TextAlign.Center)
+            }
 
             // -------- spacer ---------- //
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -168,5 +177,114 @@ fun openActivity(
             "opcion no valida",
             Toast.LENGTH_SHORT
         ).show()
+    }
+}
+
+@Composable
+fun WelcomeMessage(
+    message : String
+){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ){
+        Text(
+            text = message,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(10.dp))
+    }
+}
+
+@Composable
+fun CardDevelopers(
+    context: Context
+){
+    // ------------ MAIN CONTAINER ------------ //
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(
+                color = Color.Transparent,
+                shape = RoundedCornerShape(10.dp)
+            )
+    ){
+        // ------------- developed by --------------//
+        Box(
+            modifier = Modifier
+                .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ){
+            Text(
+                text = stringResource(id = R.string.developed_by),
+                fontSize = 14.sp,
+                color = Color.White)
+        }
+        
+        // ------------- GITHUB info --------------//
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/maxtheprogrammer98")
+                    )
+                    context.startActivity(intent)
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Image(
+                painter = painterResource(id = R.mipmap.github),
+                contentDescription = "github icon",
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(90.dp))
+
+            Spacer(modifier = Modifier.width(6.dp))
+
+            Text(
+                text = "@maxtheprogrammer98",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.zIndex(2f),
+                textAlign = TextAlign.Center)
+        }
+
+        // ------------- GITHUB info --------------//
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable {
+                    val intent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/BraianOviedo"))
+                    context.startActivity(intent)
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Image(
+                painter = painterResource(id = R.mipmap.github),
+                contentDescription = "github icon",
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(90.dp))
+
+            Spacer(modifier = Modifier.width(6.dp))
+
+            Text(
+                text = "@BraianOviedo",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.zIndex(2f),
+                textAlign = TextAlign.Center)
+
+            Spacer(modifier = Modifier.width(15.dp))
+        }
     }
 }
