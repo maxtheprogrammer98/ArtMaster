@@ -1,6 +1,5 @@
 package com.example.artmaster.paths
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,17 +14,16 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.artmaster.ui.theme.lightBlue
 import com.example.artmaster.user.UsersViewModel
 
 /**
@@ -67,7 +65,7 @@ fun CustomLinearProgressBar(
         // composable bar
         LinearProgressIndicator(
             progress = animatedProgress,
-            color = Color.Green,
+            color = lightBlue,
             trackColor = Color.White,
             modifier = Modifier
                 .fillMaxSize()
@@ -116,7 +114,9 @@ fun CustomCiricularProgressBar(
                 text = "progreso: $percentageDone%",
                 modifier = Modifier.padding(20.dp),
                 textAlign = TextAlign.Center,
-                fontSize = 10.sp)
+                fontSize = 14.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold)
         }
 
         //widget wrapper
@@ -128,7 +128,7 @@ fun CustomCiricularProgressBar(
             // widget bar
             CircularProgressIndicator(
                 progress = animatedProgress,
-                color = Color.Green,
+                color = lightBlue,
                 strokeWidth = 10.dp,
                 modifier = Modifier.size(100.dp))
         }

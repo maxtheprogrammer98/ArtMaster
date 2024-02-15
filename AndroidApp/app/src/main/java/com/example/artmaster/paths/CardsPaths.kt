@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.artmaster.R
 import com.example.artmaster.tutorials.TutorialsPreviewActivity
+import com.example.artmaster.ui.theme.greenDarkish
+import com.example.artmaster.ui.theme.greenMain
 
 /**
  * generates cards dynamically from fetched data from Firestore
@@ -81,7 +84,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(Color.DarkGray)
+                .background(greenMain)
                 .wrapContentSize(Alignment.Center)
         ){
             Text(
@@ -131,7 +134,8 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
             modifier = Modifier
                 .fillMaxWidth()
                 .height(75.dp)
-                .padding(16.dp)){
+                .padding(16.dp),
+            colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)){
             Text(
                 text = stringResource(id = R.string.abrir_tutorial),
                 fontSize = 16.sp)

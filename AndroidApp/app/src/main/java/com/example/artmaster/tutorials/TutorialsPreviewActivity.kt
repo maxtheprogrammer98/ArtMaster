@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -78,7 +80,8 @@ class TutorialsPreviewActivity : MainActivity(){
 
                 // general wrapper
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 ){
                     // widget that shows progress
                     CustomCiricularProgressBar(IDpath = pathID)
@@ -90,6 +93,9 @@ class TutorialsPreviewActivity : MainActivity(){
                     GenerateCardsTutorials(
                         pathName = pathName,
                         context = applicationContext)
+                    
+                    // spacer
+                    Spacer(modifier = Modifier.height(60.dp))
                 }
 
             }
