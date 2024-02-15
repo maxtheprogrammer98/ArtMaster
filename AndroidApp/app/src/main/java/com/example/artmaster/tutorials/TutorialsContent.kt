@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,11 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -45,6 +47,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.example.artmaster.R
+import com.example.artmaster.ui.theme.greenMain
 import com.example.artmaster.user.UsersViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -113,18 +116,21 @@ fun AddTutorialContent(
     userEmail: String
 ){
     // --------------------- CONTENEDOR GENERAL -----------------------//
-    //TODO: improve styling
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp, 0.dp, 10.dp, 0.dp)
+            .padding(20.dp)
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(15.dp)
+            )
     ){
         // ------------ TITULO ---------------//
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-                .wrapContentSize(Alignment.Center)
+                .height(100.dp),
+            contentAlignment = Alignment.Center
         ){
             Text(
                 text = nombre,
@@ -138,8 +144,8 @@ fun AddTutorialContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 20.dp)
-                .wrapContentSize(Alignment.Center)
+                .padding(10.dp, 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(
                 text = stringResource(id = R.string.informacion),
@@ -163,11 +169,16 @@ fun AddTutorialContent(
 
         // ------------ RATING BAR ---------------//
         // description
-        Text(
-            text = stringResource(id = R.string.calificacion),
+        Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(10.dp),
-            textAlign = TextAlign.Center)
+            contentAlignment = Alignment.Center,
+        ){
+            Text(
+                text = stringResource(id = R.string.calificacion),
+                textAlign = TextAlign.Center)
+        }
         // rating bar
         RatingBar(onRatingChange = {task ->
             // notification
@@ -183,7 +194,7 @@ fun AddTutorialContent(
             )
         })
         // ------------ REMINDER ---------------//
-        setReminder(context, nombre)
+        SetReminder(context, nombre)
 
     }
 }
@@ -216,7 +227,9 @@ fun AddDoneButton(
             btnText = setBtnDoneText(ButtonsFlags.btnDone)},
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(10.dp),
+
+        colors = ButtonDefaults.buttonColors(greenMain, Color.White)
     ){
         // adding btn text
         Text(text = btnText)
@@ -356,7 +369,8 @@ fun AddBtnFavs(
             favBtnText = setFavBtnText(ButtonsFlags.btnFavs)},
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp, 0.dp)
+            .padding(10.dp, 0.dp),
+        colors = ButtonDefaults.buttonColors(greenMain, Color.White)
     ){
         // adding text
         Text(text = favBtnText)

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
@@ -24,11 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.R
+import com.example.artmaster.ui.theme.greenDarkish
+import com.example.artmaster.ui.theme.greenMain
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -36,7 +40,7 @@ import java.util.Date
 
 
 @Composable
-fun setReminder(context : Context, nombreTutorial : String){
+fun SetReminder(context : Context, nombreTutorial : String){
     // main button (which triggers the function to show the settings)
     var flagShowSettings by remember { mutableStateOf(false)}
     var iconMenuSettings by remember { mutableStateOf(Icons.TwoTone.KeyboardArrowDown)}
@@ -70,7 +74,9 @@ fun setReminder(context : Context, nombreTutorial : String){
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(12.dp),
+
+        colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)
     ){
         // wrapper
         Row(
@@ -115,7 +121,7 @@ fun setReminder(context : Context, nombreTutorial : String){
                     }
                 },
                 placeholder = {
-                    Text(text = "Ingresa la fecha (DD/MM/AAAA)")
+                    Text(text = "Ingresa la fecha (DD-MM-AAAA)")
                 },
                 shape = CircleShape
             )
@@ -166,7 +172,9 @@ fun setReminder(context : Context, nombreTutorial : String){
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
+                    .padding(12.dp),
+
+                colors = ButtonDefaults.buttonColors(greenMain, Color.White)
             ){
                 Text(
                     text = "Agregar recordatorio",
@@ -177,11 +185,25 @@ fun setReminder(context : Context, nombreTutorial : String){
             // ---------------------- DELETE REMINDER  -----------------------//
             Button(
                 onClick = {
-                    //TODO: Add cancelling function
+                    // parsing input
+                    val formatDate = SimpleDateFormat("dd-MM-yyyy")
+                    val date : Date = formatDate.parse(selectedDate) as Date
+                    val formatTime = DateTimeFormatter.ofPattern("HH:mm")
+                    val time : LocalTime = LocalTime.parse(selectedTime,formatTime)
+                    // creating alertItem based on input
+                    val alarmItem = AlarmItem(
+                        date = date,
+                        time = time,
+                        message = "Recuerda practicar '$nombreTutorial'"
+                    )
+                    // calling cancel function
+                    scheudale.cancel(alarmItem)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
+                    .padding(12.dp),
+
+                colors = ButtonDefaults.buttonColors(greenMain, Color.White)
             ){
                 Text(
                     text = "eliminar recordatorio",

@@ -3,12 +3,12 @@ package com.example.artmaster.tutorials
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,11 +21,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.user.GetUserInfoAuth
-import com.example.artmaster.user.UsersViewModel
 import java.io.Serializable
 
 /**
@@ -84,25 +86,36 @@ open class TutorialsContentActivity : MainActivity(), GetUserInfoAuth {
                 .fillMaxSize()
         ){
             // -------------------- MAIN CONTAINER -------------------------//
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(scrollingState)
-                    .padding(0.dp,10.dp,0.dp,60.dp)
             ){
-                /* ------------------ PORTADA / FRONT IMAGE ----------------------- */
-                AddPortada(linkImg = tutorialModels.imagen)
-                /* ------------------ CONTENT ----------------------- */
-                AddTutorialContent(
-                    id = tutorialModels.id,
-                    nombre = tutorialModels.nombre,
-                    informacion = tutorialModels.informacion,
-                    context = applicationContext,
-                    userEmail = getCurrentUserEmail()
-                )
-            }
+                // ---------- BACKGROUND ------------ //
+                Image(
+                    painter = painterResource(id = R.mipmap.madera1),
+                    contentDescription = stringResource(id = R.string.fondo),
+                    modifier = Modifier.matchParentSize(),
+                    contentScale = ContentScale.FillBounds)
 
+                // ---------- wrapper ------------ //
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(0.dp,0.dp,0.dp,70.dp)
+                ){
+                    /* ------------------ PORTADA / FRONT IMAGE ----------------------- */
+                    AddPortada(linkImg = tutorialModels.imagen)
+                    /* ------------------ CONTENT ----------------------- */
+                    AddTutorialContent(
+                        id = tutorialModels.id,
+                        nombre = tutorialModels.nombre,
+                        informacion = tutorialModels.informacion,
+                        context = applicationContext,
+                        userEmail = getCurrentUserEmail()
+                    )
+                }
+            }
         }
     }
-
 }
