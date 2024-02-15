@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 
 interface AddingLoginHeader {
     @Composable
-    fun InsertHeader(imageLogin : Painter, descriptionLogin : String){
+    fun InsertUserIcon(imageLogin : Painter, descriptionLogin : String){
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -84,7 +84,7 @@ class HomeActivity : MainActivity(){
                     // adding IA section card
                     CardsSections(
                         title = stringResource(id = R.string.asistente_ia) ,
-                        icon = painterResource(id = R.mipmap.iconia),
+                        icon = painterResource(id = R.mipmap.iconiaalt),
                         description = stringResource(id = R.string.card_ai),
                         intentTo = "IAactivity",
                         context = applicationContext)

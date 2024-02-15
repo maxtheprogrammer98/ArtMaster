@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,10 +41,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -541,5 +544,29 @@ fun DisplayDrawingIdeas(
         Text(
             text = ideasSuggested,
             modifier = Modifier.padding(20.dp))
+    }
+}
+
+@Composable
+fun MainIaIcon(){
+    // boolean flag
+    var enabled by remember { mutableStateOf(true)}
+    // icon animation state
+    val animationValue by animateFloatAsState(if (enabled) 1f else 0f)
+
+    // ai icon
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 20.dp, 0.dp, 5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Image(
+            painter = painterResource(id = R.mipmap.iconia),
+            contentDescription = "AI logo",
+            modifier = Modifier
+                .height(130.dp)
+                .width(130.dp)
+                .alpha(animationValue))
     }
 }

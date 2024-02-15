@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -85,21 +83,9 @@ class AiAssistantActivityPreview : MainActivity() {
                         .fillMaxSize()
                         .padding(12.dp, 70.dp)
                 ){
-                    
-                    // ai icon
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(0.dp,20.dp,0.dp,5.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        Image(
-                            painter = painterResource(id = R.mipmap.iconia),
-                            contentDescription = "AI logo",
-                            modifier = Modifier
-                                .height(130.dp)
-                                .width(130.dp))
-                    }
+
+                    // adding main AI icon
+                    MainIaIcon()
 
                     // wrapper
                     Column(
