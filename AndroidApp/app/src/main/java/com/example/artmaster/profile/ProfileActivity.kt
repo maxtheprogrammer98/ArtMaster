@@ -176,7 +176,7 @@ class ProfileActivity: MainActivity() {
                                     .padding(16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(imageVector = Icons.Default.List, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                Icon(imageVector = Icons.Default.List, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = "Tutoriales")
                             }
@@ -198,7 +198,7 @@ class ProfileActivity: MainActivity() {
                                     .padding(16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(imageVector = Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                Icon(imageVector = Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = "Favoritos")
                             }
@@ -249,9 +249,15 @@ class ProfileActivity: MainActivity() {
 
                     }
 
-                    ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) },onDeleteDrawing = { uriToDelete ->
-                        dataViewModel.deleteUserDrawing(uriToDelete.toString())
-                    })
+                    if (user.drawingArray.isNotEmpty()) {
+                        ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) },onDeleteDrawing = { uriToDelete ->
+                            dataViewModel.deleteUserDrawing(uriToDelete.toString())
+                        })
+                    } else {
+                        Spacer(modifier = Modifier.fillMaxSize())
+                    }
+
+
                 }
 
         }

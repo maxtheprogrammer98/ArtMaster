@@ -149,9 +149,9 @@ class DetailUserActivity: MainActivity() {
 
                             }
                         },
-                        backgroundColor = MaterialTheme.colorScheme.primary
+                        backgroundColor = MaterialTheme.colorScheme.background
                     ) {
-                        Icon(imageVector = icon, contentDescription = null)
+                        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
                     }
                 }
             }
@@ -159,7 +159,7 @@ class DetailUserActivity: MainActivity() {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(color = MaterialTheme.colorScheme.onPrimary)
+                .background(color = MaterialTheme.colorScheme.background)
             ) {
                 // Show a snackbar for a successfully added path
                 if (detailUserUiState.userAddedStatus) {
@@ -288,9 +288,9 @@ fun CustomOutlinedTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
             cursorColor = MaterialTheme.colorScheme.onBackground,
             textColor = MaterialTheme.colorScheme.onBackground,
-            backgroundColor = MaterialTheme.colorScheme.onPrimary,
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            backgroundColor = MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
+            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
         ),
         shape = RoundedCornerShape(25.dp)
     )

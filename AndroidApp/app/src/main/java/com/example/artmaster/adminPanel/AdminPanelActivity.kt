@@ -178,7 +178,7 @@ fun AdminCard(title: String, icon: ImageVector, onClick: () -> Unit) {
                 modifier = Modifier
                     .size(48.dp)
                     .padding(8.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = title, fontWeight = FontWeight.Bold, fontSize = 16.sp)

@@ -151,9 +151,9 @@ class DetailActivity: MainActivity() {
                                 detailViewModel?.addNote()
                             }
                         },
-                        backgroundColor = MaterialTheme.colorScheme.primary
+                        backgroundColor = MaterialTheme.colorScheme.background
                     ) {
-                        Icon(imageVector = icon, contentDescription = null)
+                        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
                     }
                 }
             }
@@ -161,7 +161,7 @@ class DetailActivity: MainActivity() {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(color = MaterialTheme.colorScheme.onPrimary)
+                .background(color = MaterialTheme.colorScheme.background)
             ) {
                 // Show a snackbar for a successfully added note
                 if (detailUiState.noteAddedStatus) {
@@ -223,7 +223,7 @@ class DetailActivity: MainActivity() {
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = "Selecciona una hora",
@@ -275,7 +275,7 @@ class DetailActivity: MainActivity() {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = "Agregar Recordatorio",
@@ -340,9 +340,9 @@ fun CustomOutlinedTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
             cursorColor = MaterialTheme.colorScheme.onBackground,
             textColor = MaterialTheme.colorScheme.onBackground,
-            backgroundColor = MaterialTheme.colorScheme.onPrimary,
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            backgroundColor = MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
+            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
         ),
         shape = RoundedCornerShape(25.dp)
     )

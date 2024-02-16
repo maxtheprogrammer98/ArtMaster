@@ -7,8 +7,11 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +54,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +63,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
+import com.example.artmaster.R
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import kotlinx.coroutines.launch
 
@@ -132,7 +138,7 @@ class TutorialsActivity: MainActivity() {
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { navToDetailTutorialScreen.invoke() },
-                    backgroundColor = MaterialTheme.colorScheme.onPrimary
+                    backgroundColor = MaterialTheme.colorScheme.background
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -153,139 +159,164 @@ class TutorialsActivity: MainActivity() {
 
             ) { padding ->
 
-            // Column to hold the main content
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(color = MaterialTheme.colorScheme.background)) {
-
-                // Add a search bar
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = { Text("Buscar tutoriales", color = MaterialTheme.colorScheme.background.copy(alpha = 0.4f)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(16.dp)
-                        ),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(
-                                onClick = { searchQuery = "" },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.background
-                                )
-                            }
-                        }
-                    }
+            // Box to hold the main content and background image
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Add background image
+                Image(
+                    painter = painterResource(R.drawable.madera1),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
                 )
 
-
-                // Check the state of the tutorial list and display content accordingly
-                when(val tutorialList = tutorialUiState.tutorialList) {
-                    is TutorialResources.Loading -> {
-                        Log.d("TutorialScreen", "TutorialResource.Loading: ${tutorialUiState.tutorialList.data}")
-                        // Show a loading indicator when tutorials are being loaded
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .wrapContentSize(align = Alignment.Center)
-                        )
-                    }
-
-                    is TutorialResources.Success -> {
-                        Log.d("TutorialsScreen", "TutorialResource.Success: ${tutorialUiState.tutorialList.data}")
-                        // Show the list of tutorials when successfully loaded
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(1),
-                            contentPadding = PaddingValues(16.dp),
-
-                            ) {
-                            items(
-                                filterTutorials(tutorialList.data ?: emptyList(), searchQuery)
-                            ) { tutorial ->
-                                // Compose item for each tutorial
-                                TutorialItem(
-                                    tutorials = tutorial,
-                                    onLongClick = {
-                                        openDialog = true
-                                        selectedTutorial = tutorial
-                                    },
+                // Column to hold the main content
+                Column(
+                    modifier = Modifier.padding(padding),
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    // Add a search bar
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = {
+                            Text(
+                                "Buscar tutorial",
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.background,
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(
+                                    onClick = { searchQuery = "" },
                                 ) {
-                                    onPathClick.invoke(tutorial.tutorialID)
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.background
+                                    )
                                 }
-
                             }
                         }
-                        // Animated visibility for the delete dialog
-                        AnimatedVisibility(visible = openDialog) {
-                            // AlertDialog for confirming note deletion
-                            AlertDialog(
-                                onDismissRequest = {
-                                    openDialog = false
-                                },
-                                title = { Text(text = "Eliminar tutorial?") },
-                                confirmButton = {
-                                    Button(
-                                        onClick = {
-                                            selectedTutorial?.tutorialID?.let {
-                                                tutorialsViewModel?.deleteTutorial(it)
-                                            }
-                                            openDialog = false
-                                            scope.launch {
-                                                scaffoldState.snackbarHostState
-                                                    .showSnackbar("Tutorial eliminado exitosamente")
-                                            }
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = Color.Red
-                                        ),
-                                    ) {
-                                        Text(text = "Borrar")
-                                    }
-                                },
-                                dismissButton = {
-                                    Button(onClick = { openDialog = false }) {
-                                        Text(text = "Cancelar")
-                                    }
-                                }
+                    )
+
+
+                    // Check the state of the tutorial list and display content accordingly
+                    when (val tutorialList = tutorialUiState.tutorialList) {
+                        is TutorialResources.Loading -> {
+                            Log.d(
+                                "TutorialScreen",
+                                "TutorialResource.Loading: ${tutorialUiState.tutorialList.data}"
                             )
-
-
+                            // Show a loading indicator when tutorials are being loaded
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(align = Alignment.Center)
+                            )
                         }
 
-                    }
-                    // Show an error message if loading tutorials fails
-                    else -> {
-                        Text(
-                            text = tutorialUiState
-                                .tutorialList.throwable?.localizedMessage ?: "Error desconocido",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        Log.d("Firestore", tutorialUiState
-                            .tutorialList.throwable?.localizedMessage ?: "Error desconocido")
+                        is TutorialResources.Success -> {
+                            Log.d(
+                                "TutorialsScreen",
+                                "TutorialResource.Success: ${tutorialUiState.tutorialList.data}"
+                            )
+                            // Show the list of tutorials when successfully loaded
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(1),
+                                contentPadding = PaddingValues(16.dp),
+
+                                ) {
+                                items(
+                                    filterTutorials(tutorialList.data ?: emptyList(), searchQuery)
+                                ) { tutorial ->
+                                    // Compose item for each tutorial
+                                    TutorialItem(
+                                        tutorials = tutorial,
+                                        onLongClick = {
+                                            openDialog = true
+                                            selectedTutorial = tutorial
+                                        },
+                                    ) {
+                                        onPathClick.invoke(tutorial.tutorialID)
+                                    }
+
+                                }
+                            }
+                            // Animated visibility for the delete dialog
+                            AnimatedVisibility(visible = openDialog) {
+                                // AlertDialog for confirming note deletion
+                                AlertDialog(
+                                    onDismissRequest = {
+                                        openDialog = false
+                                    },
+                                    title = { Text(text = "Eliminar tutorial?") },
+                                    confirmButton = {
+                                        Button(
+                                            onClick = {
+                                                selectedTutorial?.tutorialID?.let {
+                                                    tutorialsViewModel?.deleteTutorial(it)
+                                                }
+                                                openDialog = false
+                                                scope.launch {
+                                                    scaffoldState.snackbarHostState
+                                                        .showSnackbar("Tutorial eliminado exitosamente")
+                                                }
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                backgroundColor = Color.Red
+                                            ),
+                                        ) {
+                                            Text(text = "Borrar")
+                                        }
+                                    },
+                                    dismissButton = {
+                                        Button(onClick = { openDialog = false }) {
+                                            Text(text = "Cancelar")
+                                        }
+                                    }
+                                )
+
+
+                            }
+
+                        }
+                        // Show an error message if loading tutorials fails
+                        else -> {
+                            Text(
+                                text = tutorialUiState
+                                    .tutorialList.throwable?.localizedMessage
+                                    ?: "Error desconocido",
+                                color = Color.Red,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            Log.d(
+                                "Firestore", tutorialUiState
+                                    .tutorialList.throwable?.localizedMessage ?: "Error desconocido"
+                            )
+                        }
                     }
                 }
             }
+
         }
-
     }
-
 
 
 }
@@ -311,7 +342,7 @@ fun TutorialItem(
             .padding(8.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        backgroundColor = MaterialTheme.colorScheme.primary
+        backgroundColor = MaterialTheme.colorScheme.background
     ) {
         // Column to arrange content within the card
         Column {
@@ -322,7 +353,7 @@ fun TutorialItem(
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Clip,
                 modifier = Modifier
                     .padding(4.dp)
@@ -337,7 +368,7 @@ fun TutorialItem(
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .padding(4.dp)
                         .padding(horizontal = 4.dp),
@@ -353,7 +384,7 @@ fun TutorialItem(
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .padding(4.dp)
                         .padding(end = 4.dp)

@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +20,6 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -137,9 +135,9 @@ class DetailTutorialActivity: MainActivity() {
                                 detailTutorialViewModel?.addTutorial()
                             }
                         },
-                        backgroundColor = MaterialTheme.colorScheme.primary
+                        backgroundColor = MaterialTheme.colorScheme.background
                     ) {
-                        Icon(imageVector = icon, contentDescription = null)
+                        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
                     }
                 }
             }
@@ -147,7 +145,7 @@ class DetailTutorialActivity: MainActivity() {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(color = MaterialTheme.colorScheme.onPrimary)
+                .background(color = MaterialTheme.colorScheme.background)
             ) {
                 // Show a snackbar for a successfully added tutorial
                 if (detailTutorialUiState.tutorialAddedStatus) {
@@ -289,9 +287,9 @@ fun CustomOutlinedTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
             cursorColor = MaterialTheme.colorScheme.onBackground,
             textColor = MaterialTheme.colorScheme.onBackground,
-            backgroundColor = MaterialTheme.colorScheme.onPrimary,
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            backgroundColor = MaterialTheme.colorScheme.background,
+            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
         ),
         shape = RoundedCornerShape(25.dp)
     )
@@ -318,9 +316,9 @@ fun CustomOutlinedFloatField(
             unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
             cursorColor = MaterialTheme.colorScheme.onBackground,
             textColor = MaterialTheme.colorScheme.onBackground,
-            backgroundColor = MaterialTheme.colorScheme.onPrimary,
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            backgroundColor = MaterialTheme.colorScheme.background,
+            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
         ),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         shape = RoundedCornerShape(25.dp)
@@ -353,7 +351,7 @@ fun CustomRadioGroup(
                 Text(
                     text = option,
                     color = if (option == selectedOption) {
-                        MaterialTheme.colorScheme.primary // Change this to your desired color
+                        MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.onBackground
                     }

@@ -7,8 +7,11 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +54,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +63,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.artmaster.MainActivity
+import com.example.artmaster.R
 import com.example.artmaster.ui.theme.ArtMasterTheme
 import kotlinx.coroutines.launch
 
@@ -130,7 +136,7 @@ class UsersActivity: MainActivity() {
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { navToDetailUserScreen.invoke() },
-                    backgroundColor = MaterialTheme.colorScheme.onPrimary
+                    backgroundColor = MaterialTheme.colorScheme.background
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -150,140 +156,163 @@ class UsersActivity: MainActivity() {
 
 
             ) { padding ->
-
-            // Column to hold the main content
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(color = MaterialTheme.colorScheme.background)) {
-
-                // Add a search bar
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = { Text("Buscar usuarios", color = MaterialTheme.colorScheme.background.copy(alpha = 0.4f)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(16.dp)
-                        ),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(
-                                onClick = { searchQuery = "" },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.background
-                                )
-                            }
-                        }
-                    }
+// Box to hold the main content and background image
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Add background image
+                Image(
+                    painter = painterResource(R.drawable.madera1),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
                 )
 
-
-                // Check the state of the users list and display content accordingly
-                when(val usersList = userUiState.userList) {
-                    is UsersResources.Loading -> {
-                        Log.d("UserScreen", "UserResources.Loading: ${userUiState.userList.data}")
-                        // Show a loading indicator when users are being loaded
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .wrapContentSize(align = Alignment.Center)
-                        )
-                    }
-
-                    is UsersResources.Success -> {
-                        Log.d("UserScreen", "UserResources.Success: ${userUiState.userList.data}")
-                        // Show the list of users when successfully loaded
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(1),
-                            contentPadding = PaddingValues(16.dp),
-
-                            ) {
-                            items(
-                                filterUsers(usersList.data ?: emptyList(), searchQuery)
-                            ) { user ->
-                                // Compose item for each note
-                                UserItem(
-                                    users = user,
-                                    onLongClick = {
-                                        openDialog = true
-                                        selectedUser = user
-                                    },
+                // Column to hold the main content
+                Column(
+                    modifier = Modifier.padding(padding),
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    // Add a search bar
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = {
+                            Text(
+                                "Buscar usuarios",
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.background,
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(
+                                    onClick = { searchQuery = "" },
                                 ) {
-                                    onUserClick.invoke(user.userID)
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.background
+                                    )
                                 }
-
                             }
                         }
-                        // Animated visibility for the delete dialog
-                        AnimatedVisibility(visible = openDialog) {
-                            // AlertDialog for confirming note deletion
-                            AlertDialog(
-                                onDismissRequest = {
-                                    openDialog = false
-                                },
-                                title = { Text(text = "Eliminar usuario?") },
-                                confirmButton = {
-                                    Button(
-                                        onClick = {
-                                            selectedUser?.userID?.let {
-                                                userViewModel?.deleteUser(it)
-                                            }
-                                            openDialog = false
-                                            scope.launch {
-                                                scaffoldState.snackbarHostState
-                                                    .showSnackbar("Usuario eliminada exitosamente")
-                                            }
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = Color.Red
-                                        ),
-                                    ) {
-                                        Text(text = "Borrar")
-                                    }
-                                },
-                                dismissButton = {
-                                    Button(onClick = { openDialog = false }) {
-                                        Text(text = "Cancelar")
-                                    }
-                                }
+                    )
+
+
+                    // Check the state of the users list and display content accordingly
+                    when (val usersList = userUiState.userList) {
+                        is UsersResources.Loading -> {
+                            Log.d(
+                                "UserScreen",
+                                "UserResources.Loading: ${userUiState.userList.data}"
                             )
-
-
+                            // Show a loading indicator when users are being loaded
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(align = Alignment.Center)
+                            )
                         }
 
-                    }
-                    // Show an error message if loading users fails
-                    else -> {
-                        Text(
-                            text = userUiState
-                                .userList.throwable?.localizedMessage ?: "Error desconocido",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        Log.d("Firestore", userUiState
-                            .userList.throwable?.localizedMessage ?: "Error desconocido")
+                        is UsersResources.Success -> {
+                            Log.d(
+                                "UserScreen",
+                                "UserResources.Success: ${userUiState.userList.data}"
+                            )
+                            // Show the list of users when successfully loaded
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(1),
+                                contentPadding = PaddingValues(16.dp),
+
+                                ) {
+                                items(
+                                    filterUsers(usersList.data ?: emptyList(), searchQuery)
+                                ) { user ->
+                                    // Compose item for each note
+                                    UserItem(
+                                        users = user,
+                                        onLongClick = {
+                                            openDialog = true
+                                            selectedUser = user
+                                        },
+                                    ) {
+                                        onUserClick.invoke(user.userID)
+                                    }
+
+                                }
+                            }
+                            // Animated visibility for the delete dialog
+                            AnimatedVisibility(visible = openDialog) {
+                                // AlertDialog for confirming note deletion
+                                AlertDialog(
+                                    onDismissRequest = {
+                                        openDialog = false
+                                    },
+                                    title = { Text(text = "Eliminar usuario?") },
+                                    confirmButton = {
+                                        Button(
+                                            onClick = {
+                                                selectedUser?.userID?.let {
+                                                    userViewModel?.deleteUser(it)
+                                                }
+                                                openDialog = false
+                                                scope.launch {
+                                                    scaffoldState.snackbarHostState
+                                                        .showSnackbar("Usuario eliminada exitosamente")
+                                                }
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                backgroundColor = Color.Red
+                                            ),
+                                        ) {
+                                            Text(text = "Borrar")
+                                        }
+                                    },
+                                    dismissButton = {
+                                        Button(onClick = { openDialog = false }) {
+                                            Text(text = "Cancelar")
+                                        }
+                                    }
+                                )
+
+
+                            }
+
+                        }
+                        // Show an error message if loading users fails
+                        else -> {
+                            Text(
+                                text = userUiState
+                                    .userList.throwable?.localizedMessage ?: "Error desconocido",
+                                color = Color.Red,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            Log.d(
+                                "Firestore", userUiState
+                                    .userList.throwable?.localizedMessage ?: "Error desconocido"
+                            )
+                        }
                     }
                 }
             }
+
         }
-
     }
-
 
 
 }
@@ -308,7 +337,7 @@ fun UserItem(
             .padding(8.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        backgroundColor = MaterialTheme.colorScheme.primary
+        backgroundColor = MaterialTheme.colorScheme.background
     ) {
         // Column to arrange content within the card
         Column {
@@ -319,7 +348,7 @@ fun UserItem(
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Clip,
                 modifier = Modifier
                     .padding(4.dp)
@@ -334,7 +363,7 @@ fun UserItem(
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .padding(4.dp)
                         .padding(horizontal = 4.dp),
@@ -350,7 +379,7 @@ fun UserItem(
                     fontFamily = FontFamily.Monospace,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .padding(4.dp)
                         .padding(end = 4.dp)

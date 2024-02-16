@@ -2,9 +2,7 @@ package com.example.artmaster.profile
 
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.os.CountDownTimer
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -166,11 +164,13 @@ fun MultiFloatingButton(
                     }
                 )
             },
+            backgroundColor = MaterialTheme.colorScheme.background,
         ) {
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = null,
-                modifier = Modifier.rotate(rotate)
+                modifier = Modifier.rotate(rotate),
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -188,7 +188,7 @@ fun MinFab(
     showLabel: Boolean = true,
     onMinFabItemClick: (MinFabItem) -> Unit
 ){
-    val buttonColor = MaterialTheme.colorScheme.primary
+    val buttonColor = Color.White
     val shadow = Color.Black.copy(.5f)
 
     Row {
@@ -221,7 +221,7 @@ fun MinFab(
                 indication = rememberRipple(
                     bounded = false,
                     radius = 20.dp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.background
                 )
             )) {
 

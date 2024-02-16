@@ -40,8 +40,6 @@ import androidx.compose.ui.unit.sp
 import com.example.artmaster.adminPaths.DetailPathActivity
 import com.example.artmaster.adminTutorials.DetailTutorialActivity
 import com.example.artmaster.adminUsers.DetailUserActivity
-import com.example.artmaster.notes.NoteActivity
-
 
 @Composable
 fun MultiFloatingButton(
@@ -119,11 +117,13 @@ fun MultiFloatingButton(
                     }
                 )
             },
+            backgroundColor = MaterialTheme.colorScheme.background,
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                modifier = Modifier.rotate(rotate)
+                modifier = Modifier.rotate(rotate),
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -141,7 +141,7 @@ fun MinFab(
     showLabel: Boolean = true,
     onMinFabItemClick: (MinFabItem) -> Unit
 ){
-    val buttonColor = MaterialTheme.colorScheme.primary
+    val buttonColor = Color.White
     val shadow = Color.Black.copy(.5f)
 
     Row {
