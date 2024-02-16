@@ -55,9 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.artmaster.R
-import com.example.artmaster.ui.theme.greenMain
+import com.example.artmaster.ui.theme.greenDarkish
 import com.google.ai.client.generativeai.GenerativeModel
-
 /**
  * sets a text field that will input a request to AI model
  */
@@ -331,7 +330,7 @@ fun BtnUploadImg(
             .fillMaxWidth()
             .padding(10.dp, 20.dp, 10.dp, 0.dp),
 
-        colors = ButtonDefaults.buttonColors(greenMain, Color.White)
+        colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)
     ){
         Text(text = stringResource(id = R.string.btn_subir))
     }
@@ -346,7 +345,7 @@ fun BtnUploadImg(
             .fillMaxWidth()
             .padding(10.dp, 20.dp, 10.dp, 0.dp),
 
-        colors = ButtonDefaults.buttonColors(greenMain, Color.White)
+        colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)
     ){
         Text(text = stringResource(id = R.string.ai_remove_image))
     }
@@ -378,12 +377,10 @@ fun BtnUploadImg(
             .fillMaxWidth()
             .padding(10.dp, 20.dp, 10.dp, 0.dp),
 
-        colors = ButtonDefaults.buttonColors(greenMain, Color.White)
+        colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)
     ){
         Text(text = stringResource(id = R.string.btn_ask_ai))
     }
-
-
 }
 
 /**
@@ -507,7 +504,10 @@ fun GetDrawingIdeas(
             },
             placeholder = {
                 Text(text = "Dime que estilo de dibujo te gusta y te dare algunas ideas!")
-            })
+            },
+            shape = CircleShape,
+            modifier = Modifier.padding(10.dp)
+        )
 
         // --------------- spacer -----------------//
         Spacer(modifier = Modifier.height(10.dp))

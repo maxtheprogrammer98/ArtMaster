@@ -1,70 +1,47 @@
 package com.example.artmaster.favorites
 
-import com.example.artmaster.tutorials.TutorialsContentActivity
-import com.example.artmaster.tutorials.TutorialsModels
-import com.example.artmaster.tutorials.TutorialsViewModel
-import com.example.artmaster.tutorials.VotosViewModel
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
-import android.util.Log
-import android.widget.RatingBar
-import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.ImageLoader
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.artmaster.R
-import com.example.artmaster.user.UserModels
+import com.example.artmaster.tutorials.TutorialsContentActivity
+import com.example.artmaster.tutorials.TutorialsModels
+import com.example.artmaster.tutorials.VotosViewModel
+import com.example.artmaster.ui.theme.greenDarkish
+import com.example.artmaster.ui.theme.starIcon
 import com.example.artmaster.user.UsersViewModel
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import androidx.compose.ui.platform.LocalContext
-import coil.compose.SubcomposeAsyncImage
-import com.example.artmaster.favorites.FavViewModel
 
 
 //remember variables
@@ -90,7 +67,6 @@ fun GenerateCardsFavs(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(15.dp)
-                    .heightIn(400.dp, 800.dp)
                     .clip(MaterialTheme.shapes.medium),
                 elevation = CardDefaults.cardElevation(
                 defaultElevation = 5.dp
@@ -161,34 +137,45 @@ fun GenerateCardsFavs(
 
         AddRatingBar(tutorialID = fav.id)
 
+        // ---------- SPACER ------------ //
+        Spacer(modifier = Modifier.height(12.dp))
+
         // ---------- BUTTONS ------------ //
         Column {
             // ---------- BUTTON OPEN  ----------//
             Button(
+                // function
                 onClick = {
                     openTutorial(
                         tutorialModel = fav,
                         context = context
                     )
                 },
+                // styles
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(15.dp, 10.dp)
+                    .padding(12.dp, 0.dp),
+                // colors
+                colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)
             ){
                 Text(
                     text = stringResource(id = R.string.abrir_tutorial))
             }
 
+            // ---------- SPACER ------------ //
+            Spacer(modifier = Modifier.height(12.dp))
+
             // ---------- BUTTON FAVS  ----------//
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .wrapContentSize(Alignment.Center)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ){
                 Button(
                     // styling
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp, 0.dp),
                     // functions
                     onClick = {
                         // removes tutorial from DB
@@ -198,13 +185,17 @@ fun GenerateCardsFavs(
                             context = context);
                         // removes tutorial from VM
                         dataViewModel.removeFromFavVM(tutorialID = fav.id)
-                        }
+                        },
+                    // colors
+                    colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)
 
                 ){
                     Text(text = stringResource(id = R.string.eliminar_fav))
                 }
             }
-            
+
+            // ---------- SPACER ------------ //
+            Spacer(modifier = Modifier.height(15.dp))
             }
         }
     }
@@ -271,7 +262,9 @@ fun AddRatingBar(
         for(elem in 0 until averageScore){
             Icon(
                 painter = painterResource(id = R.drawable.ic_star_yellow),
-                contentDescription = stringResource(id = R.string.estrella_icono) )
+                contentDescription = stringResource(id = R.string.estrella_icono),
+                tint = starIcon,
+                modifier = Modifier.size(40.dp))
         }
     }
 }

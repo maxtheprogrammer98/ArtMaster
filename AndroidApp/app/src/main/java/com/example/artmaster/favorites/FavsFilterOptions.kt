@@ -1,13 +1,15 @@
 package com.example.artmaster.favorites
 
-import android.util.Log
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -22,18 +24,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.artmaster.paths.PathsViewModel
 import com.example.artmaster.R
+import com.example.artmaster.paths.PathsViewModel
 
 @Composable
 fun FilterOptions(
     dataViewModel: FavViewModel = viewModel(),
-    pathsViewModel: PathsViewModel = viewModel()
+    pathsViewModel: PathsViewModel = viewModel(),
+    context : Context
 ){
 
     // -------------- reference variables -------------------- //
@@ -44,7 +48,6 @@ fun FilterOptions(
     var flagFilterBtns by remember { mutableStateOf(false)}
     var iconType by remember { mutableStateOf(Icons.Filled.KeyboardArrowDown) }
 
-
     // -------------------- PATH FILTER ICON ------------------//
     IconButton(
         onClick = {
@@ -53,7 +56,11 @@ fun FilterOptions(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp)
+            .padding(20.dp,12.dp)
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(12.dp)
+            )
     ){
         // ------------ wrapper -------------//
         Row(
@@ -75,22 +82,30 @@ fun FilterOptions(
                 modifier = Modifier
                     .size(55.dp))
         }
-
-
     }
 
     // -------------------- PATHS OPTIONS BTNS ------------------//
     if (flagFilterBtns){
-        paths.forEach {
-                path -> Button(
-            onClick = {dataViewModel.filterPathOption(path.nombre)},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-                .wrapContentSize(Alignment.Center)
-        ) {
+        if (paths.isNotEmpty()){
+            // array is not empty
+            paths.forEach {
+                    path -> Button(
+                onClick = {dataViewModel.filterPathOption(path.nombre)},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)
+                    .wrapContentSize(Alignment.Center)
+            ){
                 Text(text = path.nombre)
+                }
             }
+        } else {
+            // displaying error
+            Toast.makeText(
+                context,
+                "no se ha guardado ningun tutorial como favorito",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

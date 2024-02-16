@@ -63,7 +63,7 @@ class HomeActivity : MainActivity(){
             ){
                 // adding background
                 Image(
-                    painter = painterResource(id = R.mipmap.fondo2),
+                    painter = painterResource(id = R.mipmap.fondo6),
                     contentDescription = stringResource(id = R.string.fondo),
                     modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.FillBounds)

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,9 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,40 +64,26 @@ object ButtonsFlags{
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun AddPortada(linkImg : String){
+    // wrapper
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp)
+            .height(350.dp)
             .padding(0.dp, 55.dp, 0.dp, 0.dp),
+        contentAlignment = Alignment.Center
     ){
-
-        // adding background
-        Box(modifier = Modifier.fillMaxSize()){
-                Image(
-                    painter = painterResource(id = R.mipmap.header2),
-                    contentDescription = stringResource(id = R.string.fondo),
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.matchParentSize())
-        }
-
-        // adding tutorial image
-        Box(
+        // image
+        AsyncImage(
+            //TODO: Add real image in FS!
+            model = ImageRequest.Builder(LocalContext.current)
+                .data("https://loremflickr.com/800/800/art?lock=1")
+                .crossfade(1000)
+                .transformations(CircleCropTransformation())
+                .build(),
+            contentDescription = "imagen",
             modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ){
-            AsyncImage(
-                //TODO: Add real image in FS!
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://loremflickr.com/800/800/art?lock=1")
-                    .crossfade(1000)
-                    .transformations(CircleCropTransformation())
-                    .build(),
-                contentDescription = "imagen",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(0.dp, 20.dp))
-        }
+                .fillMaxSize()
+                .padding(0.dp, 20.dp))
     }
 }
 
@@ -138,7 +121,6 @@ fun AddTutorialContent(
                 textDecoration = TextDecoration.Underline,
                 fontSize = 20.sp)
         }
-
 
         // ------------ INFORMATION ---------------//
         Column(
