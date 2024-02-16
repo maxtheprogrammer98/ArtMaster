@@ -93,7 +93,7 @@ open class TutorialsContentActivity : MainActivity(), GetUserInfoAuth {
             ){
                 // ---------- BACKGROUND ------------ //
                 Image(
-                    painter = painterResource(id = R.mipmap.madera1),
+                    painter = painterResource(id = R.mipmap.fondo2),
                     contentDescription = stringResource(id = R.string.fondo),
                     modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.FillBounds)

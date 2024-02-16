@@ -57,6 +57,7 @@ import com.example.artmaster.paths.PathsActivity
 import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
+import com.example.artmaster.ui.theme.darkBlueA
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -394,7 +395,7 @@ open class MainActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(),
-            containerColor = colorResource(id = R.color.dark_blue)
+            containerColor = darkBlueA
         ){
             if (usersRole.equals("user") || usersRole.equals("admin")){
                 // displays all icons
