@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
+import com.example.artmaster.tutorials.TutorialsModels
 
 class FavActivity : MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,7 @@ class FavActivity : MainActivity() {
         "UnusedMaterialScaffoldPaddingParameter"
     )
     private fun FavsLayout(
+        tutorialsModels: ArrayList<TutorialsModels> = GetFavTutorials()
     ){
         // enables vertical scrolling
         val scrollSate = rememberScrollState()
@@ -78,7 +80,7 @@ class FavActivity : MainActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp,0.dp,0.dp,90.dp)
+                        .padding(0.dp, 0.dp, 0.dp, 90.dp)
                 ){
                     // adding header
                     Column(
@@ -97,7 +99,11 @@ class FavActivity : MainActivity() {
                     FilterOptions(context = applicationContext)
 
                     // adding cards dynamically
-                    GenerateCardsFavs(context = applicationContext)
+                    tutorialsModels.forEach {
+                        it -> SwipableCard(
+                        tutorialModel = it,
+                        context = applicationContext)
+                    }
                 }
             }
         }
