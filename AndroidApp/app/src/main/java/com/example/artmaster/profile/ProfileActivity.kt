@@ -5,8 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -39,8 +42,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
@@ -140,15 +145,32 @@ class ProfileActivity: MainActivity() {
 
             ) { padding ->
 
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.bg05),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(padding)
-                        .background(MaterialTheme.colorScheme.background),
+                        .padding(16.dp)
+                        .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(20.dp)),
                 ) {
                     ProfileHeader(user, navigateToLogin)
                     Spacer(modifier = Modifier.height(16.dp))
-                    ProfileInfoItem(Icons.Default.Person, "Nombre", user.name, true, onEditClick = {})
+                    ProfileInfoItem(
+                        Icons.Default.Person,
+                        "Nombre",
+                        user.name,
+                        true,
+                        onEditClick = {})
                     Spacer(modifier = Modifier.height(8.dp))
                     ProfileInfoItem(Icons.Default.Email, "Correo Electrónico", user.email, false)
                     Spacer(modifier = Modifier.height(32.dp))
@@ -163,7 +185,11 @@ class ProfileActivity: MainActivity() {
                         // First Card
                         Card(
                             onClick = {
-                                Toast.makeText(context, "Redirecting to tutoriales", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Redirecting to tutoriales",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -176,7 +202,11 @@ class ProfileActivity: MainActivity() {
                                     .padding(16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(imageVector = Icons.Default.List, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
+                                Icon(
+                                    imageVector = Icons.Default.List,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = "Tutoriales")
                             }
@@ -185,7 +215,11 @@ class ProfileActivity: MainActivity() {
                         // Second Card
                         Card(
                             onClick = {
-                                Toast.makeText(context, "Redirecting to favorite", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Redirecting to favorite",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -198,7 +232,11 @@ class ProfileActivity: MainActivity() {
                                     .padding(16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(imageVector = Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = "Favoritos")
                             }
@@ -209,12 +247,16 @@ class ProfileActivity: MainActivity() {
                         ChangePasswordDialog(
                             onConfirmClicked = { currentPassword, newPassword ->
                                 // Enforce specific password criteria
-                                val passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*()])(?=\\S+\$).{8,}\$".toRegex()
+                                val passwordRegex =
+                                    "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*()])(?=\\S+\$).{8,}\$".toRegex()
                                 if (newPassword.matches(passwordRegex)) {
                                     // Reauthenticate the user with their current password
-                                    if (currentPassword.isNotBlank()){
+                                    if (currentPassword.isNotBlank()) {
                                         val userProfile = Firebase.auth.currentUser
-                                        val credential = EmailAuthProvider.getCredential(userProfile?.email!!, currentPassword)
+                                        val credential = EmailAuthProvider.getCredential(
+                                            userProfile?.email!!,
+                                            currentPassword
+                                        )
 
                                         userProfile.reauthenticate(credential)
                                             .addOnSuccessListener {
@@ -223,23 +265,43 @@ class ProfileActivity: MainActivity() {
                                                     .addOnSuccessListener {
                                                         // Password changed successfully
                                                         showDialog.value = false
-                                                        Toast.makeText(context, "Contrasena actualizada", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Contrasena actualizada",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
                                                     }
                                                     .addOnFailureListener { exception ->
                                                         // Handle password change errors
-                                                        Toast.makeText(context, "Fallo al cambiar la contrasena: ${exception.message}", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Fallo al cambiar la contrasena: ${exception.message}",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
                                                     }
                                             }
                                             .addOnFailureListener { exception ->
                                                 // Handle reauthentication errors
-                                                Toast.makeText(context, "Fallo en reautenticar: ${exception.message}", Toast.LENGTH_LONG).show()
+                                                Toast.makeText(
+                                                    context,
+                                                    "Fallo en reautenticar: ${exception.message}",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
                                             }
                                     } else {
-                                        Toast.makeText(context, "Su contrasena actual debe ser valida", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Su contrasena actual debe ser valida",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
                                 } else {
                                     // Notify the user that the new password does not meet the criteria
-                                    Toast.makeText(context, "La contrasena debe tener al menos 8 caracteres e incluir una letra mayuscula, un numero, y un caracter especial", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(
+                                        context,
+                                        "La contrasena debe tener al menos 8 caracteres e incluir una letra mayuscula, un numero, y un caracter especial",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                             },
                             onDismissClicked = {
@@ -250,9 +312,11 @@ class ProfileActivity: MainActivity() {
                     }
 
                     if (user.drawingArray.isNotEmpty()) {
-                        ImageLayoutView(selectedImages = user.drawingArray.map { Uri.parse(it) },onDeleteDrawing = { uriToDelete ->
-                            dataViewModel.deleteUserDrawing(uriToDelete.toString())
-                        })
+                        ImageLayoutView(
+                            selectedImages = user.drawingArray.map { Uri.parse(it) },
+                            onDeleteDrawing = { uriToDelete ->
+                                dataViewModel.deleteUserDrawing(uriToDelete.toString())
+                            })
                     } else {
                         Spacer(modifier = Modifier.fillMaxSize())
                     }
@@ -260,7 +324,10 @@ class ProfileActivity: MainActivity() {
 
                 }
 
+            }
+
         }
+
     }
 
 }

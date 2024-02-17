@@ -156,13 +156,13 @@ class UsersActivity: MainActivity() {
 
 
             ) { padding ->
-// Box to hold the main content and background image
+            // Box to hold the main content and background image
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
                 // Add background image
                 Image(
-                    painter = painterResource(R.drawable.madera1),
+                    painter = painterResource(R.drawable.bg05),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.FillBounds

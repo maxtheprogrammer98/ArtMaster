@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class,
+    ExperimentalMaterialApi::class
+)
 
 package com.example.artmaster.notes
 
@@ -176,7 +178,7 @@ class NoteActivity: MainActivity() {
             ) {
                 // Add background image
                 Image(
-                    painter = painterResource(R.drawable.madera1),
+                    painter = painterResource(R.drawable.bg05),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.FillBounds

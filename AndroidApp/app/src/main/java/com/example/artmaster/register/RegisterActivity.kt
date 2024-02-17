@@ -7,21 +7,18 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,12 +29,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,10 +78,7 @@ class RegisterActivity: MainActivity() {
     fun RegisterScreen(navigateToLogin: () -> Unit, navigateToProfile: () -> Unit) {
 
         val scrollState = rememberScrollState()
-        val scope = rememberCoroutineScope()
-        val scaffoldState = rememberScaffoldState()
         val context = LocalContext.current
-
 
         var username by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
@@ -117,15 +111,10 @@ class RegisterActivity: MainActivity() {
         val messageCompleteAll = stringResource(R.string.complete_all_fields)
         val messageError = stringResource(R.string.error_message_register_user)
 
-
-
-        //main container
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .heightIn(max = 1050.dp),
-
+                .padding(0.dp),
             topBar = {
                 // Custom top bar from the MainActivity
                 super.TobBarMain()
@@ -134,185 +123,211 @@ class RegisterActivity: MainActivity() {
                 // Custom bottom bar from the MainActivity
                 super.BottomBar()
             },
-
-
-            ) { padding ->
-
-            Column(
+        ) { padding ->
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(padding)
-                    .background(MaterialTheme.colorScheme.background),
+                    .fillMaxSize()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile_default),
-                    contentDescription = stringResource(R.string.logo_register),
-                    modifier = Modifier.size(160.dp)
+                    painter = painterResource(id = R.drawable.bg05),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Column(
+                    modifier = Modifier
                         .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .clip(RoundedCornerShape(50)),
-                )
-
-                Text(
-                    text = stringResource(R.string.register_title),
-                    textAlign = TextAlign.Center,
-                    fontFamily = FontFamily.Monospace,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp),
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp
-                )
-
-                ValidatedOutlinedTextField(
-                    value = username,
-                    onValueChange = {
-                        username = it
-                        isUsernameInvalid = username.length < 3 || username.isEmpty() || username.length > 24
-                    },
-                    label = stringResource(R.string.username_label_register),
-                    errorMessage = if (isUsernameInvalid) usernameErrorMessage else null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contDesc = stringResource(R.string.cont_desc_username_register),
-                    icon = stringResource(R.string.icon_username_register),
-                    isPassword = false,
-                    isPasswordOpen = false,
-                    onPasswordVisibilityToggle = {
-                        isPasswordOpen = !isPasswordOpen
-                    }
-                )
-
-
-                ValidatedOutlinedTextField(
-                    value = email,
-                    onValueChange = {
-                        email = it
-                        isEmailInvalid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-                    },
-                    label = stringResource(R.string.email_label_register),
-                    errorMessage = if (isEmailInvalid) emailErrorMessage else null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contDesc = stringResource(R.string.cont_desc_email_register),
-                    icon = stringResource(R.string.icon_email_register),
-                    isPassword = false,
-                    isPasswordOpen = false,
-                    onPasswordVisibilityToggle = {
-                        isPasswordOpen = !isPasswordOpen
-                    }
-                )
-
-                ValidatedOutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                        isPasswordInvalid = password.isEmpty() || !passwordPattern.matches(password)
-                    },
-                    label = stringResource(R.string.password_label_register),
-                    errorMessage = if (isPasswordInvalid) passwordErrorMessage else null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contDesc = stringResource(R.string.cont_desc_password_register),
-                    icon = stringResource(R.string.icon_password_register),
-                    isPassword = true,
-                    isPasswordOpen = isPasswordVisible,
-                    onPasswordVisibilityToggle = {
-                        isPasswordVisible = !isPasswordVisible
-                    }
-                )
-
-                Button(onClick = {
-                    if (isUsernameInvalid) {
-                        Toast.makeText(context,messageIsUsernameInvalid, Toast.LENGTH_SHORT).show()
-                    }else if (isEmailInvalid) {
-                        Toast.makeText(context,messageIsEmailInvalid, Toast.LENGTH_SHORT).show()
-                    }else if (isPasswordInvalid) {
-                        Toast.makeText(context,messageIsPasswordInvalid, Toast.LENGTH_SHORT).show()
-                    }else if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                        Toast.makeText(context,messageCompleteAll, Toast.LENGTH_SHORT).show()
-                    }else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
-                        createUserFirebase(
-                            username,
-                            email,
-                            password,
-                            context,
-                            favoritos,
-                            completados,
-                            isAdmin,
-                            photoUrl,
-                            drawingArray
-                        ) { navigateToProfile() }
-                    }else{
-                        Toast.makeText(context,messageError, Toast.LENGTH_SHORT).show()
-                    }
-                },
-                    colors = ButtonDefaults.buttonColors(
-                        //containerColor = Color.Cyan
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 40.dp),
-                    contentPadding = PaddingValues(vertical = 14.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 0.dp
-                    )
+                        .padding(top = 75.dp)
+                        .verticalScroll(scrollState)
+                        .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(20.dp))
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.useriaicon),
+                        contentDescription = stringResource(R.string.logo_register),
+                        modifier = Modifier.size(160.dp)
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .clip(RoundedCornerShape(50)),
+                    )
+
                     Text(
-                        text = stringResource(R.string.btn_register),
+                        text = stringResource(R.string.register_title),
+                        textAlign = TextAlign.Center,
                         fontFamily = FontFamily.Monospace,
-                        //color = Color.Black,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Divider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f),
-                        color = Color.Gray,
-                        thickness = 1.dp
+                            .padding(vertical = 20.dp),
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 16.sp
                     )
 
-                    Text(
-                        modifier = Modifier.padding(8.dp),
-                        text = stringResource(R.string.or_register),
-                        fontSize = 18.sp
+                    ValidatedOutlinedTextField(
+                        value = username,
+                        onValueChange = {
+                            username = it
+                            isUsernameInvalid =
+                                username.length < 3 || username.isEmpty() || username.length > 24
+                        },
+                        label = stringResource(R.string.username_label_register),
+                        errorMessage = if (isUsernameInvalid) usernameErrorMessage else null,
+                        modifier = Modifier.fillMaxWidth(),
+                        contDesc = stringResource(R.string.cont_desc_username_register),
+                        icon = stringResource(R.string.icon_username_register),
+                        isPassword = false,
+                        isPasswordOpen = false,
+                        onPasswordVisibilityToggle = {
+                            isPasswordOpen = !isPasswordOpen
+                        }
                     )
 
-                    Divider(
+
+                    ValidatedOutlinedTextField(
+                        value = email,
+                        onValueChange = {
+                            email = it
+                            isEmailInvalid =
+                                !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                        },
+                        label = stringResource(R.string.email_label_register),
+                        errorMessage = if (isEmailInvalid) emailErrorMessage else null,
+                        modifier = Modifier.fillMaxWidth(),
+                        contDesc = stringResource(R.string.cont_desc_email_register),
+                        icon = stringResource(R.string.icon_email_register),
+                        isPassword = false,
+                        isPasswordOpen = false,
+                        onPasswordVisibilityToggle = {
+                            isPasswordOpen = !isPasswordOpen
+                        }
+                    )
+
+                    ValidatedOutlinedTextField(
+                        value = password,
+                        onValueChange = {
+                            password = it
+                            isPasswordInvalid =
+                                password.isEmpty() || !passwordPattern.matches(password)
+                        },
+                        label = stringResource(R.string.password_label_register),
+                        errorMessage = if (isPasswordInvalid) passwordErrorMessage else null,
+                        modifier = Modifier.fillMaxWidth(),
+                        contDesc = stringResource(R.string.cont_desc_password_register),
+                        icon = stringResource(R.string.icon_password_register),
+                        isPassword = true,
+                        isPasswordOpen = isPasswordVisible,
+                        onPasswordVisibilityToggle = {
+                            isPasswordVisible = !isPasswordVisible
+                        }
+                    )
+
+                    Button(
+                        onClick = {
+                            if (isUsernameInvalid) {
+                                Toast.makeText(
+                                    context,
+                                    messageIsUsernameInvalid,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else if (isEmailInvalid) {
+                                Toast.makeText(context, messageIsEmailInvalid, Toast.LENGTH_SHORT)
+                                    .show()
+                            } else if (isPasswordInvalid) {
+                                Toast.makeText(
+                                    context,
+                                    messageIsPasswordInvalid,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                                Toast.makeText(context, messageCompleteAll, Toast.LENGTH_SHORT)
+                                    .show()
+                            } else if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
+                                createUserFirebase(
+                                    username,
+                                    email,
+                                    password,
+                                    context,
+                                    favoritos,
+                                    completados,
+                                    isAdmin,
+                                    photoUrl,
+                                    drawingArray
+                                ) { navigateToProfile() }
+                            } else {
+                                Toast.makeText(context, messageError, Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            //containerColor = Color.Cyan
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f),
-                        color = Color.Gray,
-                        thickness = 1.dp
-                    )
+                            .padding(horizontal = 20.dp)
+                            .padding(top = 40.dp),
+                        contentPadding = PaddingValues(vertical = 14.dp),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 0.dp
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.btn_register),
+                            fontFamily = FontFamily.Monospace,
+                            //color = Color.Black,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+
+//                    Row(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(top = 10.dp),
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Divider(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .weight(1f),
+//                            color = Color.Gray,
+//                            thickness = 1.dp
+//                        )
+//
+//                        Text(
+//                            modifier = Modifier.padding(8.dp),
+//                            text = stringResource(R.string.or_register),
+//                            fontSize = 18.sp
+//                        )
+//
+//                        Divider(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .weight(1f),
+//                            color = Color.Gray,
+//                            thickness = 1.dp
+//                        )
+//                    }
+
+                    //SocialMediaBtn()
+
+                    TextButton(
+                        onClick = {
+                            navigateToLogin()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.register_goToLogin),
+                            fontFamily = FontFamily.Monospace,
+                            color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
 
-                SocialMediaBtn()
-
-                TextButton(onClick = {
-                    navigateToLogin()
-                },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.register_goToLogin),
-                        fontFamily = FontFamily.Monospace,
-                        color = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
             }
+
 
         }
     }

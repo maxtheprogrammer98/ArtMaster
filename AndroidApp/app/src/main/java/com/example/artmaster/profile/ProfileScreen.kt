@@ -93,7 +93,7 @@ fun ProfileHeader(user: User, navigateToLogin: () -> Unit) {
         } ?: run {
             // If user.photoUrl is null, display the default profile photo
             Image(
-                painter = painterResource(id = R.drawable.profile_default),
+                painter = painterResource(id = R.drawable.useriaicon),
                 contentDescription = null,
                 modifier = Modifier
                     .size(80.dp)

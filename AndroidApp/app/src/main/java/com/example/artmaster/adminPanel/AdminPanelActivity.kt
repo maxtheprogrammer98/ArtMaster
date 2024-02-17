@@ -3,8 +3,10 @@ package com.example.artmaster.adminPanel
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -35,8 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -109,49 +115,74 @@ class AdminPanelActivity: MainActivity() {
         )
 
         Scaffold(
-            scaffoldState = scaffoldState,
-            floatingActionButton = {
-                MultiFloatingButton(
-                    multiFloatingState = multiFloatingState,
-                    onMultiFabStateChange = {
-                        multiFloatingState = it
-                    },
-                    items = items,
-                    context = context
-                )
-            },
-            topBar = {
-                // Custom top bar from the MainActivity
-                super.TobBarMain()
-            },
-            bottomBar = {
-                // Custom bottom bar from the MainActivity
-                super.BottomBar()
-            },
+                scaffoldState = scaffoldState,
+                floatingActionButton = {
+                    MultiFloatingButton(
+                        multiFloatingState = multiFloatingState,
+                        onMultiFabStateChange = {
+                            multiFloatingState = it
+                        },
+                        items = items,
+                        context = context
+                    )
+                },
+                topBar = {
+                    // Custom top bar from the MainActivity
+                    super.TobBarMain()
+                },
+                bottomBar = {
+                    // Custom bottom bar from the MainActivity
+                    super.BottomBar()
+                },
 
+        ) { padding ->
 
-            ) { padding ->
-
-            LazyColumn(
+            // Box to hold the main content and background image
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.background)
-                    .padding(padding),
-                contentPadding = PaddingValues(16.dp)
             ) {
-                item {
-                    AdminCard("Usuarios", Icons.Default.Person, navigateToUsers)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    AdminCard("Tutoriales", Icons.Default.Edit, navigateToTutoriales)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    AdminCard("Rutas", Icons.Default.Build, navigateToRutas)
+                Image(
+                    painter = painterResource(id = R.drawable.bg05),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(vertical = 42.dp)
+                        .padding(16.dp)
+                        .background(
+                            MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .fillMaxWidth()
+                            .background(
+                                color = MaterialTheme.colorScheme.background,
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .padding(16.dp),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        item {
+                            AdminCard("Usuarios", Icons.Default.Person, navigateToUsers)
+                            Spacer(modifier = Modifier.height(42.dp))
+                            AdminCard("Tutoriales", Icons.Default.Edit, navigateToTutoriales)
+                            Spacer(modifier = Modifier.height(42.dp))
+                            AdminCard("Rutas", Icons.Default.Build, navigateToRutas)
+                        }
+                    }
+
                 }
             }
-
         }
 
-    }
 
+    }
 
 
 
