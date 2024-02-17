@@ -126,4 +126,5 @@
     <string name="card_paths"> Aqui encontraras diversos tipos de tutoriales y podras controlar tu progreso </string>
     <string name="card_notes"> Permite crear notas y recordatorios de lo que necesites</string>
     <string name="developed_by">App desarrollada por</string>
+    <string name="nada">No hay nada para mostrar</string>
 </resources>

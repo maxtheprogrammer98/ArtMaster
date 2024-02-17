@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,9 +22,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
-import com.example.artmaster.tutorials.TutorialsModels
+import com.example.artmaster.user.UsersViewModel
 
 class FavActivity : MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,16 +40,23 @@ class FavActivity : MainActivity() {
     /**
      * contains the general layout of the section
      */
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter",
         "UnusedMaterialScaffoldPaddingParameter"
     )
     private fun FavsLayout(
-        tutorialsModels: ArrayList<TutorialsModels> = GetFavTutorials()
+        viewModelFavs: FavViewModel = viewModel(),
+        viewModelUser: UsersViewModel = viewModel()
     ){
         // enables vertical scrolling
         val scrollSate = rememberScrollState()
+
+        // variable that stores tutorial models
+        val tutorialsModels = viewModelFavs.tutorialsModels.value
+
+        // variable that stores the user profile
+        val userModel = viewModelUser.userStateProfile.value
 
         // main layout
         Scaffold(
@@ -99,10 +108,29 @@ class FavActivity : MainActivity() {
                     FilterOptions(context = applicationContext)
 
                     // adding cards dynamically
-                    tutorialsModels.forEach {
-                        it -> SwipableCard(
-                        tutorialModel = it,
-                        context = applicationContext)
+                    Column {
+                        if(tutorialsModels.isNotEmpty()){
+                            tutorialsModels.forEach { model ->
+                                SwipeToDeleteContainer(
+                                    card = {
+                                        // inserting card
+                                        SwipableCard(
+                                            tutorialModel = model,
+                                            context = applicationContext)
+                                    },
+                                    onDelete = {
+                                        // removing model locally
+                                        viewModelFavs.removeFromFavVM(model.id)
+                                        // removing fav from DB
+                                        viewModelFavs.removeFromFavsDB(
+                                            context = applicationContext,
+                                            favID = model.id,
+                                            userID = viewModelUser.userStateProfile.value.id
+                                        )
+                                    },
+                                    cardId = model.id)
+                            }
+                        }
                     }
                 }
             }

@@ -12,11 +12,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.DismissDirection
@@ -39,13 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.artmaster.R
@@ -83,69 +81,62 @@ fun DeleteBackground(
 
 /**
  * container for swipeable cards
- * @param content
- * DeleteBackground
  */
 @ExperimentalMaterialApi
 @Composable
-fun <T> SwipeToDeleteContainer(
-    item : T,
-    onDelete : (T) -> Unit,
-    animationDuration : Int = 500,
-    content: @Composable (T) -> Unit
-){
-    // flag
-    var isRemoved by remember { mutableStateOf(false)}
-    // validating state and updating flag
+fun SwipeToDeleteContainer(
+    cardId : String,
+    card: @Composable () -> Unit,
+    onDelete: () -> Unit,
+    animationDuration: Int = 500,
+    //viewModel: FavViewModel = viewModel()
+) {
+    // Flag to track card removal
+    var isRemoved by remember { mutableStateOf(false) }
+
+    // State for swipe dismissal
     val state = rememberDismissState(
         confirmStateChange = { value ->
-            if (value == DismissValue.DismissedToEnd){
+            if (value == DismissValue.DismissedToEnd) {
                 isRemoved = true
                 true
             } else {
                 false
             }
-
         }
     )
 
-    // triggers swipe action
+    // Swipe-to-dismiss container
     SwipeToDismiss(
         state = state,
-        background = {
-            DeleteBackground(swipeDismissState = state)
-        },
-        dismissContent = {content(item)}
+        background = { DeleteBackground(swipeDismissState = state) },
+        dismissContent = { card },
     )
 
-    // finishing deleting process and updating viewModel / DB
-    LaunchedEffect(key1 = isRemoved){
-        if(isRemoved){
+    // Trigger deletion after animation
+    LaunchedEffect(key1 = isRemoved) {
+        if (isRemoved) {
             delay(animationDuration.toLong())
-            // TODO: configure it properly so it's deleted from the viewModel and the BD
-            onDelete(item)
+            onDelete()
         }
     }
 
-    // animaiton
+    // Animated visibility
     AnimatedVisibility(
         visible = !isRemoved,
         exit = shrinkVertically(
             animationSpec = tween(durationMillis = animationDuration),
             shrinkTowards = Alignment.Top
         ) + fadeOut()
-    ){
+    ) {
         SwipeToDismiss(
             state = state,
-            background = {
-                DeleteBackground(swipeDismissState = state)
-            },
-            dismissContent = {
-                content(item)
-            })
+            background = { DeleteBackground(swipeDismissState = state) },
+            dismissContent = { card() }
+        )
     }
-
 }
+
 
 /**
  * creates swipable Cards based on the viewModel content
@@ -162,7 +153,8 @@ fun SwipableCard(
             .padding(20.dp)
             // TODO: Add funtion to open tutorial from favs
             .clickable {},
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(15.dp),
+        elevation = 4.dp
     ){
         // --------------- main wrapper ---------------- //
         Row(
@@ -173,61 +165,36 @@ fun SwipableCard(
             horizontalArrangement = Arrangement.SpaceEvenly
         ){
             // ---------- image ------------- //
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center
-            ){
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(tutorialModel.imagen)
                         .crossfade(true)
                         .build(),
                     contentDescription = stringResource(id = R.string.imagen),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize())
-            }
+                    modifier = Modifier
+                        .size(120.dp, 120.dp)
+                        .padding(16.dp, 12.dp))
 
             // ---------- content ------------- //
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
             ){
                 // title
                 Text(
                     text = tutorialModel.nombre,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(8.dp),
-                    textAlign = TextAlign.Center)
+                    modifier = Modifier.padding(0.dp,8.dp),
+                    fontSize = 16.sp)
 
                 // path
                 Text(
-                    text = tutorialModel.rutaNombre,
-                    textAlign = TextAlign.Center)
+                    text = "ruta: ${tutorialModel.nombre}")
 
                 // spacer
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }
-}
-
-/**
- * obtains the models of the tutorials that will be displayed
- * @param viewModel
- * viewModel of the section which stores the fetch data from the DB
- * @return
- * arraylist of tutorials models
- */
-@Composable
-fun GetFavTutorials(
-    viewModel: FavViewModel = viewModel()
-) : ArrayList<TutorialsModels>{
-    // base variable
-    val favModels = viewModel.tutorialsModels.value
-    // return statement
-    return favModels
 }
