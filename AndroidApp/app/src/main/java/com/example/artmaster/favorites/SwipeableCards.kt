@@ -24,7 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.consumePositionChange
+import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -112,12 +112,12 @@ fun SwipeFavsCards(
     // ------------------ STATE VARIABLES -------------------- //
 
     // state fav VM
-    var stateViewModelFavs = viewModelFav.tutorialsModels.value
+    val stateViewModelFavs = viewModelFav.tutorialsModels.value
     // state users VM
     val userViewModelState = viewModelUser.userStateProfile.value
 
     // cards width
-    val cardWidth = 300.dp
+    val cardWidth = 200.dp
 
     // ------------------ BOX MAIN CONTAINER -------------------- //
     Box(
@@ -126,75 +126,79 @@ fun SwipeFavsCards(
             .padding(20.dp)
     ){
         // ------------------ CARDS -------------------- //
-        stateViewModelFavs.forEachIndexed { index, card ->
-            // stores location
-            val offsetX = remember(index){mutableStateOf(0)}
-            // creating card
-            Card(
-                modifier = Modifier
-                    .padding(8.dp)
-                    // getting particular location
-                    .offset { IntOffset(offsetX.value, 8 * index)}
-                    // listening to gestures
-                    .pointerInput(Unit){
-                        detectDragGestures { change, dragAmount ->
-                            change.consumePositionChange()
-                            offsetX.value = dragAmount.x.toInt()
-                            // if removed
-                            if (dragAmount.x.absoluteValue > cardWidth.toPx() / 2){
-                                // removing from VM
-                                viewModelFav.removeFromFavVM(card.id)
-                                // removing from DB
-                                viewModelFav.removeFromFavsDB(
-                                    favID = card.id,
-                                    userID = userViewModelState.id,
-                                    context = context
-                                )
-                            }
-                        }
-                    },
-                shape = RoundedCornerShape(8.dp),
-                elevation = 8.dp
-            ){
-                // ------------------ CARDS CONTENT -------------------- //
-                // --------------- main wrapper ---------------- //
-                Row(
+        if (stateViewModelFavs.isNotEmpty()){
+            stateViewModelFavs.forEachIndexed { index, card ->
+                // stores location
+                val offsetX = remember(index){ mutableStateOf(0) }
+                // creating card
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(15.dp)),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                        .padding(8.dp)
+                        // getting particular location
+                        .offset { IntOffset(offsetX.value, 8 * index) }
+                        // listening to gestures
+                        .pointerInput(Unit){
+                            detectDragGestures { change, dragAmount ->
+                                change.consumeAllChanges()
+                                offsetX.value += dragAmount.x.toInt()
+                                // if removed
+                                if (dragAmount.x.absoluteValue > cardWidth.toPx() / 2){
+                                    // removing from DB
+                                    viewModelFav.removeFromFavsDB(
+                                        favID = card.id,
+                                        userID = userViewModelState.id,
+                                        context = context
+                                    )
+                                    // removing from VM
+                                    viewModelFav.removeFromFavVM(
+                                        tutorialID = card.id,
+                                        context = context)
+                                }
+                            }
+                        },
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = 8.dp
                 ){
-                    // ---------- image ------------- //
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(card.imagen)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = stringResource(id = R.string.imagen),
+                    // ------------------ CARDS CONTENT -------------------- //
+                    // --------------- main wrapper ---------------- //
+                    Row(
                         modifier = Modifier
-                            .size(120.dp, 120.dp)
-                            .padding(16.dp, 12.dp))
-
-                    // ---------- content ------------- //
-                    Column(
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(15.dp)),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ){
-                        // title
-                        Text(
-                            text = card.nombre,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(0.dp,8.dp),
-                            fontSize = 16.sp)
+                        // ---------- image ------------- //
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(card.imagen)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = stringResource(id = R.string.imagen),
+                            modifier = Modifier
+                                .size(120.dp, 120.dp)
+                                .padding(16.dp, 12.dp))
 
-                        // path
-                        Text(
-                            text = "ruta: ${card.nombre}")
+                        // ---------- content ------------- //
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth()
+                        ){
+                            // title
+                            Text(
+                                text = card.nombre,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(0.dp,8.dp),
+                                fontSize = 16.sp)
 
-                        // spacer
-                        Spacer(modifier = Modifier.height(10.dp))
+                            // path
+                            Text(
+                                text = "ruta: ${card.nombre}")
+
+                            // spacer
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                     }
                 }
             }

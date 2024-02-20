@@ -141,7 +141,7 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
                     // success message
                     Toast.makeText(
                         context,
-                        "tutorial eliminado de favs",
+                        "tutorial eliminado de favs BD",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
@@ -162,7 +162,8 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
      * so the change is reflected on the IU as well
      */
     fun removeFromFavVM(
-        tutorialID: String
+        tutorialID: String,
+        context: Context
     ){
         // Creating a new list that excludes the item with the matching ID
         val updatedList = tutorialsModels.value.filterNot { tutorial ->
@@ -171,6 +172,12 @@ class FavViewModel : ViewModel(),GetUserInfoAuth {
 
         // Updating the state with the new list
         tutorialsModels.value = updatedList as ArrayList<TutorialsModels>
+
+        // message
+        Toast.makeText(
+            context,
+            "tutorial elminado de favs VM",
+            Toast.LENGTH_SHORT).show()
     }
 
 

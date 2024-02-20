@@ -184,7 +184,9 @@ fun GenerateCardsFavs(
                             userID = usersViewModel.userStateProfile.value.id,
                             context = context);
                         // removes tutorial from VM
-                        dataViewModel.removeFromFavVM(tutorialID = fav.id)
+                        dataViewModel.removeFromFavVM(
+                            tutorialID = fav.id,
+                            context = context)
                         },
                     // colors
                     colors = ButtonDefaults.buttonColors(greenDarkish, Color.White)
