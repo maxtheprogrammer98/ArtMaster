@@ -22,12 +22,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
-import com.example.artmaster.user.UsersViewModel
 
 class FavActivity : MainActivity() {
+    // on create method
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -45,18 +44,9 @@ class FavActivity : MainActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter",
         "UnusedMaterialScaffoldPaddingParameter"
     )
-    private fun FavsLayout(
-        viewModelFavs: FavViewModel = viewModel(),
-        viewModelUser: UsersViewModel = viewModel()
-    ){
+    private fun FavsLayout(){
         // enables vertical scrolling
         val scrollSate = rememberScrollState()
-
-        // variable that stores tutorial models
-        val tutorialsModels = viewModelFavs.tutorialsModels.value
-
-        // variable that stores the user profile
-        val userModel = viewModelUser.userStateProfile.value
 
         // main layout
         Scaffold(
@@ -80,7 +70,7 @@ class FavActivity : MainActivity() {
 
                 // image background
                 Image(
-                    painter = painterResource(id = R.mipmap.fondo1),
+                    painter = painterResource(id = R.mipmap.fondo6),
                     contentDescription = stringResource(id = R.string.fondo),
                     modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.FillBounds)
@@ -108,30 +98,7 @@ class FavActivity : MainActivity() {
                     FilterOptions(context = applicationContext)
 
                     // adding cards dynamically
-                    Column {
-                        if(tutorialsModels.isNotEmpty()){
-                            tutorialsModels.forEach { model ->
-                                SwipeToDeleteContainer(
-                                    card = {
-                                        // inserting card
-                                        SwipableCard(
-                                            tutorialModel = model,
-                                            context = applicationContext)
-                                    },
-                                    onDelete = {
-                                        // removing model locally
-                                        viewModelFavs.removeFromFavVM(model.id)
-                                        // removing fav from DB
-                                        viewModelFavs.removeFromFavsDB(
-                                            context = applicationContext,
-                                            favID = model.id,
-                                            userID = viewModelUser.userStateProfile.value.id
-                                        )
-                                    },
-                                    cardId = model.id)
-                            }
-                        }
-                    }
+                    SwipeFavsCards(context = applicationContext)
                 }
             }
         }
