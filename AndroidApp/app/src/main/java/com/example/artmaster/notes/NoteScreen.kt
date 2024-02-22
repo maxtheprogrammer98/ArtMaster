@@ -481,7 +481,7 @@ private fun formatDate(timestamp: Timestamp): String {
 
 
 // Function to filter notes based on the search query
-private fun filterNotes(notes: List<Notes>, query: String): List<Notes> {
+fun filterNotes(notes: List<Notes>, query: String): List<Notes> {
     return notes.filter {
         it.title.contains(query, ignoreCase = true) || it.content.contains(query, ignoreCase = true)
     }
