@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -44,18 +44,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.adminPanel.AdminPanelActivity
+import com.example.artmaster.aisection.AiAssistantActivityPreview
+import com.example.artmaster.favorites.FavActivity
 import com.example.artmaster.graphicElements.ItemsGenerator
+import com.example.artmaster.home.HomeActivity
 import com.example.artmaster.login.Login
 import com.example.artmaster.login.Logout
 import com.example.artmaster.notes.NoteActivity
+import com.example.artmaster.paths.PathsActivity
 import com.example.artmaster.profile.ProfileActivity
 import com.example.artmaster.register.RegisterActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
+import com.example.artmaster.ui.theme.darkBlueA
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -68,6 +72,9 @@ import com.google.firebase.ktx.Firebase
 open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        
+
         FirebaseApp.initializeApp(this)
         setContent {
             ArtMasterTheme {
@@ -75,6 +82,7 @@ open class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
                 }
                 TobBarMain()
+                BottomBar()
             }
         }
     }
@@ -163,6 +171,14 @@ open class MainActivity : ComponentActivity() {
             false
         )
 
+        val IAassistant = ItemsGenerator(
+            stringResource(id = R.string.AI_assistant),
+            stringResource(id = R.string.AI_assistant),
+            Icons.TwoTone.PlayArrow,
+            false,
+            false
+        )
+
         // list that containing all the menu options (admin / users)
         val allMenuOptions = listOf<ItemsGenerator>(inicioOption,
             rutasOption,
@@ -171,7 +187,8 @@ open class MainActivity : ComponentActivity() {
             registroOption,
             loginOption,
             perfilOption,
-            adminOption)
+            adminOption,
+            IAassistant)
 
         // determing the user's role to display menu accordingly
         // prior to creating topbar
@@ -321,10 +338,31 @@ open class MainActivity : ComponentActivity() {
                     startActivity(it)
                 }
             }else ->{
+            "Inicio" ->{
+                Intent(applicationContext, HomeActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Rutas" ->{
+                Intent(applicationContext, PathsActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Favoritos" ->{
+                Intent(applicationContext, FavActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
+            "Asistente IA" ->{
+                Intent(applicationContext, AiAssistantActivityPreview::class.java).also {
+                    startActivity(it)
+                }
+            }
+            else ->{
             Toast.makeText(applicationContext,
                 "la seccion aun se encuentra en construccion",
                 Toast.LENGTH_SHORT).show()
-        }
+            }
         }
     }
 
@@ -369,7 +407,7 @@ open class MainActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(),
-            containerColor = colorResource(id = R.color.dark_blue)
+            containerColor = darkBlueA
         ){
             if (usersRole.equals("user") || usersRole.equals("admin")){
                 // displays all icons
@@ -482,6 +520,7 @@ open class MainActivity : ComponentActivity() {
                 }
             }
     }
+
 }
 
 
