@@ -437,7 +437,8 @@ open class MainActivity : ComponentActivity() {
                         section -> NavigationBarItem(
                     selected = screenSelected.any { it.name == section.name },
                     onClick = {
-
+                        val intent = navigateToBottomBar(section.name);
+                        applicationContext.startActivity(intent)
                     },
                     icon = {
                         Icon(
