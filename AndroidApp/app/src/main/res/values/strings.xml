@@ -1,3 +1,134 @@
 <resources>
+    <!-- nombres base !-->
     <string name="app_name">ArtMaster</string>
+    <string name="header">header app</string>
+    <string name="artMaster">ArtMaster</string>
+    <!-- varios !-->
+    <string name="toast_menu_else">La seccion aun se encuentra en construccion</string>
+    <!-- secciones !-->
+    <string name="inicio">Inicio</string>
+    <string name="rutas">Rutas</string>
+    <string name="favoritos">Favoritos</string>
+    <string name="notas">Notas</string>
+    <string name="registro">Registro</string>
+    <string name="login">Login / Logout</string>
+    <string name="perfil">Perfil</string>
+    <string name="panel_admin">Panel Admin</string>
+    <string name="asistente_ia">Asistente IA</string>
+    <!-- login !-->
+    <string name="bienvenido">Bienvenido!</string>
+    <string name="ic_user">icono user</string>
+    <string name="email">ingrese email</string>
+    <string name="password">Ingrese contraseña</string>
+    <string name="password_olvidada">Olvidaste tu contraseña?</string>
+    <string name="login_fb"> Facebook</string>
+    <string name="login_google">Google</string>
+    <string name="login_alt">Tambien te puedes loguar via facebook o google</string>
+    <string name="iniciar_sesion">Iniciar sesion</string>
+    <string name="password_olvidada_toast">Por mail se ha enviado un enlace para que puedas asignar una clave nueva</string>
+    <string name="esconder_password">Mostrar / esconder password</string>
+    <string name="email_sample">ejemplo: juan@gmail.com</string>
+    <string name="registro_redirect">ir al registro</string>
+    <!-- registro !-->
+    <string name="username_error_message">El Username debe contener más de 3 caracteres</string>
+    <string name="email_error_message">El correo electrónico no es válido.</string>
+    <string name="password_error_message_01">Tu contraseña debe contener al menos 8 caracteres,\n</string>
+    <string name="password_error_message_02">" incluyendo al menos una letra mayúscula,\n"</string>
+    <string name="password_error_message_03">" una letra minúscula, un número y\n"</string>
+    <string name="password_error_message_04"><![CDATA[" un carácter especial como @, #, $, %, ^, &, + o !."]]></string>
+    <string name="logo_register">Logo Registro</string>
+    <string name="register_title">CREA TU CUENTA</string>
+    <string name="username_label_register">Username</string>
+    <string name="cont_desc_username_register">Icono Username</string>
+    <string name="icon_username_register">person</string>
+    <string name="email_label_register">Email</string>
+    <string name="cont_desc_email_register">Icono Email</string>
+    <string name="icon_email_register">email</string>
+    <string name="password_label_register">Password</string>
+    <string name="cont_desc_password_register">Icono Password</string>
+    <string name="icon_password_register">password</string>
+    <string name="is_username_invalid">Completa el campo Username correctamente</string>
+    <string name="is_email_invalid">Completa el campo Email correctamente</string>
+    <string name="is_password_invalid">Completa el campo Password correctamente</string>
+    <string name="complete_all_fields">Completa todos los campos</string>
+    <string name="error_message_register_user">Ocurrio un error.</string>
+    <string name="register_goToLogin">¿Ya tienes una cuenta? Inicia Sesión.</string>
+    <string name="btn_register">REGISTRATE</string>
+    <string name="or_register">O</string>
+    <string name="successful_register">Registro exitoso!</string>
+    <string name="cont_desc_google">Iniciar con Google</string>
+    <string name="google">Google</string>
+    <string name="cont_desc_facebook">Iniciar con Facebook</string>
+    <string name="facebook">Facebook</string>
+    <!-- logout !-->
+    <string name="hasta_luego">Hasta luego!</string>
+    <string name="btn_aceptar">Aceptar</string>
+    <string name="cambiar_visibilidad">mostrar password</string>
+    <string name="odin_message">Greetings, mortal. As the Allfather and ruler of Asgard, I have deemed you worthy to wield the mighty power of an admin. With this authority, you shall command the realms, ensuring order and prosperity. Use your newfound abilities wisely, for great responsibility accompanies great power. May your decisions be just, and your reign be benevolent. By the authority vested in me, Odin Allfather, I hereby grant you the title of Administrator. Rise, and let your influence shape the digital realms.</string>
+    <string name="hidden_password">Ocultar contraseña</string>
+    <string name="show_password">Mostrar contraseña</string>
+
+    <!--home !-->
+    <string name="slideshow">Imagen slideshow</string>
+    <string name="flecha_anterior">Anterior</string>
+    <string name="flecha_siguiente">Siguiente</string>
+    <string name="imagen">imagen seccion</string>
+    <string name="seccion_rutas">En esta seccion podrás encontrar una amplia variedad de caminos de aprendizaje</string>
+    <string name="seccion_favoritos">Aqui podrás ver los tutoriales que has guardado en favoritos</string>
+    <string name="seccion_notas">En esta parte de la aplicacion podras crear notas con notificaciones personalizadas</string>
+    <string name="seccion_perfil">En este apartado podras modificar o actualizar tus datos si los deseas, ademas podrias ver tu progreso desde aqui</string>
+    <!--rutas y tutoriales !-->
+    <string name="rutas_titulo">Rutas de aprendizaje</string>
+    <string name="rutas_descripcion"> En esta sección podrás encontrar distintas rutas que te ayudaran a adentrarte en este maravilloso mundo
+    del arte realista, si eres principiante te recomendamos comenzar con la ruta "FUNDAMENTOS"</string>
+    <string name="btn_abrir_ruta">Abrir Ruta</string>
+    <string name="progreso">Progreso: </string>
+    <string name="abrir_tutorial">Abrir</string>
+    <string name="buscar_tutorial">Buscar tutorial</string>
+    <string name="borrar_busqueda">Borrar input</string>
+    <string name="tutorial_completado">Tutorial Completado</string>
+    <string name="tutorial_no_completado">Tutorial Incompletado</string>
+    <string name="eliminar_fav">Eliminar de fav</string>
+    <string name="descripcion">Descripcion</string>
+    <string name="informacion">Informacion</string>
+    <string name="incompleto">Incompleto</string>
+    <string name="completado">Completado</string>
+    <string name="agregar_completado">Agregar a completados </string>
+    <string name="quitar_completado">Eliminar de completados</string>
+    <string name="estrella_icono">Icono estrella</string>
+    <string name="calificacion">Califica el tutorial!</string>
+    <string name="calificacion_titulo">rating</string>
+    <string name="barra_busqueda_fav">filtra el tutorial por su nombre</string>
+    <string name="filtrar_path">Filtrar por rutas</string>
+    <string name="filtrar_fav_nombre">Filtrar por nombre</string>
+    <string name="agregar_reminder">Agregar recordatorio</string>
+    <string name="seleccionar_hora_reminder">Selecciona la hora y el dia del recordatorio</string>
+    <string name="borrar">Borrar</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="ingresa_date">Ingresa la fecha (DD/MM/AAAA)</string>
+    <string name="ingresa_hora">Ingresa la hora, formato 24hs: (HH:MM)</string>
+    <string name="notification_channel">ArtMaster Notificaciones</string>
+    <string name="fondo">fondo</string>
+    <!-- AI ASSISTANT-->
+    <string name="ai_title_input">Ingresa tu pregunta</string>
+    <string name="AI_assistant"> Asistente IA</string>
+    <string name="ai_help">Soy una IA, en que te puedo ayudar?</string>
+    <string name="ai_titulo"> Respuesta de la AI...</string>
+    <string name="robot_icon">robot icon</string>
+    <string name="title_activity_ai_assistant_image">AiAssistantActivityImage</string>
+    <string name="ia_text_option"> Realiza consultas y la IA te respondera en forma de texto</string>
+    <string name="ia_image_option"> Sube una imagen de tu dibujo y la IA te dara su opinion</string>
+    <string name="ia_title_preview"> Selecciona la opción que prefieras</string>
+    <string name="ai_btn_img">Click en el siguiente boton para subir imagen</string>
+    <string name="btn_subir">Subir Imagen</string>
+    <string name="btn_ask_ai">Consultar IA</string>
+    <string name="ai_drawing_ideas">La IA te brindara ideas para dibujos!</string>
+    <string name="ai_image_uploaded">Tu imagen aparecera aqui</string>
+    <string name="ai_remove_image">Eliminar Imagen</string>
+    <!-- HOME CARDS descriptions-->
+    <string name="card_ai"> Esta seccion utiliza una IA para brindarte ayuda de forma personalizada </string>
+    <string name="card_paths"> Aqui encontraras diversos tipos de tutoriales y podras controlar tu progreso </string>
+    <string name="card_notes"> Permite crear notas y recordatorios de lo que necesites</string>
+    <string name="developed_by">App desarrollada por</string>
+    <string name="nada">No hay nada para mostrar</string>
 </resources>

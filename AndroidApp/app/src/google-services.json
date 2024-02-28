@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "614056161006",
+    "project_id": "artmaster-c3e26",
+    "storage_bucket": "artmaster-c3e26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614056161006:android:69bbe85c4c68a3e4374dff",
+        "android_client_info": {
+          "package_name": "com.example.artmaster"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKqV1It6lvbdYzI6w1_eFSgy1AB9XMOHc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,9 +17,32 @@
         android:theme="@style/Theme.ArtMaster"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".aisection.AiAssistantActivityIdeas"
+            android:exported="false" />
+        <activity
+            android:name=".aisection.AiAssistantActivityImg"
+            android:exported="false" />
+        <activity
+            android:name=".aisection.AiAssistantActivityPreview"
+            android:exported="true" />
+        <activity
+            android:name=".aisection.AiAssistantActivityText"
+            android:exported="false" />
+        <activity
+            android:name=".favorites.FavActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tutorials.TutorialsContentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tutorials.TutorialsPreviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".paths.PathsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".home.HomeActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ArtMaster">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +50,58 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".login.Login"
+            android:exported="false"
+            android:theme="@style/Theme.ArtMaster" />
+        <activity
+            android:name=".profile.ProfileActivity">
+        </activity>
+
+        <activity
+            android:name=".notes.NoteActivity">
+        </activity>
+
+        <activity
+            android:name=".notes.DetailActivity"
+            android:parentActivityName=".notes.NoteActivity">
+        </activity>
+
+        <activity android:name=".alarm.TimePickerActivity"/>
+
+        <activity android:name=".adminPanel.AdminPanelActivity"/>
+
+        <activity android:name=".adminPaths.PathsActivity"/>
+
+        <activity
+            android:name=".adminPaths.DetailPathActivity"
+            android:parentActivityName=".adminPaths.PathsActivity" />
+
+        <activity android:name=".adminTutorials.TutorialsActivity"/>
+        <activity
+            android:name=".adminTutorials.DetailTutorialActivity"
+            android:parentActivityName=".adminTutorials.TutorialsActivity" />
+
+        <activity android:name=".adminUsers.UsersActivity"/>
+        <activity
+            android:name=".adminUsers.DetailUserActivity"
+            android:parentActivityName=".adminUsers.UsersActivity" />
+
+        <receiver android:name=".alarm.AlarmReceiver"/>
+            
+        <activity
+            android:name=".login.Logout"
+            android:exported="false"
+            android:theme="@style/Theme.ArtMaster" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ArtMaster" />
+        <activity android:name=".register.RegisterActivity" />
+        <activity android:name=".profile.ProfileActivity" />
+
+        <receiver android:name=".tutorials.AlarmReceiver" />
     </application>
 
 </manifest>
