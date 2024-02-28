@@ -5,7 +5,7 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
-android {
+android{
     namespace = "com.example.artmaster"
     compileSdk = 34
 
@@ -47,6 +47,8 @@ android {
         }
     }
 }
+
+
 
 dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")

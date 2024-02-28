@@ -337,7 +337,7 @@ open class MainActivity : ComponentActivity() {
                 Intent(applicationContext, AdminPanelActivity::class.java).also {
                     startActivity(it)
                 }
-            }else ->{
+            }
             "Inicio" ->{
                 Intent(applicationContext, HomeActivity::class.java).also {
                     startActivity(it)

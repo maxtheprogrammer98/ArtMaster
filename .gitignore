@@ -1,0 +1,13 @@
+
+AndroidApp/.gradle
+AndroidApp/.tmp
+AndroidApp/caches
+AndroidApp/wrapper
+AndroidApp/build
+AndroidApp/native
+AndroidApp/daemon
+AndroidApp/.idea
+AndroidApp/android
+AndroidApp/local.properties
+AndroidApp/jdks
+AndroidApp/kotlin-profile
