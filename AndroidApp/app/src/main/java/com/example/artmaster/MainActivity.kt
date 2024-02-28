@@ -411,10 +411,12 @@ open class MainActivity : ComponentActivity() {
         ){
             if (usersRole.equals("user") || usersRole.equals("admin")){
                 // displays all icons
-                sectionsApp.forEach {
-                        section -> NavigationBarItem(
+                sectionsApp.forEach { section -> NavigationBarItem(
                     selected = screenSelected.any { it.name == section.name },
-                    onClick = { /*TODO: add intent function*/},
+                    onClick = {
+                        val intent = navigateToBottomBar(section.name);
+                        applicationContext.startActivity(intent)
+                    },
                     icon = {
                         Icon(
                             imageVector = section.icon,
@@ -434,7 +436,9 @@ open class MainActivity : ComponentActivity() {
                 sectionsApp.filter{ it.visitorCanAccess}.forEach {
                         section -> NavigationBarItem(
                     selected = screenSelected.any { it.name == section.name },
-                    onClick = { /*TODO: add intent function*/ },
+                    onClick = {
+
+                    },
                     icon = {
                         Icon(
                             imageVector = section.icon,
@@ -519,6 +523,27 @@ open class MainActivity : ComponentActivity() {
                     }
                 }
             }
+    }
+
+    // validates which section was clicked
+    fun navigateToBottomBar(sectionName : String) : Intent{
+        // base variable
+        val intent : Intent
+        // validation process
+        if (sectionName.equals("favs")){
+            intent = Intent(applicationContext,FavActivity::class.java)
+
+        } else if (sectionName.equals("rutas")){
+            intent = Intent(applicationContext,PathsActivity::class.java)
+
+        } else if(sectionName.equals("inicio")){
+            intent = Intent(applicationContext,HomeActivity::class.java)
+
+        } else {
+            intent = Intent(applicationContext,HomeActivity::class.java)
+        }
+        // return statement
+        return intent
     }
 
 }
