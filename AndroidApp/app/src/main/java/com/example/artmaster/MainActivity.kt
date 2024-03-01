@@ -72,9 +72,6 @@ import com.google.firebase.ktx.Firebase
 open class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        
-
         FirebaseApp.initializeApp(this)
         setContent {
             ArtMasterTheme {
@@ -284,7 +281,6 @@ open class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-
                 }
             }
         }
@@ -452,9 +448,7 @@ open class MainActivity : ComponentActivity() {
                     })
                 }
             }
-
         }
-
     }
 
     /**
