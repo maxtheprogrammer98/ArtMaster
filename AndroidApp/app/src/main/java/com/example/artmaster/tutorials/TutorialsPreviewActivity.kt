@@ -92,12 +92,11 @@ class TutorialsPreviewActivity : MainActivity(){
                     // generates cards dynamically
                     GenerateCardsTutorials(
                         pathName = pathName,
-                        context = baseContext)
+                        context = applicationContext)
                     
                     // spacer
                     Spacer(modifier = Modifier.height(60.dp))
                 }
-
             }
         }
     }

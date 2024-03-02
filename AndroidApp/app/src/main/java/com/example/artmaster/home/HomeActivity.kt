@@ -1,6 +1,7 @@
 package com.example.artmaster.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -22,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
+import com.example.artmaster.aisection.AiAssistantActivityPreview
+import com.example.artmaster.paths.PathsActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
 class HomeActivity : MainActivity(){
@@ -86,24 +89,33 @@ class HomeActivity : MainActivity(){
                         title = stringResource(id = R.string.asistente_ia) ,
                         icon = painterResource(id = R.mipmap.iconiaalt),
                         description = stringResource(id = R.string.card_ai),
-                        intentTo = "IAactivity",
-                        context = applicationContext)
+                        navigateTo = {
+                            Intent(applicationContext,AiAssistantActivityPreview::class.java).also {
+                                startActivity(it)
+                            }
+                        })
 
                     // adding paths section card
                     CardsSections(
                         title = stringResource(id = R.string.rutas),
                         icon = painterResource(id = R.mipmap.artiaicon),
                         description = stringResource(id = R.string.card_paths),
-                        intentTo = "RutasActivity",
-                        context = applicationContext)
+                        navigateTo = {
+                            Intent(applicationContext,PathsActivity::class.java).also {
+                                startActivity(it)
+                            }
+                        })
 
                     // adding notes section card
                     CardsSections(
                         title = stringResource(id = R.string.notas),
                         icon = painterResource(id = R.mipmap.notesiconia),
                         description = stringResource(id = R.string.card_notes),
-                        intentTo = "NotesActivity",
-                        context = applicationContext)
+                        navigateTo = {
+                            Intent(applicationContext,PathsActivity::class.java).also {
+                                startActivity(it)
+                            }
+                        })
                     
                     // adding developers contact
                     CardDevelopers(context = applicationContext)

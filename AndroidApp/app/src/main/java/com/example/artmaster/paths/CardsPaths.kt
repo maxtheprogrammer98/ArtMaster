@@ -44,10 +44,7 @@ import com.example.artmaster.ui.theme.greenMain
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
-    //--------------- ID PATH ------------------------//
-//    var pathID by remember {
-//        mutableStateOf("")
-//    }
+
     //--------------- BASE ARRAY ------------------------//
     val learningPaths = dataViewModel.pathsModelsState.value
     // ----------- PATH CARDS---------//

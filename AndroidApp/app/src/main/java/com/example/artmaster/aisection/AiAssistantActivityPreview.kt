@@ -1,6 +1,7 @@
 package com.example.artmaster.aisection
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -107,22 +108,31 @@ class AiAssistantActivityPreview : MainActivity() {
                     AddOptionAI(
                         painterIcon = painterResource(id = R.mipmap.notesiconia) ,
                         description = stringResource(id = R.string.ia_text_option),
-                        context = baseContext,
-                        intentTo = "textActivity")
+                        navigateTo = {
+                            Intent(applicationContext,AiAssistantActivityText::class.java).also {
+                                startActivity(it)
+                            }
+                        })
 
                     // option image feedback
                     AddOptionAI(
                         painterIcon = painterResource(id = R.mipmap.artiaicon),
                         description = stringResource(id = R.string.ia_image_option),
-                        context = baseContext,
-                        intentTo = "imageActivity")
+                        navigateTo = {
+                            Intent(applicationContext,AiAssistantActivityImg::class.java).also {
+                                startActivity(it)
+                            }
+                        })
 
                     // option drawing ideas
                     AddOptionAI(
                         painterIcon = painterResource(id = R.mipmap.eureka),
                         description = stringResource(id = R.string.ai_drawing_ideas),
-                        context = baseContext,
-                        intentTo = "ideasActivity")
+                        navigateTo = {
+                            Intent(applicationContext,AiAssistantActivityIdeas::class.java).also {
+                                startActivity(it)
+                            }
+                        })
                 }
             }
         }

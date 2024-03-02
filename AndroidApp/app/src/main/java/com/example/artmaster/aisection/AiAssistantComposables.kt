@@ -216,15 +216,14 @@ fun AddRobotIcon(painterIcon: Painter){
 fun AddOptionAI(
     painterIcon: Painter,
     description : String,
-    context: Context,
-    intentTo: String){
+    navigateTo: () -> Unit){
     // --------------------  WRAPPER --------------------//
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
             .heightIn(90.dp, 125.dp)
-            .clickable { createIntent(context, intentTo) }
+            .clickable { navigateTo }
             .background(Color.White, shape = RoundedCornerShape(12.dp)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly

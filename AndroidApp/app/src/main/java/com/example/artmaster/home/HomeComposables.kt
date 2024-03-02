@@ -3,7 +3,6 @@ package com.example.artmaster.home
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,8 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.artmaster.R
-import com.example.artmaster.aisection.AiAssistantActivityPreview
-import com.example.artmaster.paths.PathsActivity
 
 @Composable
 fun FrontPage(){
@@ -84,17 +81,13 @@ fun CardsSections(
     title : String,
     icon : Painter,
     description : String,
-    intentTo: String,
-    context: Context
+    navigateTo: () -> Unit,
 ){
     // ------------------- CARD ELEMENT ------------------- //
     Card(
         onClick = {
-            // redirects the user to the selected activity
-            openActivity(
-                intentTo = intentTo,
-                context = context
-            )
+            // redirects the user to the corresponding activity
+            navigateTo
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -144,39 +137,6 @@ fun CardsSections(
             // -------- spacer ---------- //
             Spacer(modifier = Modifier.height(16.dp))
         }
-    }
-}
-
-fun openActivity(
-    intentTo: String,
-    context : Context
-){
-    // validation
-    if (intentTo.equals("IAactivity")){
-        // redirect to activity:
-        val intent = Intent(context, AiAssistantActivityPreview::class.java)
-        context.startActivity(intent)
-
-    } else if(intentTo.equals("NotesActivity")){
-        // redirect to activity:
-        Toast.makeText(
-            context,
-            "seccion en construccion",
-            Toast.LENGTH_SHORT
-        ).show()
-
-    } else if(intentTo.equals("RutasActivity")){
-        // redirect to activity:
-        val intent = Intent(context,PathsActivity::class.java)
-        context.startActivity(intent)
-
-    } else {
-        // invalid option message
-        Toast.makeText(
-            context,
-            "opcion no valida",
-            Toast.LENGTH_SHORT
-        ).show()
     }
 }
 
