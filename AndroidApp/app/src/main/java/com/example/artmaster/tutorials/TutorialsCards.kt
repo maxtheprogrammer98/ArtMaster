@@ -325,7 +325,6 @@ fun removeFavTutorial(IDtutorial:String, userModel: UserModels,context: Context)
         .addOnFailureListener { exception ->
             Log.e("tutorials", "error while removing tutorial", exception)
         }
-    // TODO: updating icon / button text
 }
 
 /**

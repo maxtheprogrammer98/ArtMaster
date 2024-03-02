@@ -31,12 +31,12 @@ class TutorialsPreviewActivity : MainActivity(){
         super.onCreate(savedInstanceState)
 
         // receiving data from intent
-        val namePath = intent.getStringExtra("NAME_PATH")
-        val idPath = intent.getStringExtra("ID_PATH")
+        val namePath = intent.getStringExtra("NAME_PATH") as String
+        val idPath = intent.getStringExtra("ID_PATH") as String
 
         setContent {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                TutorialsLayout(namePath.toString(), idPath.toString())
+                TutorialsLayout(namePath, idPath)
             }
         }
     }
@@ -92,7 +92,7 @@ class TutorialsPreviewActivity : MainActivity(){
                     // generates cards dynamically
                     GenerateCardsTutorials(
                         pathName = pathName,
-                        context = applicationContext)
+                        context = baseContext)
                     
                     // spacer
                     Spacer(modifier = Modifier.height(60.dp))

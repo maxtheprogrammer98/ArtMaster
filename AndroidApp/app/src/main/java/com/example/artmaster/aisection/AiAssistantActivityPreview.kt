@@ -107,21 +107,21 @@ class AiAssistantActivityPreview : MainActivity() {
                     AddOptionAI(
                         painterIcon = painterResource(id = R.mipmap.notesiconia) ,
                         description = stringResource(id = R.string.ia_text_option),
-                        context = applicationContext,
+                        context = baseContext,
                         intentTo = "textActivity")
 
                     // option image feedback
                     AddOptionAI(
                         painterIcon = painterResource(id = R.mipmap.artiaicon),
                         description = stringResource(id = R.string.ia_image_option),
-                        context = applicationContext,
+                        context = baseContext,
                         intentTo = "imageActivity")
 
                     // option drawing ideas
                     AddOptionAI(
                         painterIcon = painterResource(id = R.mipmap.eureka),
                         description = stringResource(id = R.string.ai_drawing_ideas),
-                        context = applicationContext,
+                        context = baseContext,
                         intentTo = "ideasActivity")
                 }
             }

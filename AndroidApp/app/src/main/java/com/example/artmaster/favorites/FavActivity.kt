@@ -95,10 +95,10 @@ class FavActivity : MainActivity() {
                     FavsSearchBar()
 
                     // adding filtering option (based on paths)
-                    FilterOptions(context = applicationContext)
+                    FilterOptions(context = baseContext)
 
                     // adding cards dynamically
-                    SwipeFavsCards(context = applicationContext)
+                    SwipeFavsCards(context = baseContext)
                 }
             }
         }

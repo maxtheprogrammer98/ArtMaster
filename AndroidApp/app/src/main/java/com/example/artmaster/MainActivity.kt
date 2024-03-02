@@ -88,7 +88,7 @@ open class MainActivity : ComponentActivity() {
     //TODO: Encapsulate variables and functions, general review
 
     //user's role (visitor / user / admin)
-    private var usersRole = ""
+    var usersRole = ""
 
     /**
      * creates a topbar with a dropdown menu
