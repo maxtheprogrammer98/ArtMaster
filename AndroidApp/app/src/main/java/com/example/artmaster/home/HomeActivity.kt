@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.aisection.AiAssistantActivityPreview
+import com.example.artmaster.notes.NoteActivity
 import com.example.artmaster.paths.PathsActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
@@ -112,7 +113,7 @@ class HomeActivity : MainActivity(){
                         icon = painterResource(id = R.mipmap.notesiconia),
                         description = stringResource(id = R.string.card_notes),
                         navigateTo = {
-                            Intent(applicationContext,PathsActivity::class.java).also {
+                            Intent(applicationContext,NoteActivity::class.java).also {
                                 startActivity(it)
                             }
                         })
