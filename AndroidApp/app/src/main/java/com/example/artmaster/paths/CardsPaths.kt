@@ -1,8 +1,6 @@
 package com.example.artmaster.paths
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,28 +11,22 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.artmaster.R
-import com.example.artmaster.tutorials.TutorialsPreviewActivity
 import com.example.artmaster.ui.theme.greenDarkish
 import com.example.artmaster.ui.theme.greenMain
 
@@ -43,37 +35,32 @@ import com.example.artmaster.ui.theme.greenMain
  */
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
+fun CardsPaths(
+    pathModel : PathsModels,
+    navigateTo: () -> Unit){
 
-    //--------------- BASE ARRAY ------------------------//
-    val learningPaths = dataViewModel.pathsModelsState.value
-    // ----------- PATH CARDS---------//
-    learningPaths.forEach {
-            path -> Card(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
-                    .shadow(5.dp, RectangleShape),
-                elevation = CardDefaults.cardElevation(),
+    // ----------- MAIN CARD CONTAINER ---------//
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
     ){
-
         // ----------- IMAGE ---------//
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
         ){
-           AsyncImage(
-               model = ImageRequest.Builder(LocalContext.current)
-                   //TODO: upload real images in FS
-                   .data("https://loremflickr.com/400/400/art?lock=1")
-                   .crossfade(true)
-                   .build(),
-               contentDescription = stringResource(id = R.string.imagen),
-               contentScale = ContentScale.Crop,
-               modifier = Modifier.fillMaxSize()
-           )
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(pathModel.imagen)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = stringResource(id = R.string.imagen),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                error = painterResource(id = R.mipmap.artiaicon)
+            )
         }
 
         // ----------- TITLE ---------//
@@ -85,7 +72,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                 .wrapContentSize(Alignment.Center)
         ){
             Text(
-                text = path.nombre,
+                text = pathModel.nombre,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -100,7 +87,7 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                 .padding(10.dp)
         ){
             Text(
-                text = path.informacion,
+                text = pathModel.informacion,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(10.dp, 0.dp)
@@ -115,18 +102,19 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
                 .padding(15.dp)
         ){
             Text(
-                text = "Dificultad: ${path.dificultad}",
+                text = "Dificultad: ${pathModel.dificultad}",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold)
         }
         // ------ PROGRESS BAR -----------//
 
-        CustomLinearProgressBar(pathID = path.id)
+        CustomLinearProgressBar(pathID = pathModel.id)
 
         // ----------- BUTTON ---------//
         Button(
             onClick = {
-                openTutorials(context, path.nombre, path.id)
+                // starts intent that shows tutorials list
+                navigateTo.invoke()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -136,18 +124,6 @@ fun CreateCards(dataViewModel: PathsViewModel = viewModel(), context: Context){
             Text(
                 text = stringResource(id = R.string.abrir_tutorial),
                 fontSize = 16.sp)
-            }
         }
     }
-}
-
-/**
- * Starts a new activity where the tutorials will be displayed
- * based on the ID path selected
- */
-fun openTutorials(context: Context, namePath : String, IDpath : String){
-    val intent = Intent(context, TutorialsPreviewActivity::class.java)
-    intent.putExtra("NAME_PATH" , namePath)
-    intent.putExtra("ID_PATH", IDpath)
-    context.startActivity(intent)
 }

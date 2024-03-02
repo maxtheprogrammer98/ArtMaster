@@ -2,7 +2,6 @@ package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -45,52 +44,39 @@ import com.example.artmaster.R
 import com.example.artmaster.ui.theme.greenDarkish
 import com.example.artmaster.ui.theme.starIcon
 import com.example.artmaster.user.UserModels
-import com.example.artmaster.user.UsersViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-
-
-//remember variables
 /**
  * renders dynamically the tutorials cards based on the path selected
  */
 @Composable
 @SuppressLint("MutableCollectionMutableState")
-//@Preview
-fun GenerateCardsTutorials(
-    dataViewModel: TutorialsViewModel = viewModel(),
-    pathName:String ,
-    usersViewModel: UsersViewModel = viewModel(),
-    context: Context
+fun CardsTutorials(
+    tutorialModel: TutorialsModels,
+    userModel: UserModels,
+    navigateTo : () -> Unit,
 ){
-    // variable that stores fetched documents
-    val tutorialsData = dataViewModel.stateTutorials.value
-    // variable that stores user's profile
-    val userProfile = usersViewModel.userStateProfile.value
     //-------------- GENERATING CARDS ----------------//
-    tutorialsData.filter{ it.rutaNombre.equals(pathName)}.forEach {
-        tutorial -> Card(
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+            .clip(MaterialTheme.shapes.medium),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
+    ){
+        // ---------- TITLE ----------//
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(15.dp)
-                .clip(MaterialTheme.shapes.medium),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 5.dp
-            )
+                .height(50.dp)
+                .wrapContentSize(Alignment.Center)
         ){
-            // ---------- TITLE ----------//
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .wrapContentSize(Alignment.Center)
-            ){
-                Text(
-                    text = tutorial.nombre,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp)
+            Text(
+                text = tutorialModel.nombre,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp)
 
             }
 
@@ -101,14 +87,14 @@ fun GenerateCardsTutorials(
                     .height(150.dp)
             ){
                 AsyncImage(
-                    //TODO: Add real images in FS
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://loremflickr.com/600/600/art?lock=1")
+                        .data(tutorialModel.imagen)
                         .crossfade(true)
                         .build(),
                     contentDescription = stringResource(id = R.string.imagen),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize())
+                    modifier = Modifier.fillMaxSize(),
+                    error = painterResource(id = R.mipmap.artiaicon))
             }
 
             // ---------- DESCRIPTION  ----------//
@@ -119,13 +105,13 @@ fun GenerateCardsTutorials(
                     .wrapContentSize(Alignment.Center)
             ){
                 Text(
-                    text = tutorial.descripcion,
+                    text = tutorialModel.descripcion,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(0.dp,10.dp))
 
                 val estado = addDoneIcon(
-                    userDoneTutorials = userProfile.completados,
-                    tutorialName = tutorial.id )
+                    userDoneTutorials = userModel.completados,
+                    tutorialName = tutorialModel.id )
 
                 Text(
                     text = "Estado: $estado",
@@ -144,18 +130,13 @@ fun GenerateCardsTutorials(
                     textAlign = TextAlign.Center)
             }
 
-            AddRatingIcons(tutorialID = tutorial.id)
+            AddRatingIcons(tutorialID = tutorialModel.id)
 
             // ---------- BUTTONS ------------ //
             Column {
                 // ---------- BUTTON OPEN  ----------//
                 Button(
-                    onClick = {
-                              openTutorial(
-                                  tutorialModel = tutorial,
-                                  context = context
-                              )
-                    },
+                    onClick = { navigateTo.invoke()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(15.dp, 5.dp),
@@ -168,14 +149,13 @@ fun GenerateCardsTutorials(
 
                 // ---------- BUTTON FAVS  ----------//
                 AddFavButton(
-                    userProfile = userProfile,
-                    tutorialsModel = tutorial,
-                    context = context)
+                    userProfile = userModel,
+                    tutorialsModel = tutorialModel,
+                    context = LocalContext.current)
 
                 // ---------- SPACER ----------//
                 Spacer(modifier = Modifier.height(15.dp))
             }
-        }
     }
 }
 
@@ -294,7 +274,6 @@ fun addFavTutorial(IDtutorial:String, userModel: UserModels, context: Context){
         .addOnFailureListener { exception ->
             Log.e("tutorials", "error trying to update tutorial", exception)
         }
-    // TODO: updating icon / button text
 }
 
 
@@ -325,18 +304,6 @@ fun removeFavTutorial(IDtutorial:String, userModel: UserModels,context: Context)
         .addOnFailureListener { exception ->
             Log.e("tutorials", "error while removing tutorial", exception)
         }
-}
-
-/**
- * creates intents that redirects user to a new activity where the content is displayed
- */
-fun openTutorial(tutorialModel: TutorialsModels, context: Context){
-    // defining intent
-    val intentTutorial = Intent(context, TutorialsContentActivity::class.java)
-    // adding serializable object
-    intentTutorial.putExtra("TUTORIAL_DATA", tutorialModel)
-    // initializing intent
-    context.startActivity(intentTutorial)
 }
 
 @Composable

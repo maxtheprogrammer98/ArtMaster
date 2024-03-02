@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -22,11 +21,6 @@ class TutorialsViewModel : ViewModel(){
     val stateTutorials = mutableStateOf(
         arrayListOf<TutorialsModels>()
     )
-
-    //initializing function that returns data
-    init {
-        getData()
-    }
 
     /**
      * function that fetchs data asynchronically
@@ -103,5 +97,44 @@ class TutorialsViewModel : ViewModel(){
         }
     }
 
+    /**
+     * fetchs tutorials based on their specific path
+     */
+    suspend fun getTutorialsFromPath(path:String) : ArrayList<TutorialsModels>{
+        // reference variable
+        var tutorialsFromPath = ArrayList<TutorialsModels>()
+        // instantiating DB
+        val db = Firebase.firestore
+        // collection reference
+        val collectionRef = db.collection("tutoriales")
+        // executing request and handling possible errors
+        try {
+            collectionRef
+                // filter specification
+                .whereEqualTo("rutaNombre", path)
+                // get request
+                .get()
+                // waiting for server response
+                .await()
+                // deserializing documents
+                .map {
+                    val result = it.toObject(TutorialsModels::class.java)
+                    tutorialsFromPath.add(result)
+                }
+        } catch (e : FirebaseFirestoreException){
+            Log.e("get_request_tutos", "get request unsuccessful", e)
+        }
+        // return statement
+        return tutorialsFromPath
+    }
+
+    /**
+     * executes async request that fetches tutorials based on their path
+     */
+    fun fetchTutorialsFiltered(path: String){
+        viewModelScope.launch {
+            stateTutorials.value = getTutorialsFromPath(path)
+        }
+    }
 
 }

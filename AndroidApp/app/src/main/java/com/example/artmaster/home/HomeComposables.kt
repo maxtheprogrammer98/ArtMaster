@@ -118,7 +118,8 @@ fun CardsSections(
                 text = title,
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.padding(10.dp,0.dp))
+                modifier = Modifier.padding(10.dp,0.dp),
+                color = Color.Black)
 
             // -------- spacer ---------- //
             Spacer(modifier = Modifier.height(12.dp))
@@ -131,7 +132,8 @@ fun CardsSections(
                 Text(
                     text = description,
                     modifier = Modifier.padding(10.dp,0.dp),
-                    textAlign = TextAlign.Center)
+                    textAlign = TextAlign.Center,
+                    color = Color.DarkGray)
             }
 
             // -------- spacer ---------- //

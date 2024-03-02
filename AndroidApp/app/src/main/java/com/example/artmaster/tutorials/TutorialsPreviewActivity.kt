@@ -1,6 +1,7 @@
 package com.example.artmaster.tutorials
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -22,9 +23,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.paths.CustomCiricularProgressBar
+import com.example.artmaster.user.UsersViewModel
 
 class TutorialsPreviewActivity : MainActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,10 +50,16 @@ class TutorialsPreviewActivity : MainActivity(){
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    fun TutorialsLayout(pathName:String, pathID:String){
+    fun TutorialsLayout(
+        pathName:String,
+        pathID:String,
+        tutorialsViewModel: TutorialsViewModel = viewModel(),
+        usersViewModel: UsersViewModel = viewModel()){
         // ------------------------ VARIABLES ----------------------//
         val scrollingState = rememberScrollState()
-
+        val userModel = usersViewModel.userStateProfile.value
+        // updadting state based on choosen path
+        tutorialsViewModel.fetchTutorialsFiltered(pathName)
         // ------------------------ MAIN LAYOUT ----------------------//
         Scaffold(
             modifier = Modifier
@@ -89,10 +98,23 @@ class TutorialsPreviewActivity : MainActivity(){
                     // creates search bar that interacts with the view model
                     CreateSerachBar(pathName = pathName)
 
-                    // generates cards dynamically
-                    GenerateCardsTutorials(
-                        pathName = pathName,
-                        context = applicationContext)
+                    // generates cards dynamically based on VM state
+                    if (tutorialsViewModel.stateTutorials.value.isNotEmpty()){
+                        tutorialsViewModel.stateTutorials.value.forEach {
+                                model -> CardsTutorials(
+                            tutorialModel = model,
+                            userModel = userModel,
+                            navigateTo = {
+                                //intent specification
+                                val intent = Intent(applicationContext,TutorialsContentActivity::class.java)
+                                intent.putExtra("TUTORIAL_DATA", model)
+                                // starting following activity
+                                startActivity(intent)
+                                // finishing current activity
+                                finish()
+                            })
+                        }
+                    }
                     
                     // spacer
                     Spacer(modifier = Modifier.height(60.dp))

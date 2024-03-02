@@ -1,6 +1,7 @@
 package com.example.artmaster.favorites
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -22,8 +23,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.artmaster.MainActivity
 import com.example.artmaster.R
+import com.example.artmaster.tutorials.CardsTutorials
+import com.example.artmaster.tutorials.TutorialsContentActivity
+import com.example.artmaster.user.UsersViewModel
 
 class FavActivity : MainActivity() {
     // on create method
@@ -44,7 +49,13 @@ class FavActivity : MainActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter",
         "UnusedMaterialScaffoldPaddingParameter"
     )
-    private fun FavsLayout(){
+    private fun FavsLayout(
+        favViewModel: FavViewModel = viewModel(),
+        userViewModel: UsersViewModel = viewModel()
+    ){
+        // --------------- VARIABLES -------------------//
+        val userModel = userViewModel.userStateProfile.value
+
         // enables vertical scrolling
         val scrollSate = rememberScrollState()
 
@@ -95,10 +106,26 @@ class FavActivity : MainActivity() {
                     FavsSearchBar()
 
                     // adding filtering option (based on paths)
-                    FilterOptions(context = baseContext)
+                    FilterOptions(context = applicationContext)
 
-                    // adding cards dynamically
-                    SwipeFavsCards(context = baseContext)
+                    // adding classic cards
+                    // TODO: fix code and add swipable cards!
+                    if(favViewModel.tutorialsModels.value.isNotEmpty()){
+                      favViewModel.tutorialsModels.value.forEach {
+                          model -> CardsTutorials(
+                                tutorialModel = model,
+                                userModel = userModel,
+                                navigateTo = {
+                                    // intent specification
+                                    val intent = Intent(applicationContext,TutorialsContentActivity::class.java)
+                                    intent.putExtra("TUTORIAL_DATA", model)
+                                    // starting following activity
+                                    startActivity(intent)
+                                    // finish current activity
+                                    finish()
+                                })
+                        }
+                    }
                 }
             }
         }

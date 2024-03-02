@@ -158,7 +158,7 @@ class Logout : MainActivity(), AddingLoginHeader, AuthenticateUsers{
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp)
+                            .padding(20.dp),
                     )
 
                     // --------------------- PASSWORD FIELD -------------------------------//

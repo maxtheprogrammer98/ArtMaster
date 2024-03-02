@@ -1,6 +1,7 @@
 package com.example.artmaster.paths
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -25,6 +26,7 @@ import com.example.artmaster.MainActivity
 import com.example.artmaster.R
 import com.example.artmaster.graphicElements.HeaderMain
 import com.example.artmaster.graphicElements.LoadingScreen
+import com.example.artmaster.tutorials.TutorialsPreviewActivity
 import com.example.artmaster.ui.theme.ArtMasterTheme
 
 
@@ -35,7 +37,7 @@ class PathsActivity : MainActivity() {
             ArtMasterTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-                    CreateRutas()
+                    PathsLayout()
                 }
             }
         }
@@ -44,7 +46,9 @@ class PathsActivity : MainActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    fun CreateRutas(pathsViewModel: PathsViewModel = viewModel()){
+    fun PathsLayout(
+        pathsViewModel: PathsViewModel = viewModel()
+    ){
         // scrolling variable
         val scrollingState = rememberScrollState()
         // checking whether the data has been fetched
@@ -84,12 +88,28 @@ class PathsActivity : MainActivity() {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(0.dp,60.dp,0.dp,80.dp)
+                            .padding(0.dp, 60.dp, 0.dp, 80.dp)
                     ){
                         // ------------ INSERTING HEADER ---------//
                         HeaderMain()
                         // ----------------- CARDS -----------------//
-                        CreateCards(context = applicationContext)
+                        // they are created dynamically based on the VM state
+                        if(pathsViewModel.pathsModelsState.value.isNotEmpty()){
+                            pathsViewModel.pathsModelsState.value.forEach {
+                                    model -> CardsPaths(
+                                pathModel = model,
+                                navigateTo = {
+                                    // intent specifications
+                                    val intent = Intent(applicationContext, TutorialsPreviewActivity::class.java)
+                                    intent.putExtra("NAME_PATH", model.nombre)
+                                    intent.putExtra("ID_PATH", model.id)
+                                    // starting following activity
+                                    startActivity(intent)
+                                    // finishing current activity
+                                    finish()
+                                })
+                            }
+                        }
                     }
                 }
             }

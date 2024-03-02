@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -74,16 +75,16 @@ fun AddPortada(linkImg : String){
     ){
         // image
         AsyncImage(
-            //TODO: Add real image in FS!
             model = ImageRequest.Builder(LocalContext.current)
-                .data("https://loremflickr.com/800/800/art?lock=1")
+                .data(linkImg)
                 .crossfade(1000)
                 .transformations(CircleCropTransformation())
                 .build(),
             contentDescription = "imagen",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(0.dp, 20.dp))
+                .padding(0.dp, 20.dp),
+            error = painterResource(id = R.mipmap.iconartmaster))
     }
 }
 

@@ -1,7 +1,6 @@
 package com.example.artmaster.aisection
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.Toast
@@ -165,8 +164,7 @@ fun DisplayResponseAI(viewModelAIsection: AiAssistantViewModel = viewModel()){
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth()
-            .background(Color.White, shape = RoundedCornerShape(15.dp))
-            .shadow(4.dp, shape = RoundedCornerShape(15.dp)),
+            .background(Color.White, shape = RoundedCornerShape(15.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
 
@@ -175,13 +173,15 @@ fun DisplayResponseAI(viewModelAIsection: AiAssistantViewModel = viewModel()){
             text = stringResource(id = R.string.ai_titulo),
             textDecoration = TextDecoration.Underline,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(20.dp))
+            modifier = Modifier.padding(20.dp),
+            color = Color.Black)
 
 
         // --------------------  text response --------------------//
         Text(
             text = aiResponse,
-            modifier = Modifier.padding(12.dp))
+            modifier = Modifier.padding(12.dp),
+            color = Color.Black)
 
         // --------------------  separation --------------------//
         Spacer(modifier = Modifier.height(20.dp))
@@ -240,40 +240,8 @@ fun AddOptionAI(
         Text(
             text = description,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(6.dp))
-    }
-}
-
-/**
- * identifies which option was selected and opens the corresponding activity
- */
-fun createIntent(context: Context, intentTo: String){
-    //error message
-    val errorMessage = Toast.makeText(
-        context,
-        "ha ocurrido un error, intenta de nuevo",
-        Toast.LENGTH_SHORT
-    )
-
-    // validation
-    if (intentTo.equals("textActivity")){
-        // text option
-        val intent = Intent(context, AiAssistantActivityText::class.java)
-        context.startActivity(intent)
-
-    } else if (intentTo.equals("imageActivity")){
-        // image option
-        val intent = Intent(context, AiAssistantActivityImg::class.java)
-        context.startActivity(intent)
-
-    } else if (intentTo.equals("ideasActivity")) {
-        // ideas option
-        val intent = Intent(context, AiAssistantActivityIdeas::class.java)
-        context.startActivity(intent)
-
-    } else {
-        // displaying error message
-        errorMessage.show()
+            modifier = Modifier.padding(6.dp),
+            color = Color.Black)
     }
 }
 
@@ -395,8 +363,7 @@ fun DisplayFeedbackDrawing(viewModel: AiAssistantViewModel = viewModel()){
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth()
-            .background(Color.White, shape = RoundedCornerShape(15.dp))
-            .shadow(4.dp, shape = RoundedCornerShape(15.dp)),
+            .background(Color.White, shape = RoundedCornerShape(15.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
         // --------------------  title --------------------//
@@ -404,13 +371,14 @@ fun DisplayFeedbackDrawing(viewModel: AiAssistantViewModel = viewModel()){
             text = stringResource(id = R.string.ai_titulo),
             textDecoration = TextDecoration.Underline,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(20.dp))
-
+            modifier = Modifier.padding(20.dp),
+            color = Color.Black)
 
         // --------------------  text response --------------------//
         Text(
             text = aiResponse,
-            modifier = Modifier.padding(12.dp))
+            modifier = Modifier.padding(12.dp),
+            color = Color.Black)
 
         // --------------------  separation --------------------//
         Spacer(modifier = Modifier.height(20.dp))
@@ -451,10 +419,6 @@ fun GetDrawingIdeas(
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(15.dp)
-            )
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(15.dp)
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -463,7 +427,8 @@ fun GetDrawingIdeas(
             text = stringResource(id = R.string.ai_title_input),
             fontWeight = FontWeight.Bold,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.padding(10.dp))
+            modifier = Modifier.padding(10.dp),
+            color = Color.Black)
 
         // --------------- text field -----------------//
         OutlinedTextField(
@@ -533,10 +498,6 @@ fun DisplayDrawingIdeas(
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(15.dp)
-            )
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(15.dp)
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -545,12 +506,14 @@ fun DisplayDrawingIdeas(
             text = stringResource(id = R.string.ai_titulo),
             fontWeight = FontWeight.Bold,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.padding(10.dp))
+            modifier = Modifier.padding(10.dp),
+            color = Color.Black)
 
         // ----------------- AI response --------------------//
         Text(
             text = ideasSuggested,
-            modifier = Modifier.padding(20.dp))
+            modifier = Modifier.padding(20.dp),
+            color = Color.Black)
     }
 }
 
