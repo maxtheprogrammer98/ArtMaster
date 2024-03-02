@@ -87,7 +87,7 @@ fun CardsSections(
     Card(
         onClick = {
             // redirects the user to the corresponding activity
-            navigateTo
+            navigateTo.invoke()
         },
         modifier = Modifier
             .fillMaxWidth()

@@ -223,7 +223,7 @@ fun AddOptionAI(
             .fillMaxWidth()
             .padding(15.dp)
             .heightIn(90.dp, 125.dp)
-            .clickable { navigateTo }
+            .clickable { navigateTo.invoke() }
             .background(Color.White, shape = RoundedCornerShape(12.dp)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
